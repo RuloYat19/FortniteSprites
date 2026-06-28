@@ -5,16 +5,21 @@
 
 ```json
 {
-    yaFueDominado: false // Si aunque sea 1 vez ya fue dominado y por ende fichado
-    estaDominado: false // Si en el inventario está en nivel 5
-    estaEnInventario: false // Si se encuentra en el inventario
-    estaDesbloqueado: false // Si ya se desbloqueó en el inventario
+    "nombre": "Espíritu de Agua", // Nombre del espíritu
+    "rareza": "Raro", // Rareza del espíritu
+    "material": "Normal", // Material del espíritu
+    "nombreArchivoImagen": "./imagenesSprites/aguaNormal.png", // Ruta de la imagen dentro de la carpeta frontend
+    "yaFueDominado": False // Nuevo: Si aunque sea 1 vez ya fue dominado y por ende fichado
+    "estaDominado": False // Nuevo: Si en el inventario está en nivel 5
+    "estaEnInventario": False // Nuevo: Si se encuentra en el inventario
+    "estaDesbloqueado": False // Nuevo: Si ya se desbloqueó en el inventario
+    "polvoAlExtraer": 500, // Cantidad de Polvo de Espíritu que el espíritu da al ser extraído
+    "polvoAlInvocar": 100 // Cantidad de Polvo de Espíritu que se requiere para invocarlo
 }
 ```
 
 - Mejor interfaz para indicar el estado del espíritu
 - Hacer un orden en específico para que se muestren los espíritus
-- Actualizar imagenes hacia las mejores
 
 ### Cosas Nuevas para Añadir
 - Mostrar cantidad de Polvo de Espíritu para invocar a los que hacen falta
