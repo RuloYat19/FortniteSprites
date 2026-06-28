@@ -14,6 +14,7 @@
 
 - Mejor interfaz para indicar el estado del espíritu
 - Hacer un orden en específico para que se muestren los espíritus
+- Actualizar imagenes hacia las mejores
 
 ### Cosas Nuevas para Añadir
 - Mostrar cantidad de Polvo de Espíritu para invocar a los que hacen falta
