@@ -9,6 +9,7 @@ class SpritBase(BaseModel):
     nombreArchivoImagen: Optional[str] = None
     estaColeccionado: bool = True
     estaDominado: bool = True
+    estaEnInventario: bool = False
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 
@@ -22,6 +23,7 @@ class SpritUpdate(BaseModel):
     nombreArchivoImagen: Optional[str] = None
     estaColeccionado: Optional[bool] = None
     estaDominado: Optional[bool] = None
+    estaEnInventario: Optional[bool] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 
@@ -31,4 +33,4 @@ class SpritResponse(SpritBase):
     updated_at: Optional[datetime] = None
     
     class Config:
-        from_attributes = True  # Para Pydantic v2
+        from_attributes = True
