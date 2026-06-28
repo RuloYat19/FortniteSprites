@@ -50,3 +50,30 @@ docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U 
 docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong!Passw0rd' \
    -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 ```
+
+## Rehacer la base de datos con cambios en la seed y/o de los atributos
+```bash
+# 1. Detener todo
+docker compose down
+
+# 2. Eliminar el volumen de la base de datos
+docker compose down -v
+
+# 3. Reconstruir todo
+docker compose up -d --build
+
+# 4. Crear la base de datos
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -Q "CREATE DATABASE FORTNITEDB"
+
+# 5. Verificar que la base de datos se creó
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -Q "SELECT name FROM sys.databases WHERE name = 'FORTNITEDB'"
+
+# 6. Ejecutar el script de creación de tablas
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/001_tablas.sql
+
+# 7. Verificar que la tabla se creó
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'sprits' ORDER BY ORDINAL_POSITION"
+
+# 6. Ejecutar el seed
+docker exec -it backend_fortnite_sprits python -m app.seed
+```
