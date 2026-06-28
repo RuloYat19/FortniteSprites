@@ -12,6 +12,7 @@ function SpritsList() {
     material: '',
     nombre: ''
   });
+  const [flippedCards, setFlippedCards] = useState({});
 
   useEffect(() => {
     cargarSprits();
@@ -31,12 +32,10 @@ function SpritsList() {
     }
   };
 
-  // 🔵 Manejar clic en la imagen (toggle inventario o resetear si está dominado)
   const handleImageClick = async (id) => {
     try {
       const spritActual = sprits.find(s => s.id === id);
       
-      // Si está dominado, resetear todo (dominado: false, inventario: false)
       if (spritActual?.estaDominado) {
         setSprits(prevSprits => 
           prevSprits.map(sprit => 
@@ -46,7 +45,6 @@ function SpritsList() {
           )
         );
         
-        // Actualizar en el backend ambos campos
         await spritsService.update(id, {
           estaDominado: false,
           estaEnInventario: false
@@ -54,7 +52,6 @@ function SpritsList() {
         return;
       }
       
-      // Si NO está dominado, alternar inventario
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
           sprit.id === id 
@@ -70,7 +67,6 @@ function SpritsList() {
     }
   };
 
-  // 🔵 Toggle de dominado (hacer clic en la corona cuando está en inventario)
   const toggleDominado = async (id, e) => {
     e.stopPropagation();
     
@@ -88,6 +84,14 @@ function SpritsList() {
       console.error('Error al alternar dominado:', err);
       cargarSprits();
     }
+  };
+
+  const toggleFlip = (id, e) => {
+    e.stopPropagation();
+    setFlippedCards(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
   };
 
   const handleFiltroChange = (e) => {
@@ -172,57 +176,115 @@ function SpritsList() {
         {spritsFiltrados.map((sprit) => (
           <div 
             key={sprit.id} 
-            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''}`}
+            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
           >
-            {/* 🔵 Imagen (click para toggle inventario / resetear si está dominado) */}
-            <div 
-              className="sprit-image-wrapper"
-              onClick={() => handleImageClick(sprit.id)}
-            >
-              {sprit.nombreArchivoImagen ? (
-                <img 
-                  src={sprit.nombreArchivoImagen} 
-                  alt={sprit.nombre}
-                  className="sprit-img"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/200/16213e/ffffff?text=Sin+imagen';
-                  }}
-                />
-              ) : (
-                <div className="sprit-img-placeholder">
-                  🖼️ Sin imagen
-                </div>
-              )}
-              
-              {/* 🔵 Corona centrada en la parte superior cuando está dominado */}
-              {sprit.estaDominado && (
-                <div className="corona-overlay">
-                  <span className="corona-dominada">👑</span>
-                </div>
-              )}
-            </div>
-
-            {/* 🔵 Rareza y corona (entre imagen y nombre) */}
-            <div className="sprit-rareza-wrapper">
-              {/* 🔵 La corona solo aparece aquí si está en inventario pero NO dominado */}
-              {sprit.estaEnInventario && !sprit.estaDominado && (
-                <span 
-                  className="corona-icon clickable"
-                  onClick={(e) => toggleDominado(sprit.id, e)}
-                  title="Haz clic para dominar este sprit"
+            <div className="sprit-card-inner">
+              {/* 🔵 FRONT - Cara frontal */}
+              <div className="sprit-card-front">
+                <div 
+                  className="sprit-image-wrapper"
+                  onClick={() => handleImageClick(sprit.id)}
                 >
-                  👑
-                </span>
-              )}
-              <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
-                {sprit.rareza}
-              </span>
-            </div>
+                  {sprit.nombreArchivoImagen ? (
+                    <img 
+                      src={sprit.nombreArchivoImagen} 
+                      alt={sprit.nombre}
+                      className="sprit-img"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/200/16213e/ffffff?text=Sin+imagen';
+                      }}
+                    />
+                  ) : (
+                    <div className="sprit-img-placeholder">
+                      🖼️ Sin imagen
+                    </div>
+                  )}
+                  
+                  {sprit.estaDominado && (
+                    <div className="corona-overlay">
+                      <span className="corona-dominada">👑</span>
+                    </div>
+                  )}
+                </div>
 
-            {/* 🔵 Nombre del sprit */}
-            <div className="sprit-nombre">
-              <h4>{sprit.nombre}</h4>
+                <div className="sprit-rareza-wrapper">
+                  {sprit.estaEnInventario && !sprit.estaDominado && (
+                    <span 
+                      className="corona-icon clickable"
+                      onClick={(e) => toggleDominado(sprit.id, e)}
+                      title="Haz clic para dominar este sprit"
+                    >
+                      👑
+                    </span>
+                  )}
+                  <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
+                    {sprit.rareza}
+                  </span>
+                  <span 
+                    className="eye-icon clickable"
+                    onClick={(e) => toggleFlip(sprit.id, e)}
+                    title="Ver detalles del sprit"
+                  >
+                    👁️
+                  </span>
+                </div>
+
+                <div className="sprit-nombre">
+                  <h4>{sprit.nombre}</h4>
+                </div>
+              </div>
+
+              {/* 🔵 BACK - Cara trasera (detalles) - SIN NOMBRE */}
+              <div className="sprit-card-back">
+                <div className="back-details">
+                  <div className="detail-item">
+                    <span className="detail-label">📦 Material:</span>
+                    <span className="detail-value">{sprit.material}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">⬆️ Polvo al invocar:</span>
+                    <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">⬇️ Polvo al extraer:</span>
+                    <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
+                  </div>
+                </div>
+
+                {/* 🔵 ACCIONES: Editar, Eliminar, Volver */}
+                <div className="back-actions">
+                  <span 
+                    className="action-icon"
+                    title="Editar"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Aquí iría la lógica de edición
+                      alert('Editar sprit: ' + sprit.nombre);
+                    }}
+                  >
+                    ✏️
+                  </span>
+                  <span 
+                    className="action-icon"
+                    title="Eliminar"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Aquí iría la lógica de eliminación
+                      alert('Eliminar sprit: ' + sprit.nombre);
+                    }}
+                  >
+                    🗑️
+                  </span>
+                  <span 
+                    className="action-icon"
+                    title="Volver"
+                    onClick={(e) => toggleFlip(sprit.id, e)}
+                  >
+                    🔄
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         ))}
