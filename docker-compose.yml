@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db_fortnite_sprits
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    restart: unless-stopped
+
+  db-init:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: fortnite_db_init
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./database:/scripts
+    entrypoint: >
+      /bin/bash -c "
+      echo 'Waiting for SQL Server...';
+      until /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'YourStrong!Passw0rd' -Q 'SELECT 1' > /dev/null 2>&1;
+      do
+        echo 'SQL Server not ready, retrying in 5 seconds...';
+        sleep 5;
+      done;
+      echo 'SQL Server ready, running scripts...';
+      for script in /scripts/*.sql; do
+        echo 'Running $script...';
+        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'YourStrong!Passw0rd' -d FORTNITEDB -i \"$script\";
+      done;
+      echo 'Database initialized';
+      "
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_fortnite_sprits
+    depends_on:
+      sqlserver:
+        condition: service_started
+      db-init:
+        condition: service_completed_successfully
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: "mssql+pyodbc://sa:YourStrong%21Passw0rd@sqlserver:1433/FORTNITEDB?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_fortnite_sprits
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  sql_data:
