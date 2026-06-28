@@ -1,8 +1,5 @@
 ## Cosas por Añadir al Programa
 
-### Cosas que editar
-- Actualizar atributos de la base de datos
-
 ```json
 {
     "nombre": "Espíritu de Agua", // Nombre del espíritu
@@ -18,6 +15,7 @@
 }
 ```
 
+### Cosas que editar
 - Mejor interfaz para indicar el estado del espíritu
 - Hacer un orden en específico para que se muestren los espíritus
 
