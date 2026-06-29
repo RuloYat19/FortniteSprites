@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { spritsService } from '../services/api';
 import './SpritsList.css';
 import ConfirmModal from './ConfirmModal';
 
 function SpritsList() {
+  const navigate = useNavigate();
   const [sprits, setSprits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -375,9 +377,19 @@ function SpritsList() {
           Limpiar filtros
         </button>
 
-        <button className="btn-agregar" onClick={abrirAddModal}>
-          ➕ Agregar Sprit
-        </button>
+        {/* 🔵 Grupo de botones a la derecha */}
+        <div className="filtros-botones">
+          <button className="btn-agregar" onClick={abrirAddModal}>
+            ➕ Agregar Sprit
+          </button>
+          <button 
+            className="btn-volver"
+            onClick={() => navigate('/')}
+            title="Volver al inicio"
+          >
+            ←
+          </button>
+        </div>
       </div>
 
       <ConfirmModal

@@ -1,5 +1,4 @@
-/* SpritsList.css - FINAL - UNA SOLA CARD */
-
+/* 🔵 ESTILOS GLOBALES */
 * {
   margin: 0;
   padding: 0;
@@ -10,24 +9,29 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #1a1a2e;
   color: #fff;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
 }
 
 .sprits-container {
-  max-width: 1600px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 15px;
+  overflow-x: hidden;
 }
 
-h1 {
+.sprits-container h1 {
   text-align: center;
   color: #35cf35;
-  margin-bottom: 30px;
-  font-size: 2.5rem;
+  margin-bottom: 60px;
+  font-size: 4.5rem;
   text-shadow: 0 0 10px rgba(38, 167, 21, 0.5);
 }
 
 /* 🔵 Filtros */
-.filtros {
+.sprits-container .filtros {
   display: flex;
   gap: 15px;
   justify-content: center;
@@ -35,7 +39,7 @@ h1 {
   flex-wrap: wrap;
 }
 
-.filtros select {
+.sprits-container .filtros select {
   padding: 10px 20px;
   border-radius: 8px;
   border: 2px solid #35cf35;
@@ -46,32 +50,33 @@ h1 {
   min-width: 150px;
 }
 
-.filtros button {
+.sprits-container .filtros button {
   padding: 10px 25px;
   border: none;
   border-radius: 8px;
   background: #35cf35;
   color: #fff;
+  font-size: 1.0rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.filtros button:hover {
+.sprits-container .filtros button:hover {
   background: #2db82d;
   transform: scale(1.05);
 }
 
 /* 🔵 Grid de sprits */
-.sprits-grid {
+.sprits-container .sprits-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
   align-items: stretch;
 }
 
-/* 🔵 LA CARD - UNA SOLA */
-.sprit-card {
+/* 🔵 Cards de Sprits */
+.sprits-container .sprit-card {
   perspective: 1000px;
   min-height: 280px;
   border-radius: 12px;
@@ -668,4 +673,73 @@ h1 {
 .btn-agregar:hover {
   background: #388e3c;
   transform: scale(1.05);
+}
+
+/* 🔵 Contenedor de botones en los filtros */
+.sprits-container .filtros-botones {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 🔵 Botón para agregar sprit */
+.sprits-container .btn-agregar {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 1.0rem;
+}
+
+.sprits-container .btn-agregar:hover {
+  background: #388e3c;
+  transform: scale(1.05);
+}
+
+/* 🔵 Botón para volver al inicio */
+.sprits-container .btn-volver {
+  padding: 10px 18px;
+  border: 2px solid #0f3460;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.sprits-container .btn-volver:hover {
+  border-color: #35cf35;
+  background: rgba(53, 207, 53, 0.1);
+  transform: scale(1.05);
+}
+
+.sprits-container .btn-volver:active {
+  transform: scale(0.95);
+}
+
+/* 🔵 Responsive para los botones */
+@media (max-width: 768px) {
+  .sprits-container .filtros-botones {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .sprits-container .btn-volver {
+    padding: 10px 16px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 1rem;
+  }
 }
