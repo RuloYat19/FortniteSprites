@@ -7,9 +7,10 @@ class SpritBase(BaseModel):
     rareza: str
     material: str
     nombreArchivoImagen: Optional[str] = None
-    estaColeccionado: bool = True
-    estaDominado: bool = True
+    yaFueDominado: bool = False
+    estaDominado: bool = False
     estaEnInventario: bool = False
+    estaDesbloqueado: bool = False
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 
@@ -21,9 +22,10 @@ class SpritUpdate(BaseModel):
     rareza: Optional[str] = None
     material: Optional[str] = None
     nombreArchivoImagen: Optional[str] = None
-    estaColeccionado: Optional[bool] = None
+    yaFueDominado: Optional[bool] = None
     estaDominado: Optional[bool] = None
     estaEnInventario: Optional[bool] = None
+    estaDesbloqueado: Optional[bool] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 

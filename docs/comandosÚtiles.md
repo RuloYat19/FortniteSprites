@@ -77,3 +77,18 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed
 ```
+
+## Para detener o parar un momento los contenedores
+```bash
+# Para apagar sin perder datos
+docker compose down
+
+# Para iniciar de nuevo después de down
+docker compose up -d
+
+# Para solo pausar
+docker compose stop
+
+# Para iniciar de nuevo después de stop
+docker compose start
+```
