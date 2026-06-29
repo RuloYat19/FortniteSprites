@@ -71,8 +71,12 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 # 6. Ejecutar el script de creación de tablas
 docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/001_tablas.sql
 
-# 7. Verificar que la tabla se creó
+# 7. Verificar que las tablas se crearon
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'sprits' ORDER BY ORDINAL_POSITION"
+
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'materiales' ORDER BY ORDINAL_POSITION"
+
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'nombres' ORDER BY ORDINAL_POSITION"
 
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed

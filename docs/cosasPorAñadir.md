@@ -16,7 +16,6 @@
 ```
 
 ### Cosas que editar
-- Mejor interfaz para indicar el estado del espíritu
 - Hacer un orden en específico para que se muestren los espíritus
 
 ### Cosas Nuevas para Añadir
