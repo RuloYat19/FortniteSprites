@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Inicio from './components/Inicio';
 import SpritsList from './components/SpritsList';
-import './App.css';
+import CalculadoraPolvoEspiritu from './components/CalculadoraPolvoEspiritu';
 
 // Componente wrapper para manejar la navegación desde Inicio
 function InicioWrapper() {
@@ -19,7 +19,7 @@ function InicioWrapper() {
         alert('🔧 Sección de Administrador en construcción');
         break;
       case 'calculo':
-        alert('🧮 Sección de Cálculo de Polvo en construcción');
+        navigate('/calculadora');
         break;
       default:
         break;
@@ -36,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<InicioWrapper />} />
           <Route path="/sprits" element={<SpritsList />} />
+          <Route path="/calculadora" element={<CalculadoraPolvoEspiritu />} />
         </Routes>
       </div>
     </Router>

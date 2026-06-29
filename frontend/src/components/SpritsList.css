@@ -25,7 +25,7 @@ body {
 .sprits-container h1 {
   text-align: center;
   color: #35cf35;
-  margin-bottom: 60px;
+  margin-bottom: 12px;
   font-size: 4.5rem;
   text-shadow: 0 0 10px rgba(38, 167, 21, 0.5);
 }
@@ -65,6 +65,167 @@ body {
 .sprits-container .filtros button:hover {
   background: #2db82d;
   transform: scale(1.05);
+}
+
+.sprits-container .filtro-orden {
+  border-color: #9c27b0 !important;
+  min-width: 180px !important;
+}
+
+.sprits-container .filtro-orden:focus {
+  border-color: #9c27b0 !important;
+  box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+}
+
+/* 🔵 Opcional: estilo para los options del select */
+.sprits-container .filtro-orden option {
+  background: #16213e;
+  color: #fff;
+}
+
+/* 🔵 INFO DE POLVO NECESARIO */
+.sprits-container .polvo-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin: 0 10px 25px 10px;
+  border: 1px solid rgba(53, 207, 53, 0.15);
+  gap: 4px;
+}
+
+.sprits-container .polvo-info-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sprits-container .polvo-icon-text {
+  font-size: 1.5rem;
+}
+
+.sprits-container .polvo-info-text {
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.sprits-container .polvo-info-cantidad {
+  color: #35cf35;
+  font-size: 1.4rem;
+  font-weight: bold;
+  background: rgba(53, 207, 53, 0.15);
+  padding: 2px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(53, 207, 53, 0.2);
+}
+
+/* 🔵 Responsive para el polvo-info */
+@media (max-width: 768px) {
+  .sprits-container .polvo-info {
+    padding: 10px 15px;
+    margin: 0 5px 20px 5px;
+  }
+  
+  .sprits-container .polvo-info-text {
+    font-size: 0.85rem;
+  }
+  
+  .sprits-container .polvo-info-cantidad {
+    font-size: 1.1rem;
+    padding: 2px 10px;
+  }
+}
+
+/* 🔵 CONTENEDORES DE PROGRESO */
+.sprits-container .progresos-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 0 10px 25px 10px;
+}
+
+.sprits-container .progreso-item {
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(53, 207, 53, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sprits-container .progreso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sprits-container .progreso-titulo {
+  color: #aaa;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.sprits-container .progreso-numero {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.sprits-container .progreso-barra {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sprits-container .progreso-llenado {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.sprits-container .progreso-llenado.dorado {
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.sprits-container .progreso-llenado.mitico {
+  background: linear-gradient(90deg, #f44336, #ff6b6b);
+}
+
+.sprits-container .progreso-porcentaje {
+  color: #666;
+  font-size: 0.7rem;
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* 🔵 Responsive para los progresos */
+@media (max-width: 768px) {
+  .sprits-container .progresos-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 0 5px 20px 5px;
+  }
+  
+  .sprits-container .progreso-item {
+    padding: 10px 14px;
+  }
+  
+  .sprits-container .progreso-titulo {
+    font-size: 0.75rem;
+  }
+  
+  .sprits-container .progreso-numero {
+    font-size: 0.75rem;
+  }
 }
 
 /* 🔵 Grid de sprits */
@@ -183,6 +344,57 @@ body {
   font-size: 2rem;
   color: #666;
   background: #16213e;
+}
+
+/* 🔵 Icono de polvo en el texto informativo */
+.sprits-container .polvo-info-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(53, 207, 53, 0.3));
+}
+
+/* 🔵 Icono de polvo pequeño en las cards (parte trasera) */
+.sprits-container .polvo-icon-small {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 2px rgba(53, 207, 53, 0.2));
+}
+
+/* 🔵 Ajuste de los items de detalle para alinear el icono */
+.sprits-container .detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 6px;
+}
+
+.sprits-container .detail-item .detail-label {
+  color: #aaa;
+  font-size: 0.75rem;
+  flex: 1;
+}
+
+.sprits-container .detail-item .detail-value {
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* 🔵 Responsive para los iconos de polvo */
+@media (max-width: 768px) {
+  .sprits-container .polvo-info-icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .sprits-container .polvo-icon-small {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* 🔵 Corona cuando está dominado */

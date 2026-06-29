@@ -1,5 +1,6 @@
 ## Cosas por Añadir al Programa
 
+### Sprites
 ```json
 {
     "nombre": "Espíritu de Agua", // Nombre del espíritu
@@ -15,13 +16,24 @@
 }
 ```
 
+### Materiales
+```json
+{
+    "numeroOrden": 1, // Número de orden para seguir una jerarquía
+    "material": "Normal", // Nombre del Material
+}
+```
+
+### Nombres de Sprites
+```json
+{
+    "numeroOrden": 1, // Número de orden para seguir una jerarquía
+    "nombre": "Normal", // Nombre del Sprite
+}
+```
+
 ### Cosas que editar
-- Hacer un orden en específico para que se muestren los espíritus
 
 ### Cosas Nuevas para Añadir
-- Mostrar cantidad de Polvo de Espíritu para invocar a los que hacen falta
-- Calculadora para indicar cuanto de Polvo de Espíritu se precisa para x cantidad y y tipo de espíritus
-- Contador de espíritus extraídos, coleccionados y dominados
 - Inventario de cuales se tiene dominados sin importar que estén extraídos
 - Generar un backup de los espíritus que se tengan en la base de datos
-- Gestión de espíritus para saber cuales tengo para dar y cuales no, y con ello calcular cuanto polvo preciso

@@ -1,3 +1,4 @@
+// frontend/src/components/SpritsList.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { spritsService } from '../services/api';
@@ -12,7 +13,8 @@ function SpritsList() {
   const [filtros, setFiltros] = useState({ 
     rareza: '', 
     material: '',
-    nombre: ''
+    nombre: '',
+    orden: 'default'  // 🔵 Nuevo filtro: default, material, rareza
   });
   const [flippedCards, setFlippedCards] = useState({});
   
@@ -39,7 +41,6 @@ function SpritsList() {
   });
   const [agregando, setAgregando] = useState(false);
 
-  // 🔵 Estado para el modal de confirmación
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmModalData, setConfirmModalData] = useState({
     title: '',
@@ -47,9 +48,113 @@ function SpritsList() {
     type: 'success'
   });
 
-  // 🔵 Estado para el modal de confirmación de eliminación
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
+
+  // 🔵 Orden de materiales
+  const ordenMateriales = {
+    'Normal': 1,
+    'Oro': 2,
+    'Gomita': 3,
+    'Galaxia': 4
+  };
+
+  // 🔵 Orden de nombres (Default)
+  const ordenNombresDefault = {
+    'Espíritu de Agua': 1,
+    'Espíritu de Tierra': 2,
+    'Espíritu de Fuego': 3,
+    'Espíritu Pato': 4,
+    'Espíritu Fantasmal': 5,
+    'Espíritu Demoníaco': 6,
+    'Espíritu Rey': 7,
+    'Espíritu Dormilón': 8,
+    'Espíritu Punk': 9,
+    'Espíritu del Punto Cero': 10,
+    'Cacahuate Tostado': 11,
+    'Espíritu de Pez': 12,
+    'Espíritu Goleador': 13,
+    'Espíritu de Aura': 14,
+    'Espíritu Jefe': 15,
+    'Espíritu Parca': 16
+  };
+
+  // 🔵 Orden de nombres por Rareza
+  const ordenNombresRareza = {
+    'Espíritu de Agua': 1,
+    'Espíritu de Tierra': 2,
+    'Espíritu de Fuego': 3,
+    'Espíritu de Pez': 4,
+    'Espíritu Pato': 5,
+    'Espíritu Fantasmal': 6,
+    'Espíritu Demoníaco': 7,
+    'Espíritu Rey': 8,
+    'Espíritu Goleador': 9,
+    'Espíritu de Aura': 10,
+    'Espíritu Dormilón': 11,
+    'Espíritu Punk': 12,
+    'Espíritu Jefe': 13,
+    'Espíritu del Punto Cero': 14,
+    'Espíritu Parca': 15,
+    'Cacahuate Tostado': 16
+  };
+
+  // 🔵 Función para ordenar sprits según el criterio seleccionado
+  const ordenarSprits = (spritsList) => {
+    const orden = filtros.orden || 'default';
+    
+    switch(orden) {
+      case 'material':
+        return [...spritsList].sort((a, b) => {
+          // Primero ordenar por material
+          const ordenA = ordenMateriales[a.material] || 999;
+          const ordenB = ordenMateriales[b.material] || 999;
+          if (ordenA !== ordenB) return ordenA - ordenB;
+          // Luego por nombre (usando orden default)
+          const nombreA = ordenNombresDefault[a.nombre] || 999;
+          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          return nombreA - nombreB;
+        });
+      
+      case 'rareza':
+        return [...spritsList].sort((a, b) => {
+          // Primero ordenar por rareza (usando el orden de rareza)
+          const rarezaA = ordenNombresRareza[a.nombre] || 999;
+          const rarezaB = ordenNombresRareza[b.nombre] || 999;
+          if (rarezaA !== rarezaB) return rarezaA - rarezaB;
+          // Si misma rareza, ordenar por material
+          const materialA = ordenMateriales[a.material] || 999;
+          const materialB = ordenMateriales[b.material] || 999;
+          return materialA - materialB;
+        });
+      
+      case 'default':
+      default:
+        return [...spritsList].sort((a, b) => {
+          // Primero ordenar por nombre (orden default)
+          const nombreA = ordenNombresDefault[a.nombre] || 999;
+          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          // Luego por material
+          const materialA = ordenMateriales[a.material] || 999;
+          const materialB = ordenMateriales[b.material] || 999;
+          return materialA - materialB;
+        });
+    }
+  };
+
+  const calcularPolvoNecesario = () => {
+    return sprits
+      .filter(sprit => !sprit.estaEnInventario)
+      .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
+  };
+
+  const calcularProgreso = (condicion) => {
+    const total = sprits.length;
+    const completados = sprits.filter(condicion).length;
+    const porcentaje = total > 0 ? (completados / total) * 100 : 0;
+    return { completados, total, porcentaje };
+  };
 
   useEffect(() => {
     cargarSprits();
@@ -78,13 +183,11 @@ function SpritsList() {
     }, 2500);
   };
 
-  // 🔵 Función para confirmar eliminación
   const confirmarEliminacion = (sprit) => {
     setSpritAEliminar(sprit);
     setShowDeleteConfirmModal(true);
   };
 
-  // 🔵 Función para eliminar el sprit
   const eliminarSprit = async () => {
     if (!spritAEliminar) return;
 
@@ -311,7 +414,8 @@ function SpritsList() {
     setFiltros({ 
       rareza: '', 
       material: '',
-      nombre: ''
+      nombre: '',
+      orden: 'default'
     });
   };
 
@@ -336,14 +440,35 @@ function SpritsList() {
     return true;
   });
 
+  // 🔵 Aplicar el ordenamiento a los sprits filtrados
+  const spritsOrdenados = ordenarSprits(spritsFiltrados);
+
   if (loading) return <div className="loading">Cargando sprits...</div>;
   if (error) return <div className="error">{error}</div>;
+
+  const polvoNecesario = calcularPolvoNecesario();
+  
+  const progresoInventario = calcularProgreso(s => s.estaEnInventario);
+  const progresoDominadosInventario = calcularProgreso(s => s.estaDominado);
+  const progresoDominadosGeneral = calcularProgreso(s => s.yaFueDominado);
 
   return (
     <div className="sprits-container">
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
+        {/* 🔵 Nuevo filtro "Por Orden" - a la izquierda */}
+        <select 
+          name="orden" 
+          value={filtros.orden} 
+          onChange={handleFiltroChange}
+          className="filtro-orden"
+        >
+          <option value="default">Por Orden (Default)</option>
+          <option value="material">Por Orden (Material)</option>
+          <option value="rareza">Por Orden (Rareza)</option>
+        </select>
+
         <select 
           name="nombre" 
           value={filtros.nombre} 
@@ -377,7 +502,6 @@ function SpritsList() {
           Limpiar filtros
         </button>
 
-        {/* 🔵 Grupo de botones a la derecha */}
         <div className="filtros-botones">
           <button className="btn-agregar" onClick={abrirAddModal}>
             ➕ Agregar Sprit
@@ -392,6 +516,78 @@ function SpritsList() {
         </div>
       </div>
 
+      {/* 🔵 TEXTO DE POLVO NECESARIO */}
+      <div className="polvo-info">
+        <div className="polvo-info-content">
+          <img 
+            src="./imagenesSprites/polvoEspiritu.png" 
+            alt="Polvo de Espíritu"
+            className="polvo-info-icon"
+          />
+          <span className="polvo-info-text">
+            Polvo de Espíritu necesario para tener en el inventario a todos:
+          </span>
+          <span className="polvo-info-cantidad">{polvoNecesario.toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* 🔵 CONTADORES DE PROGRESO */}
+      <div className="progresos-container">
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">📦 Progreso de Inventario</span>
+            <span className="progreso-numero">
+              {progresoInventario.completados}/{progresoInventario.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado" 
+              style={{ width: `${progresoInventario.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoInventario.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">👑 Dominados en Inventario</span>
+            <span className="progreso-numero">
+              {progresoDominadosInventario.completados}/{progresoDominadosInventario.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado dorado" 
+              style={{ width: `${progresoDominadosInventario.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoDominadosInventario.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">🏆 Dominados en General</span>
+            <span className="progreso-numero">
+              {progresoDominadosGeneral.completados}/{progresoDominadosGeneral.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado mitico" 
+              style={{ width: `${progresoDominadosGeneral.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoDominadosGeneral.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+      </div>
+
       <ConfirmModal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
@@ -401,7 +597,6 @@ function SpritsList() {
         confirmText="Aceptar"
       />
 
-      {/* 🔵 MODAL DE CONFIRMACIÓN DE ELIMINACIÓN */}
       <ConfirmModal
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
@@ -414,7 +609,7 @@ function SpritsList() {
       />
 
       <div className="sprits-grid">
-        {spritsFiltrados.map((sprit) => (
+        {spritsOrdenados.map((sprit) => (
           <div 
             key={sprit.id} 
             className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
@@ -482,11 +677,21 @@ function SpritsList() {
                     <span className="detail-value">{sprit.material}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">⬇️ Polvo al extraer:</span>
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo al extraer"
+                      className="polvo-icon-small"
+                    />
+                    <span className="detail-label">Polvo al extraer:</span>
                     <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">⬆️ Polvo al invocar:</span>
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo al invocar"
+                      className="polvo-icon-small"
+                    />
+                    <span className="detail-label">Polvo al invocar:</span>
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
                 </div>
@@ -523,11 +728,11 @@ function SpritsList() {
         ))}
       </div>
       
-      {spritsFiltrados.length === 0 && (
+      {spritsOrdenados.length === 0 && (
         <p className="no-results">No hay sprits que coincidan con los filtros</p>
       )}
 
-      {/* 🔵 MODAL DE AGREGAR SPRIT */}
+      {/* MODALES DE AGREGAR Y EDITAR */}
       {showAddModal && (
         <div className="modal-overlay" onClick={cerrarAddModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -627,7 +832,6 @@ function SpritsList() {
         </div>
       )}
 
-      {/* 🔵 MODAL DE EDICIÓN */}
       {showEditModal && (
         <div className="modal-overlay" onClick={cerrarEditModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

@@ -5,9 +5,9 @@ function Inicio({ onNavigate }) {
   const cards = [
     {
       id: 'admin',
-      titulo: 'Administrador',
-      imagen: './imagenesSprites/administradorSprites.png',
-      descripcion: 'Gestiona materiales y nombres de sprits'
+      titulo: 'Lista de Dominados',
+      imagen: './imagenesSprites/dominado.png',
+      descripcion: 'Control de Sprites que ya se han dominado'
     },
     {
       id: 'lista',
