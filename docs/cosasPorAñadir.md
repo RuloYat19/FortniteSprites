@@ -35,5 +35,4 @@
 ### Cosas que editar
 
 ### Cosas Nuevas para Añadir
-- Inventario de cuales se tiene dominados sin importar que estén extraídos
 - Generar un backup de los espíritus que se tengan en la base de datos
