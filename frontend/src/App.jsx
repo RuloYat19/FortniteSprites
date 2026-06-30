@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Inicio from './components/Inicio';
 import SpritsList from './components/SpritsList';
 import CalculadoraPolvoEspiritu from './components/CalculadoraPolvoEspiritu';
+import Dominados from './components/Dominados';
 
 // Componente wrapper para manejar la navegación desde Inicio
 function InicioWrapper() {
@@ -14,9 +15,8 @@ function InicioWrapper() {
       case 'lista':
         navigate('/sprits');
         break;
-      case 'admin':
-        // Por ahora, redirige a sprits o muestra un mensaje
-        alert('🔧 Sección de Administrador en construcción');
+      case 'dominados':
+        navigate('/dominados');
         break;
       case 'calculo':
         navigate('/calculadora');
@@ -37,6 +37,7 @@ function App() {
           <Route path="/" element={<InicioWrapper />} />
           <Route path="/sprits" element={<SpritsList />} />
           <Route path="/calculadora" element={<CalculadoraPolvoEspiritu />} />
+          <Route path="/dominados" element={<Dominados />} />
         </Routes>
       </div>
     </Router>

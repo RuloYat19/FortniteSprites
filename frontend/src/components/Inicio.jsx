@@ -4,7 +4,7 @@ import './Inicio.css';
 function Inicio({ onNavigate }) {
   const cards = [
     {
-      id: 'admin',
+      id: 'dominados',
       titulo: 'Lista de Dominados',
       imagen: './imagenesSprites/dominado.png',
       descripcion: 'Control de Sprites que ya se han dominado'
