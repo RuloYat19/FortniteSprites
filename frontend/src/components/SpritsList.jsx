@@ -1,4 +1,3 @@
-// frontend/src/components/SpritsList.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { spritsService } from '../services/api';
@@ -14,7 +13,7 @@ function SpritsList() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'  // 🔵 Nuevo filtro: default, material, rareza
+    orden: 'default'
   });
   const [flippedCards, setFlippedCards] = useState({});
   
@@ -51,7 +50,6 @@ function SpritsList() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
 
-  // 🔵 Orden de materiales
   const ordenMateriales = {
     'Normal': 1,
     'Oro': 2,
@@ -59,7 +57,6 @@ function SpritsList() {
     'Galaxia': 4
   };
 
-  // 🔵 Orden de nombres (Default)
   const ordenNombresDefault = {
     'Espíritu de Agua': 1,
     'Espíritu de Tierra': 2,
@@ -79,7 +76,6 @@ function SpritsList() {
     'Espíritu Parca': 16
   };
 
-  // 🔵 Orden de nombres por Rareza
   const ordenNombresRareza = {
     'Espíritu de Agua': 1,
     'Espíritu de Tierra': 2,
@@ -94,23 +90,20 @@ function SpritsList() {
     'Espíritu Dormilón': 11,
     'Espíritu Punk': 12,
     'Espíritu Jefe': 13,
-    'Espíritu del Punto Cero': 14,
-    'Espíritu Parca': 15,
+    'Espíritu Parca': 14,
+    'Espíritu del Punto Cero': 15,
     'Cacahuate Tostado': 16
   };
 
-  // 🔵 Función para ordenar sprits según el criterio seleccionado
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por material
           const ordenA = ordenMateriales[a.material] || 999;
           const ordenB = ordenMateriales[b.material] || 999;
           if (ordenA !== ordenB) return ordenA - ordenB;
-          // Luego por nombre (usando orden default)
           const nombreA = ordenNombresDefault[a.nombre] || 999;
           const nombreB = ordenNombresDefault[b.nombre] || 999;
           return nombreA - nombreB;
@@ -118,11 +111,9 @@ function SpritsList() {
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por rareza (usando el orden de rareza)
           const rarezaA = ordenNombresRareza[a.nombre] || 999;
           const rarezaB = ordenNombresRareza[b.nombre] || 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          // Si misma rareza, ordenar por material
           const materialA = ordenMateriales[a.material] || 999;
           const materialB = ordenMateriales[b.material] || 999;
           return materialA - materialB;
@@ -131,11 +122,9 @@ function SpritsList() {
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por nombre (orden default)
           const nombreA = ordenNombresDefault[a.nombre] || 999;
           const nombreB = ordenNombresDefault[b.nombre] || 999;
           if (nombreA !== nombreB) return nombreA - nombreB;
-          // Luego por material
           const materialA = ordenMateriales[a.material] || 999;
           const materialB = ordenMateriales[b.material] || 999;
           return materialA - materialB;
@@ -212,10 +201,12 @@ function SpritsList() {
     }
   };
 
+  // 🔵 MODIFICADO: handleImageClick ahora también maneja yaFueDominado
   const handleImageClick = async (id) => {
     try {
       const spritActual = sprits.find(s => s.id === id);
       
+      // Si el sprit está dominado, resetear todo
       if (spritActual?.estaDominado) {
         setSprits(prevSprits => 
           prevSprits.map(sprit => 
@@ -232,34 +223,70 @@ function SpritsList() {
         return;
       }
       
+      // 🔵 Alternar inventario
+      const nuevoEstadoInventario = !spritActual.estaEnInventario;
+      
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
           sprit.id === id 
-            ? { ...sprit, estaEnInventario: !sprit.estaEnInventario }
+            ? { ...sprit, estaEnInventario: nuevoEstadoInventario }
             : sprit
         )
       );
       
       await spritsService.toggleInventario(id);
+      
+      // 🔵 Si se está agregando al inventario (nuevoEstadoInventario = true)
+      // y el sprit tiene yaFueDominado = false, NO hacemos nada con yaFueDominado
+      // porque eso solo se activa al dominar
+      
     } catch (err) {
       console.error('Error al manejar clic en imagen:', err);
       cargarSprits();
     }
   };
 
+  // 🔵 MODIFICADO: toggleDominado ahora también activa yaFueDominado
   const toggleDominado = async (id, e) => {
     e.stopPropagation();
     
     try {
+      const spritActual = sprits.find(s => s.id === id);
+      if (!spritActual) return;
+      
+      // 🔵 Si el sprit ya fue dominado (yaFueDominado = true), no se puede desmarcar
+      if (spritActual.yaFueDominado && spritActual.estaDominado) {
+        alert('💪 Este sprit ya fue dominado y no se puede desmarcar');
+        return;
+      }
+      
+      // 🔵 Alternar estaDominado
+      const nuevoEstadoDominado = !spritActual.estaDominado;
+      
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
           sprit.id === id 
-            ? { ...sprit, estaDominado: !sprit.estaDominado }
+            ? { 
+                ...sprit, 
+                estaDominado: nuevoEstadoDominado,
+                // 🔵 Si se está dominando (nuevoEstadoDominado = true), marcar yaFueDominado como true
+                yaFueDominado: nuevoEstadoDominado ? true : sprit.yaFueDominado
+              }
             : sprit
         )
       );
       
-      await spritsService.toggleDominado(id);
+      // 🔵 Si se está activando el dominado, también actualizar yaFueDominado en el backend
+      if (nuevoEstadoDominado) {
+        await spritsService.update(id, {
+          estaDominado: true,
+          yaFueDominado: true
+        });
+      } else {
+        // Si se está desactivando, solo actualizar estaDominado (yaFueDominado se mantiene)
+        await spritsService.toggleDominado(id);
+      }
+      
     } catch (err) {
       console.error('Error al alternar dominado:', err);
       cargarSprits();
@@ -440,7 +467,6 @@ function SpritsList() {
     return true;
   });
 
-  // 🔵 Aplicar el ordenamiento a los sprits filtrados
   const spritsOrdenados = ordenarSprits(spritsFiltrados);
 
   if (loading) return <div className="loading">Cargando sprits...</div>;
@@ -457,7 +483,6 @@ function SpritsList() {
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
-        {/* 🔵 Nuevo filtro "Por Orden" - a la izquierda */}
         <select 
           name="orden" 
           value={filtros.orden} 
@@ -516,7 +541,6 @@ function SpritsList() {
         </div>
       </div>
 
-      {/* 🔵 TEXTO DE POLVO NECESARIO */}
       <div className="polvo-info">
         <div className="polvo-info-content">
           <img 
@@ -531,7 +555,6 @@ function SpritsList() {
         </div>
       </div>
 
-      {/* 🔵 CONTADORES DE PROGRESO */}
       <div className="progresos-container">
         <div className="progreso-item">
           <div className="progreso-header">
@@ -644,11 +667,16 @@ function SpritsList() {
                 </div>
 
                 <div className="sprit-rareza-wrapper">
+                  {/* 🔵 Mostrar icono de dominado general si yaFueDominado es true */}
+                  {/* {sprit.yaFueDominado && (
+                    <span className="ya-dominado-icon" title="Ya fue dominado alguna vez">🏆</span>
+                  )} */}
+                  
                   {sprit.estaEnInventario && !sprit.estaDominado && (
                     <span 
                       className="corona-icon clickable"
                       onClick={(e) => toggleDominado(sprit.id, e)}
-                      title="Haz clic para dominar este sprit"
+                      title={sprit.yaFueDominado ? '✅ Ya fue dominado (no se puede desmarcar)' : 'Haz clic para dominar este sprit'}
                     >
                       👑
                     </span>
@@ -694,6 +722,12 @@ function SpritsList() {
                     <span className="detail-label">Polvo al invocar:</span>
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
+                  {sprit.yaFueDominado && (
+                    <div className="detail-item ya-dominado-detail">
+                      <span className="detail-label">🏆 Ya fue dominado</span>
+                      <span className="detail-value">✅ Sí</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="back-actions">
