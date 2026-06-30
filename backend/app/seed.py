@@ -1,8 +1,8 @@
 from app.database import SessionLocal, engine
-from app.models import Sprit
+from app.models import Sprit, Material, Nombre
 from app.database import Base
 
-# Datos de ejemplo
+# Datos de Sprits
 sprits_data = [
     # Sprits Normales
     {
@@ -747,6 +747,34 @@ sprits_data = [
     },
 ]
 
+# Datos de Materiales
+materiales_data = [
+    {"numeroOrden": 1, "nombreMaterial": "Normal"},
+    {"numeroOrden": 2, "nombreMaterial": "Oro"},
+    {"numeroOrden": 3, "nombreMaterial": "Gomita"},
+    {"numeroOrden": 4, "nombreMaterial": "Galaxia"},
+]
+
+# Datos de Nombres (Sprits)
+nombres_data = [
+    {"numeroOrden": 1, "nombreSprite": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombreSprite": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombreSprite": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombreSprite": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombreSprite": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombreSprite": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombreSprite": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombreSprite": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombreSprite": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombreSprite": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombreSprite": "Espíritu de Pez"},
+    {"numeroOrden": 12, "nombreSprite": "Espíritu Goleador"},
+    {"numeroOrden": 13, "nombreSprite": "Espíritu de Aura"},
+    {"numeroOrden": 14, "nombreSprite": "Espíritu Jefe"},
+    {"numeroOrden": 15, "nombreSprite": "Espíritu Parca"},
+    {"numeroOrden": 16, "nombreSprite": "Cacahuate Tostado"},
+]
+
 def seed_database():
     # Crear las tablas si no existen
     Base.metadata.create_all(bind=engine)
@@ -758,17 +786,32 @@ def seed_database():
         if existing:
             print("La base de datos ya tiene sprits.")
             
-        # Insertar los datos
+        # Insertar Sprits
         for sprit_data in sprits_data:
             sprit = Sprit(**sprit_data)
             db.add(sprit)
         
         db.commit()
         print(f"{len(sprits_data)} sprits insertados con éxito :D")
+
+        # Insertar Materiales
+        for material_data in materiales_data:
+            material = Material(**material_data)
+            db.add(material)
+        print(f"{len(materiales_data)} materiales insertados con éxito :D")
+        
+        # Insertar Nombres
+        for nombre_data in nombres_data:
+            nombre = Nombre(**nombre_data)
+            db.add(nombre)
+        print(f"{len(nombres_data)} nombres de sprits insertados con éxito :D")
+        
+        db.commit()
+        print("Seed completado exitosamente")
         
     except Exception as e:
         db.rollback()
-        print(f"Hubo problemas al insertar los sprits: {e}")
+        print(f"Hubo problemas al insertar los datos: {e}")
     finally:
         db.close()
 
