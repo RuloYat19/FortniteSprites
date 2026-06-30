@@ -1,17 +1,19 @@
 from app.database import SessionLocal, engine
-from app.models import Sprit
+from app.models import Sprit, Material, Nombre
 from app.database import Base
 
-# Datos de ejemplo
+# Datos de Sprits
 sprits_data = [
     # Sprits Normales
     {
         "nombre": "Espíritu de Agua",
         "rareza": "Raro",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/aguaNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/aguaNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -19,9 +21,11 @@ sprits_data = [
         "nombre": "Espíritu de Tierra",
         "rareza": "Raro",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/tierraNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/tierraNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -29,9 +33,11 @@ sprits_data = [
         "nombre": "Espíritu de Fuego",
         "rareza": "Raro",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/fuegoNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fuegoNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -39,9 +45,11 @@ sprits_data = [
         "nombre": "Espíritu Pato",
         "rareza": "Épico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/patoNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/patoNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -49,9 +57,11 @@ sprits_data = [
         "nombre": "Espíritu Fantasmal",
         "rareza": "Épico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/fantasmalNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fantasmalNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -59,9 +69,11 @@ sprits_data = [
         "nombre": "Espíritu Demoníaco",
         "rareza": "Épico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/demoniacoNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/demoniacoNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -69,9 +81,11 @@ sprits_data = [
         "nombre": "Espíritu Rey",
         "rareza": "Épico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/reyNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/reyNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -79,9 +93,11 @@ sprits_data = [
         "nombre": "Espíritu Dormilón",
         "rareza": "Legendario",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/dormilonNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/dormilonNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 5000
     },
@@ -89,9 +105,11 @@ sprits_data = [
         "nombre": "Espíritu Punk",
         "rareza": "Legendario",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/punkNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/punkNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 5000
     },
@@ -99,9 +117,71 @@ sprits_data = [
         "nombre": "Espíritu del Punto Cero",
         "rareza": "Mítico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/puntoCeroNormal.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/puntoCeroNormal.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 650,
+        "polvoAlInvocar": 7500
+    },
+    {
+        "nombre": "Espíritu de Pez",
+        "rareza": "Raro",
+        "material": "Normal",
+        "nombreArchivoImagen": "./imagenesSprites/pezNormal.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 500,
+        "polvoAlInvocar": 100
+    },
+    {
+        "nombre": "Espíritu Goleador",
+        "rareza": "Épico",
+        "material": "Normal",
+        "nombreArchivoImagen": "./imagenesSprites/goleadorNormal.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 3000
+    },
+    {
+        "nombre": "Espíritu de Aura",
+        "rareza": "Épico",
+        "material": "Normal",
+        "nombreArchivoImagen": "./imagenesSprites/auraNormal.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 3000
+    },
+    {
+        "nombre": "Espíritu Jefe",
+        "rareza": "Legendario",
+        "material": "Normal",
+        "nombreArchivoImagen": "./imagenesSprites/jefeNormal.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 600,
+        "polvoAlInvocar": 5000
+    },
+    {
+        "nombre": "Espíritu Parca",
+        "rareza": "Mítico",
+        "material": "Normal",
+        "nombreArchivoImagen": "./imagenesSprites/parcaNormal.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
@@ -111,9 +191,11 @@ sprits_data = [
         "nombre": "Espíritu de Agua",
         "rareza": "Raro",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/aguaOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/aguaOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -121,9 +203,11 @@ sprits_data = [
         "nombre": "Espíritu de Tierra",
         "rareza": "Raro",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/tierraOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/tierraOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -131,9 +215,11 @@ sprits_data = [
         "nombre": "Espíritu de Fuego",
         "rareza": "Raro",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/fuegoOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fuegoOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -141,9 +227,11 @@ sprits_data = [
         "nombre": "Espíritu Pato",
         "rareza": "Épico",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/patoOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/patoOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -151,9 +239,11 @@ sprits_data = [
         "nombre": "Espíritu Fantasmal",
         "rareza": "Épico",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/fantasmalOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fantasmalOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -161,9 +251,11 @@ sprits_data = [
         "nombre": "Espíritu Demoníaco",
         "rareza": "Épico",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/demoniacoOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/demoniacoOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -171,9 +263,11 @@ sprits_data = [
         "nombre": "Espíritu Rey",
         "rareza": "Épico",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/reyOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/reyOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -181,9 +275,11 @@ sprits_data = [
         "nombre": "Espíritu Dormilón",
         "rareza": "Legendario",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/dormilonOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/dormilonOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -191,9 +287,11 @@ sprits_data = [
         "nombre": "Espíritu Punk",
         "rareza": "Legendario",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/punkOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/punkOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -201,9 +299,71 @@ sprits_data = [
         "nombre": "Espíritu del Punto Cero",
         "rareza": "Mítico",
         "material": "Oro",
-        "nombreArchivoImagen": "./imagenesSprites/puntoCeroOro.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/puntoCeroOro.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 650,
+        "polvoAlInvocar": 15000
+    },
+    {
+        "nombre": "Espíritu de Pez",
+        "rareza": "Raro",
+        "material": "Oro",
+        "nombreArchivoImagen": "./imagenesSprites/pezOro.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 500,
+        "polvoAlInvocar": 4000
+    },
+    {
+        "nombre": "Espíritu Goleador",
+        "rareza": "Épico",
+        "material": "Oro",
+        "nombreArchivoImagen": "./imagenesSprites/goleadorOro.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu de Aura",
+        "rareza": "Épico",
+        "material": "Oro",
+        "nombreArchivoImagen": "./imagenesSprites/auraOro.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu Jefe",
+        "rareza": "Legendario",
+        "material": "Oro",
+        "nombreArchivoImagen": "./imagenesSprites/jefeOro.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 600,
+        "polvoAlInvocar": 10000
+    },
+    {
+        "nombre": "Espíritu Parca",
+        "rareza": "Mítico",
+        "material": "Oro",
+        "nombreArchivoImagen": "./imagenesSprites/parcaOro.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -213,9 +373,11 @@ sprits_data = [
         "nombre": "Espíritu de Agua",
         "rareza": "Raro",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/aguaGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/aguaGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -223,9 +385,11 @@ sprits_data = [
         "nombre": "Espíritu de Tierra",
         "rareza": "Raro",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/tierraGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/tierraGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -233,9 +397,11 @@ sprits_data = [
         "nombre": "Espíritu de Fuego",
         "rareza": "Raro",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/fuegoGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fuegoGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -243,9 +409,11 @@ sprits_data = [
         "nombre": "Espíritu Pato",
         "rareza": "Épico",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/patoGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/patoGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -253,9 +421,11 @@ sprits_data = [
         "nombre": "Espíritu Fantasmal",
         "rareza": "Épico",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/fantasmalGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fantasmalGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -263,9 +433,11 @@ sprits_data = [
         "nombre": "Espíritu Demoníaco",
         "rareza": "Épico",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/demoniacoGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/demoniacoGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -273,9 +445,11 @@ sprits_data = [
         "nombre": "Espíritu Rey",
         "rareza": "Épico",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/reyGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/reyGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -283,9 +457,11 @@ sprits_data = [
         "nombre": "Espíritu Dormilón",
         "rareza": "Legendario",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/dormilonGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/dormilonGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -293,9 +469,11 @@ sprits_data = [
         "nombre": "Espíritu Punk",
         "rareza": "Legendario",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/punkGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/punkGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -303,9 +481,71 @@ sprits_data = [
         "nombre": "Espíritu del Punto Cero",
         "rareza": "Mítico",
         "material": "Gomita",
-        "nombreArchivoImagen": "./imagenesSprites/puntoCeroGomita.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/puntoCeroGomita.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 650,
+        "polvoAlInvocar": 15000
+    },
+    {
+        "nombre": "Espíritu de Pez",
+        "rareza": "Raro",
+        "material": "Gomita",
+        "nombreArchivoImagen": "./imagenesSprites/pezGomita.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 500,
+        "polvoAlInvocar": 4000
+    },
+    {
+        "nombre": "Espíritu Goleador",
+        "rareza": "Épico",
+        "material": "Gomita",
+        "nombreArchivoImagen": "./imagenesSprites/goleadorGomita.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu de Aura",
+        "rareza": "Épico",
+        "material": "Gomita",
+        "nombreArchivoImagen": "./imagenesSprites/auraGomita.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu Jefe",
+        "rareza": "Legendario",
+        "material": "Gomita",
+        "nombreArchivoImagen": "./imagenesSprites/jefeGomita.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 600,
+        "polvoAlInvocar": 10000
+    },
+    {
+        "nombre": "Espíritu Parca",
+        "rareza": "Mítico",
+        "material": "Gomita",
+        "nombreArchivoImagen": "./imagenesSprites/parcaGomita.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -315,9 +555,11 @@ sprits_data = [
         "nombre": "Espíritu de Agua",
         "rareza": "Raro",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/aguaGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/aguaGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -325,9 +567,11 @@ sprits_data = [
         "nombre": "Espíritu de Tierra",
         "rareza": "Raro",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/tierraGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/tierraGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -335,9 +579,11 @@ sprits_data = [
         "nombre": "Espíritu de Fuego",
         "rareza": "Raro",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/fuegoGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fuegoGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -345,9 +591,11 @@ sprits_data = [
         "nombre": "Espíritu Pato",
         "rareza": "Épico",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/patoGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/patoGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -355,9 +603,11 @@ sprits_data = [
         "nombre": "Espíritu Fantasmal",
         "rareza": "Épico",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/fantasmalGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/fantasmalGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -365,9 +615,11 @@ sprits_data = [
         "nombre": "Espíritu Demoníaco",
         "rareza": "Épico",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/demoniacoGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/demoniacoGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -375,9 +627,11 @@ sprits_data = [
         "nombre": "Espíritu Rey",
         "rareza": "Épico",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/reyGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/reyGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -385,9 +639,11 @@ sprits_data = [
         "nombre": "Espíritu Dormilón",
         "rareza": "Legendario",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/dormilonGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/dormilonGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -395,9 +651,11 @@ sprits_data = [
         "nombre": "Espíritu Punk",
         "rareza": "Legendario",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/punkGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/punkGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -405,9 +663,71 @@ sprits_data = [
         "nombre": "Espíritu del Punto Cero",
         "rareza": "Mítico",
         "material": "Galaxia",
-        "nombreArchivoImagen": "./imagenesSprites/puntoCeroGalaxia.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/puntoCeroGalaxia.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 650,
+        "polvoAlInvocar": 15000
+    },
+    {
+        "nombre": "Espíritu de Pez",
+        "rareza": "Raro",
+        "material": "Galaxia",
+        "nombreArchivoImagen": "./imagenesSprites/pezGalaxia.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 500,
+        "polvoAlInvocar": 4000
+    },
+    {
+        "nombre": "Espíritu Goleador",
+        "rareza": "Épico",
+        "material": "Galaxia",
+        "nombreArchivoImagen": "./imagenesSprites/goleadorGalaxia.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu de Aura",
+        "rareza": "Épico",
+        "material": "Galaxia",
+        "nombreArchivoImagen": "./imagenesSprites/auraGalaxia.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 550,
+        "polvoAlInvocar": 6000
+    },
+    {
+        "nombre": "Espíritu Jefe",
+        "rareza": "Legendario",
+        "material": "Galaxia",
+        "nombreArchivoImagen": "./imagenesSprites/jefeGalaxia.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "polvoAlExtraer": 600,
+        "polvoAlInvocar": 10000
+    },
+    {
+        "nombre": "Espíritu Parca",
+        "rareza": "Mítico",
+        "material": "Galaxia",
+        "nombreArchivoImagen": "./imagenesSprites/parcaGalaxia.png",
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -417,12 +737,42 @@ sprits_data = [
         "nombre": "Cacahuate Tostado",
         "rareza": "Mítico",
         "material": "Normal",
-        "nombreArchivoImagen": "./imagenesSprites/cacahuateTostado.jpg",
-        "estaColeccionado": False,
+        "nombreArchivoImagen": "./imagenesSprites/cacahuateTostado.png",
+        "yaFueDominado": False,
         "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
+]
+
+# Datos de Materiales
+materiales_data = [
+    {"numeroOrden": 1, "nombreMaterial": "Normal"},
+    {"numeroOrden": 2, "nombreMaterial": "Oro"},
+    {"numeroOrden": 3, "nombreMaterial": "Gomita"},
+    {"numeroOrden": 4, "nombreMaterial": "Galaxia"},
+]
+
+# Datos de Nombres (Sprits)
+nombres_data = [
+    {"numeroOrden": 1, "nombreSprite": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombreSprite": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombreSprite": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombreSprite": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombreSprite": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombreSprite": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombreSprite": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombreSprite": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombreSprite": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombreSprite": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombreSprite": "Espíritu de Pez"},
+    {"numeroOrden": 12, "nombreSprite": "Espíritu Goleador"},
+    {"numeroOrden": 13, "nombreSprite": "Espíritu de Aura"},
+    {"numeroOrden": 14, "nombreSprite": "Espíritu Jefe"},
+    {"numeroOrden": 15, "nombreSprite": "Espíritu Parca"},
+    {"numeroOrden": 16, "nombreSprite": "Cacahuate Tostado"},
 ]
 
 def seed_database():
@@ -436,17 +786,32 @@ def seed_database():
         if existing:
             print("La base de datos ya tiene sprits.")
             
-        # Insertar los datos
+        # Insertar Sprits
         for sprit_data in sprits_data:
             sprit = Sprit(**sprit_data)
             db.add(sprit)
         
         db.commit()
         print(f"{len(sprits_data)} sprits insertados con éxito :D")
+
+        # Insertar Materiales
+        for material_data in materiales_data:
+            material = Material(**material_data)
+            db.add(material)
+        print(f"{len(materiales_data)} materiales insertados con éxito :D")
+        
+        # Insertar Nombres
+        for nombre_data in nombres_data:
+            nombre = Nombre(**nombre_data)
+            db.add(nombre)
+        print(f"{len(nombres_data)} nombres de sprits insertados con éxito :D")
+        
+        db.commit()
+        print("Seed completado exitosamente")
         
     except Exception as e:
         db.rollback()
-        print(f"Hubo problemas al insertar los sprits: {e}")
+        print(f"Hubo problemas al insertar los datos: {e}")
     finally:
         db.close()
 

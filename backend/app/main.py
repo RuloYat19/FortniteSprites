@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routes import sprits
+from app.routes import sprits, materiales, nombres
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)
@@ -17,10 +17,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",    # Vite por defecto
-        "http://127.0.0.1:5173",   # <-- Agregar esta línea
-        "http://localhost:3000",    # React por defecto
-        "http://localhost:8000",    # Para desarrollo local
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://localhost:8000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -29,6 +29,8 @@ app.add_middleware(
 
 # Incluir rutas
 app.include_router(sprits.router)
+app.include_router(materiales.router)
+app.include_router(nombres.router)
 
 @app.get("/")
 def root():

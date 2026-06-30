@@ -1,0 +1,118 @@
+/* ConfirmModal.css */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: confirmFadeIn 0.3s ease;
+}
+
+.confirm-modal-content {
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 30px 35px 25px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 2px solid #35cf35;
+  box-shadow: 0 10px 40px rgba(53, 207, 53, 0.4);
+  animation: confirmSlideUp 0.3s ease;
+}
+
+.confirm-modal-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 2rem;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.confirm-modal-title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.confirm-modal-message {
+  color: #bbb;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-modal-btn {
+  padding: 8px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-modal-btn-primary {
+  background: #4caf50;
+  color: #fff;
+}
+
+.confirm-modal-btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes confirmFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes confirmSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ConfirmModal.css - Agregar estilos para el botón cancelar */
+
+.confirm-modal-btn-cancel {
+  background: transparent;
+  color: #aaa;
+  border: 2px solid #444;
+}
+
+.confirm-modal-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.05);
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
