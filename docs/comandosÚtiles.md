@@ -96,3 +96,8 @@ docker compose stop
 # Para iniciar de nuevo después de stop
 docker compose start
 ```
+
+## Para eliminar una tabla de la base de datos
+```bash
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE materiales;"
+```

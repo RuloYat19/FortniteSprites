@@ -700,6 +700,13 @@ function SpritsList() {
 
               <div className="sprit-card-back">
                 <div className="back-details">
+                  {/**/}
+                  {sprit.yaFueDominado && (
+                    <div className="detail-item ya-dominado-detail">
+                      <span className="detail-label">🏆 Ya fue dominado</span>
+                      <span className="detail-value">✅</span>
+                    </div>
+                  )}
                   <div className="detail-item">
                     <span className="detail-label">📦 Material:</span>
                     <span className="detail-value">{sprit.material}</span>
@@ -710,7 +717,7 @@ function SpritsList() {
                       alt="Polvo al extraer"
                       className="polvo-icon-small"
                     />
-                    <span className="detail-label">Polvo al extraer:</span>
+                    <span className="detail-label">Polvo al Extraer para el Nivel 1:</span>
                     <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
                   </div>
                   <div className="detail-item">
@@ -719,15 +726,10 @@ function SpritsList() {
                       alt="Polvo al invocar"
                       className="polvo-icon-small"
                     />
-                    <span className="detail-label">Polvo al invocar:</span>
+                    <span className="detail-label">Polvo al Invocar:</span>
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
-                  {sprit.yaFueDominado && (
-                    <div className="detail-item ya-dominado-detail">
-                      <span className="detail-label">🏆 Ya fue dominado</span>
-                      <span className="detail-value">✅ Sí</span>
-                    </div>
-                  )}
+                  
                 </div>
 
                 <div className="back-actions">

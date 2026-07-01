@@ -231,7 +231,7 @@ body {
 /* 🔵 Grid de sprits */
 .sprits-container .sprits-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px;
   align-items: stretch;
 }
@@ -241,7 +241,7 @@ body {
   perspective: 1000px;
   min-height: 280px;
   border-radius: 12px;
-  border: 2px solid #0f3460;
+  border: 3px solid #0f3460;
   background: #16213e;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -374,7 +374,7 @@ body {
 
 .sprits-container .detail-item .detail-label {
   color: #aaa;
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   flex: 1;
 }
 
@@ -556,7 +556,7 @@ body {
   background: rgba(53, 207, 53, 0.2);
 }
 
-/* 🔵 BACK - Cara trasera (sin header) */
+/* 🔵 BACK - Cara trasera*/
 .back-details {
   flex: 1;
   display: flex;
@@ -577,7 +577,7 @@ body {
 
 .detail-label {
   color: #aaa;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
 }
 
 .detail-value {
