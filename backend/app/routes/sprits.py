@@ -109,15 +109,3 @@ def toggle_inventario(sprit_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_sprit)
     return db_sprit
-
-@router.patch("/{sprit_id}/dominar", response_model=schemas.SpritResponse)
-def toggle_dominado(sprit_id: int, db: Session = Depends(get_db)):
-    """Alternar estado de dominado de un sprit"""
-    db_sprit = db.query(models.Sprit).filter(models.Sprit.id == sprit_id).first()
-    if not db_sprit:
-        raise HTTPException(status_code=404, detail="Sprit no encontrado")
-    
-    db_sprit.estaDominado = not db_sprit.estaDominado
-    db.commit()
-    db.refresh(db_sprit)
-    return db_sprit

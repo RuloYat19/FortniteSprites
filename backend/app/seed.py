@@ -812,6 +812,7 @@ sprits_data = [
 cantidad_polvo_data = [
     # Nivel 1
     {
+        "numeroOrden": 1,
         "material": "Normal", 
         "rareza": "Raro", 
         "nivelEspiritu": 1, 

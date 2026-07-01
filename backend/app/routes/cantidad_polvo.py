@@ -1,3 +1,4 @@
+# backend/app/routes/cantidad_polvo.py
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -16,11 +17,12 @@ def get_all_cantidades(
     limit: int = Query(100, ge=1, le=1000),
     material: Optional[str] = None,
     rareza: Optional[str] = None,
-    nivel_espiritu: Optional[int] = None
+    nivel_espiritu: Optional[int] = None,
+    numero_orden: Optional[int] = None
 ):
     """
     Obtener todas las cantidades de polvo de espíritu.
-    Se pueden aplicar filtros opcionales por material, rareza o nivel.
+    Se pueden aplicar filtros opcionales por material, rareza, nivel o número de orden.
     """
     query = db.query(models.CantidadPolvoEspiritu)
     
@@ -31,15 +33,19 @@ def get_all_cantidades(
         query = query.filter(models.CantidadPolvoEspiritu.rareza == rareza)
     if nivel_espiritu:
         query = query.filter(models.CantidadPolvoEspiritu.nivelEspiritu == nivel_espiritu)
+    if numero_orden:
+        query = query.filter(models.CantidadPolvoEspiritu.numeroOrden == numero_orden)
     
-    # Ordenar por material, rareza y nivel
+    # Ordenar por número de orden, material, rareza y nivel
     query = query.order_by(
+        models.CantidadPolvoEspiritu.numeroOrden,
         models.CantidadPolvoEspiritu.material,
         models.CantidadPolvoEspiritu.rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu
     )
     
     return query.offset(skip).limit(limit).all()
+
 
 # ============================================
 # GET - Obtener una cantidad por ID
@@ -61,6 +67,7 @@ def get_cantidad_by_id(
         )
     
     return cantidad
+
 
 # ============================================
 # GET - Obtener cantidad por combinación
@@ -89,6 +96,87 @@ def get_cantidad_by_combinacion(
         )
     
     return cantidad
+
+
+# ============================================
+# GET - Obtener cantidades por número de orden
+# ============================================
+@router.get("/orden/{numero_orden}", response_model=List[schemas.CantidadPolvoResponse])
+def get_cantidades_by_orden(
+    numero_orden: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todas las cantidades de polvo por número de orden.
+    """
+    cantidades = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.numeroOrden == numero_orden
+    ).all()
+    
+    if not cantidades:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron cantidades para el número de orden {numero_orden}"
+        )
+    
+    return cantidades
+
+
+# ============================================
+# GET - Obtener cantidades por material
+# ============================================
+@router.get("/material/{material}", response_model=List[schemas.CantidadPolvoResponse])
+def get_cantidades_by_material(
+    material: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todas las cantidades de polvo por material.
+    """
+    cantidades = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.material == material
+    ).order_by(
+        models.CantidadPolvoEspiritu.numeroOrden,
+        models.CantidadPolvoEspiritu.rareza,
+        models.CantidadPolvoEspiritu.nivelEspiritu
+    ).all()
+    
+    if not cantidades:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron cantidades para el material {material}"
+        )
+    
+    return cantidades
+
+
+# ============================================
+# GET - Obtener cantidades por rareza
+# ============================================
+@router.get("/rareza/{rareza}", response_model=List[schemas.CantidadPolvoResponse])
+def get_cantidades_by_rareza(
+    rareza: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todas las cantidades de polvo por rareza.
+    """
+    cantidades = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.rareza == rareza
+    ).order_by(
+        models.CantidadPolvoEspiritu.numeroOrden,
+        models.CantidadPolvoEspiritu.material,
+        models.CantidadPolvoEspiritu.nivelEspiritu
+    ).all()
+    
+    if not cantidades:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron cantidades para la rareza {rareza}"
+        )
+    
+    return cantidades
+
 
 # ============================================
 # POST - Crear una nueva cantidad
@@ -119,12 +207,24 @@ def create_cantidad(
             detail=f"Ya existe una cantidad para {cantidad.material} - {cantidad.rareza} - Nivel {cantidad.nivelEspiritu}"
         )
     
+    # Verificar que el número de orden no esté duplicado (opcional)
+    existing_orden = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.numeroOrden == cantidad.numeroOrden
+    ).first()
+    
+    if existing_orden:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe una cantidad con el número de orden {cantidad.numeroOrden}"
+        )
+    
     db_cantidad = models.CantidadPolvoEspiritu(**cantidad.model_dump())
     db.add(db_cantidad)
     db.commit()
     db.refresh(db_cantidad)
     
     return db_cantidad
+
 
 # ============================================
 # PUT - Actualizar una cantidad existente
@@ -162,6 +262,18 @@ def update_cantidad(
             detail=f"Ya existe una cantidad para {cantidad_update.material} - {cantidad_update.rareza} - Nivel {cantidad_update.nivelEspiritu}"
         )
     
+    # Verificar duplicado de número de orden (excluyendo el mismo registro)
+    existing_orden = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.numeroOrden == cantidad_update.numeroOrden,
+        models.CantidadPolvoEspiritu.id != cantidad_id
+    ).first()
+    
+    if existing_orden:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe una cantidad con el número de orden {cantidad_update.numeroOrden}"
+        )
+    
     # Actualizar campos
     update_data = cantidad_update.model_dump()
     for key, value in update_data.items():
@@ -171,6 +283,41 @@ def update_cantidad(
     db.refresh(db_cantidad)
     
     return db_cantidad
+
+
+# ============================================
+# PATCH - Actualizar parcialmente una cantidad
+# ============================================
+@router.patch("/{cantidad_id}", response_model=schemas.CantidadPolvoResponse)
+def patch_cantidad(
+    cantidad_id: int,
+    cantidad_update: schemas.CantidadPolvoBase,
+    db: Session = Depends(get_db)
+):
+    """
+    Actualizar parcialmente una cantidad de polvo existente.
+    Solo actualiza los campos que se envían.
+    """
+    db_cantidad = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.id == cantidad_id
+    ).first()
+    
+    if not db_cantidad:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cantidad de polvo no encontrada"
+        )
+    
+    # Actualizar solo los campos enviados
+    update_data = cantidad_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_cantidad, key, value)
+    
+    db.commit()
+    db.refresh(db_cantidad)
+    
+    return db_cantidad
+
 
 # ============================================
 # DELETE - Eliminar una cantidad
@@ -196,8 +343,9 @@ def delete_cantidad(
     
     return None
 
+
 # ============================================
-# DELETE - Eliminar por combinación (opcional)
+# DELETE - Eliminar por combinación
 # ============================================
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cantidad_by_combinacion(
@@ -222,6 +370,35 @@ def delete_cantidad_by_combinacion(
         )
     
     db.delete(db_cantidad)
+    db.commit()
+    
+    return None
+
+
+# ============================================
+# DELETE - Eliminar por número de orden
+# ============================================
+@router.delete("/orden/{numero_orden}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_cantidades_by_orden(
+    numero_orden: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Eliminar todas las cantidades de polvo con un número de orden específico.
+    """
+    cantidades = db.query(models.CantidadPolvoEspiritu).filter(
+        models.CantidadPolvoEspiritu.numeroOrden == numero_orden
+    ).all()
+    
+    if not cantidades:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron cantidades para el número de orden {numero_orden}"
+        )
+    
+    for cantidad in cantidades:
+        db.delete(cantidad)
+    
     db.commit()
     
     return None

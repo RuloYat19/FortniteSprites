@@ -51,6 +51,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspiritu')
 BEGIN
     CREATE TABLE cantidadPolvoEspiritu (
         id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
         material VARCHAR(50) NOT NULL,
         rareza VARCHAR(50) NOT NULL,
         nivelEspiritu INT NOT NULL,
