@@ -24,6 +24,7 @@ BEGIN
         estaDominado BIT DEFAULT 0,
         estaEnInventario BIT DEFAULT 0,
         estaDesbloqueado BIT DEFAULT 0,
+        nivelEspiritu INT NULL,
         polvoAlExtraer INT NULL,
         polvoAlInvocar INT NULL,
         created_at DATETIME DEFAULT GETDATE(),
@@ -46,53 +47,32 @@ GO
 -- ============================================
 -- TABLA: Material
 -- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'materiales')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspiritu')
 BEGIN
-    CREATE TABLE materiales (
+    CREATE TABLE cantidadPolvoEspiritu (
         id INT IDENTITY(1,1) PRIMARY KEY,
-        numeroOrden INT NOT NULL,
-        nombreMaterial VARCHAR(50) NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        nivelEspiritu INT NOT NULL,
+        cantidad INT NOT NULL,
         created_at DATETIME DEFAULT GETDATE(),
         updated_at DATETIME NULL
     );
     
     -- Índices
-    CREATE INDEX idx_materiales_numeroOrden ON materiales(numeroOrden);
-    CREATE INDEX idx_materiales_nombre ON materiales(nombreMaterial);
+    CREATE INDEX idx_cantidadPolvoEspiritu_material ON cantidadPolvoEspiritu(material);
+    CREATE INDEX idx_cantidadPolvoEspiritu_rareza ON cantidadPolvoEspiritu(rareza);
+    CREATE INDEX idx_cantidadPolvoEspiritu_nivelEspiritu ON cantidadPolvoEspiritu(nivelEspiritu);
+    CREATE INDEX idx_cantidadPolvoEspiritu_cantidad ON cantidadPolvoEspiritu(cantidad);
     
-    PRINT '✅ Tabla materiales creada';
+    PRINT '✅ Tabla cantidadPolvoEspiritu creada';
 END
 ELSE
 BEGIN
-    PRINT '⚠️ Tabla materiales ya existe';
-END
-GO
-
--- ============================================
--- TABLA: Nombre (Sprits)
--- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombres')
-BEGIN
-    CREATE TABLE nombres (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        numeroOrden INT NOT NULL,
-        nombreSprite VARCHAR(100) NOT NULL,
-        created_at DATETIME DEFAULT GETDATE(),
-        updated_at DATETIME NULL
-    );
-    
-    -- Índices
-    CREATE INDEX idx_nombres_numeroOrden ON nombres(numeroOrden);
-    CREATE INDEX idx_nombres_nombre ON nombres(nombreSprite);
-    
-    PRINT '✅ Tabla nombres creada';
-END
-ELSE
-BEGIN
-    PRINT '⚠️ Tabla nombres ya existe';
+    PRINT '⚠️ Tabla cantidadPolvoEspiritu ya existe';
 END
 GO
 
 -- Verificar que las tablas se crearon
-SELECT * FROM sys.tables WHERE name IN ('sprits', 'materiales', 'nombres');
+SELECT * FROM sys.tables WHERE name IN ('sprits', 'cantidadPolvoEspiritu');
 GO
