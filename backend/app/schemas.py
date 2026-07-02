@@ -14,6 +14,7 @@ class SpritBase(BaseModel):
     estaDominado: bool = False
     estaEnInventario: bool = False
     estaDesbloqueado: bool = False
+    nivelEspiritu: Optional[int] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 
@@ -29,6 +30,7 @@ class SpritUpdate(BaseModel):
     estaDominado: Optional[bool] = None
     estaEnInventario: Optional[bool] = None
     estaDesbloqueado: Optional[bool] = None
+    nivelEspiritu: Optional[int] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
 
@@ -40,45 +42,17 @@ class SpritResponse(SpritBase):
     class Config:
         from_attributes = True
 
-
 # ============================================
-# SCHEMAS PARA MATERIALES
+# SCHEMAS PARA CANTIDADPOLVOESPIRITU
 # ============================================
-class MaterialBase(BaseModel):
+class CantidadPolvoBase(BaseModel):
     numeroOrden: int
-    nombreMaterial: str
+    material: str
+    rareza: str
+    nivelEspiritu: int
+    cantidad: int
 
-class MaterialCreate(MaterialBase):
-    pass
-
-class MaterialUpdate(BaseModel):
-    numeroOrden: Optional[int] = None
-    nombreMaterial: Optional[str] = None
-
-class MaterialResponse(MaterialBase):
-    id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-
-
-# ============================================
-# SCHEMAS PARA NOMBRES (SPRITS)
-# ============================================
-class NombreBase(BaseModel):
-    numeroOrden: int
-    nombreSprite: str
-
-class NombreCreate(NombreBase):
-    pass
-
-class NombreUpdate(BaseModel):
-    numeroOrden: Optional[int] = None
-    nombreSprite: Optional[str] = None
-
-class NombreResponse(NombreBase):
+class CantidadPolvoResponse(CantidadPolvoBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

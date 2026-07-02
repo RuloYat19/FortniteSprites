@@ -4,6 +4,12 @@ import './Inicio.css';
 function Inicio({ onNavigate }) {
   const cards = [
     {
+      id: 'administrador',
+      titulo: 'Módulo de Administrador',
+      imagen: './imagenesSprites/administradorSprites.png',
+      descripcion: 'Gestión de Ciertos Datos de los Sprites'
+    },
+    {
       id: 'dominados',
       titulo: 'Lista de Dominados',
       imagen: './imagenesSprites/dominado.png',

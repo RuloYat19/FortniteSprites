@@ -24,6 +24,7 @@ function SpritsList() {
     rareza: '',
     material: '',
     nombreArchivoImagen: '',
+    nivelEspiritu: '',
     polvoAlExtraer: '',
     polvoAlInvocar: ''
   });
@@ -35,6 +36,7 @@ function SpritsList() {
     rareza: '',
     material: '',
     nombreArchivoImagen: '',
+    nivelEspiritu: '',
     polvoAlExtraer: '',
     polvoAlInvocar: ''
   });
@@ -309,6 +311,7 @@ function SpritsList() {
       rareza: sprit.rareza,
       material: sprit.material,
       nombreArchivoImagen: sprit.nombreArchivoImagen || '',
+      nivelEspiritu: sprit.nivelEspiritu || '',
       polvoAlExtraer: sprit.polvoAlExtraer || '',
       polvoAlInvocar: sprit.polvoAlInvocar || ''
     });
@@ -323,6 +326,7 @@ function SpritsList() {
       rareza: '',
       material: '',
       nombreArchivoImagen: '',
+      nivelEspiritu: '',
       polvoAlExtraer: '',
       polvoAlInvocar: ''
     });
@@ -349,6 +353,7 @@ function SpritsList() {
         rareza: editSprit.rareza,
         material: editSprit.material,
         nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
+        nivelEspiritu: editSprit.nivelEspiritu ? parseInt(editSprit.nivelEspiritu) : null,
         polvoAlExtraer: editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null,
         polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
       };
@@ -371,6 +376,7 @@ function SpritsList() {
       rareza: '',
       material: '',
       nombreArchivoImagen: '',
+      nivelEspiritu: '',
       polvoAlExtraer: '',
       polvoAlInvocar: ''
     });
@@ -384,6 +390,7 @@ function SpritsList() {
       rareza: '',
       material: '',
       nombreArchivoImagen: '',
+      nivelEspiritu: '',
       polvoAlExtraer: '',
       polvoAlInvocar: ''
     });
@@ -410,6 +417,7 @@ function SpritsList() {
         rareza: newSprit.rareza,
         material: newSprit.material,
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
+        nivelEspiritu: newSprit.nivelEspiritu ? parseInt(newSprit.nivelEspiritu) : null,
         polvoAlExtraer: newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null,
         polvoAlInvocar: newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null,
         yaFueDominado: false,
@@ -700,17 +708,28 @@ function SpritsList() {
 
               <div className="sprit-card-back">
                 <div className="back-details">
+                  {/**/}
+                  {sprit.yaFueDominado && (
+                    <div className="detail-item ya-dominado-detail">
+                      <span className="detail-label">🏆 Ya fue dominado</span>
+                      <span className="detail-value">✅</span>
+                    </div>
+                  )}
                   <div className="detail-item">
                     <span className="detail-label">📦 Material:</span>
                     <span className="detail-value">{sprit.material}</span>
                   </div>
                   <div className="detail-item">
-                    <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                    <span className="detail-label">✨ Nivel de Espíritu:</span>
+                    <span className="detail-value">{sprit.nivelEspiritu || 0}</span>
+                  </div>
+                  <div className="detail-item">
+                    <img
+                      src="./imagenesSprites/polvoEspiritu.png"
                       alt="Polvo al extraer"
                       className="polvo-icon-small"
                     />
-                    <span className="detail-label">Polvo al extraer:</span>
+                    <span className="detail-label">Polvo al Extraer para el Nivel 1:</span>
                     <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
                   </div>
                   <div className="detail-item">
@@ -719,15 +738,10 @@ function SpritsList() {
                       alt="Polvo al invocar"
                       className="polvo-icon-small"
                     />
-                    <span className="detail-label">Polvo al invocar:</span>
+                    <span className="detail-label">Polvo al Invocar:</span>
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
-                  {sprit.yaFueDominado && (
-                    <div className="detail-item ya-dominado-detail">
-                      <span className="detail-label">🏆 Ya fue dominado</span>
-                      <span className="detail-value">✅ Sí</span>
-                    </div>
-                  )}
+                  
                 </div>
 
                 <div className="back-actions">
@@ -817,6 +831,17 @@ function SpritsList() {
                     name="nombreArchivoImagen"
                     placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
                     value={newSprit.nombreArchivoImagen}
+                    onChange={handleAddChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Nivel de Espíritu</label>
+                  <input
+                    type="number"
+                    name="nivelEspiritu"
+                    placeholder="Ej: 1"
+                    value={newSprit.nivelEspiritu}
                     onChange={handleAddChange}
                   />
                 </div>
@@ -916,6 +941,17 @@ function SpritsList() {
                     name="nombreArchivoImagen"
                     placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
                     value={editSprit.nombreArchivoImagen}
+                    onChange={handleEditChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Nivel de Espíritu</label>
+                  <input
+                    type="number"
+                    name="nivelEspiritu"
+                    placeholder="Ej: 1"
+                    value={editSprit.nivelEspiritu}
                     onChange={handleEditChange}
                   />
                 </div>

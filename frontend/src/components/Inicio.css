@@ -1,3 +1,4 @@
+/* frontend/src/components/Inicio.css */
 .inicio-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -12,9 +13,10 @@
   text-shadow: 0 0 10px rgba(38, 167, 21, 0.5);
 }
 
+/* 🔵 Grid de cards - 4 columnas en desktop */
 .inicio-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 30px;
   justify-items: center;
 }
@@ -82,13 +84,30 @@
   line-height: 1.4;
 }
 
+/* 🔵 3 columnas en tablets */
+@media (max-width: 1024px) {
+  .inicio-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+}
+
+/* 🔵 2 columnas en tablets pequeñas */
 @media (max-width: 768px) {
   .inicio-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
   
   .inicio-card {
     max-width: 100%;
+  }
+}
+
+/* 🔵 1 columna en móviles */
+@media (max-width: 480px) {
+  .inicio-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
