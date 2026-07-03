@@ -248,7 +248,12 @@ function Dominados() {
     'Espíritu Dormilón',
     'Espíritu Punk',
     'Espíritu del Punto Cero',
-    'Cacahuate Tostado'
+    'Cacahuate Tostado',
+    'Espíritu de Pez',
+    'Espíritu Goleador',
+    'Espíritu de Aura',
+    'Espíritu Jefe',
+    'Espíritu Parca'
   ];
 
   const spritsFiltrados = sprits.filter(sprit => {
@@ -366,13 +371,13 @@ function Dominados() {
         <div className="modal-overlay" onClick={cerrarResetModal}>
           <div className="modal-content modal-reset" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>🗑️ Resetear yaFueDominado</h2>
+              <h2>🗑️ Resetear estado Dominado</h2>
               <button className="modal-close" onClick={cerrarResetModal}>✕</button>
             </div>
             
             <div className="modal-body">
               <p className="modal-descripcion">
-                Ingresa el <strong>Nombre</strong> y <strong>Material</strong> del sprit para resetear su estado <code>yaFueDominado</code> a <strong>false</strong>.
+                Ingrese los datos del Sprite que desea <code>Resetear</code>
               </p>
               
               <div className="reset-form">
@@ -397,11 +402,6 @@ function Dominados() {
                     value={resetData.material}
                     onChange={handleResetChange}
                   />
-                </div>
-
-                <div className="form-hint">
-                  <p>💡 El nombre y material deben coincidir <strong>exactamente</strong> (sin importar mayúsculas/minúsculas)</p>
-                  <p>⚠️ Esta acción <strong>no se puede deshacer</strong> fácilmente</p>
                 </div>
               </div>
             </div>
@@ -511,13 +511,18 @@ function Dominados() {
 
                 <div className="sprit-rareza-wrapper">
                   {sprit.yaFueDominado}
+                  <span className="nivel-badge">
+                    ✨ Nv. {sprit.nivelEspiritu || 1}
+                  </span>
                   <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
                     {sprit.rareza}
                   </span>
                 </div>
 
                 <div className="sprit-nombre">
-                  <h4>{sprit.nombre}</h4>
+                  <h4 className={`nombre-material-${sprit.material.toLowerCase()}`}>
+                    {sprit.nombre}
+                  </h4>
                 </div>
               </div>
             </div>
