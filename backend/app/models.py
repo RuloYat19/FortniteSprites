@@ -25,7 +25,6 @@ class CantidadPolvoEspiritu(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
-    material = Column(String(50), nullable=False)
     rareza = Column(String(50), nullable=False)
     nivelEspiritu = Column(Integer, nullable=False)
     cantidad = Column(Integer, nullable=False)

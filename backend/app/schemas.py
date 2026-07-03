@@ -47,7 +47,6 @@ class SpritResponse(SpritBase):
 # ============================================
 class CantidadPolvoBase(BaseModel):
     numeroOrden: int
-    material: str
     rareza: str
     nivelEspiritu: int
     cantidad: int
