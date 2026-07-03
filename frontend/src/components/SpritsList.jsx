@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService } from '../services/api';
+import { spritsService, cantidadPolvoService } from '../services/api';
 import './SpritsList.css';
 import ConfirmModal from './ConfirmModal';
 
@@ -8,6 +8,10 @@ function SpritsList() {
   const navigate = useNavigate();
   const [sprits, setSprits] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [cantidadesPolvo, setCantidadesPolvo] = useState({});
+  const [loadingPolvo, setLoadingPolvo] = useState(false);
+  
   const [error, setError] = useState(null);
   const [filtros, setFiltros] = useState({ 
     rareza: '', 
@@ -140,6 +144,55 @@ function SpritsList() {
       .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
   };
 
+  const obtenerPolvoAlExtraer = async (rareza, nivelEspiritu) => {
+    if (!rareza || !nivelEspiritu) return 0;
+    
+    const clave = `${rareza}-${nivelEspiritu}`;
+    
+    // Si ya está en caché, devolver el valor
+    if (cantidadesPolvo[clave] !== undefined) {
+      return cantidadesPolvo[clave];
+    }
+    
+    try {
+      const response = await cantidadPolvoService.getByCombinacion(rareza, nivelEspiritu);
+      const cantidad = response.data?.cantidad || 0;
+      
+      // Guardar en caché
+      setCantidadesPolvo(prev => ({
+        ...prev,
+        [clave]: cantidad
+      }));
+      
+      return cantidad;
+    } catch (error) {
+      console.error(`Error al obtener polvo para ${rareza} - Nivel ${nivelEspiritu}:`, error);
+      return 0;
+    }
+  };
+
+  const actualizarPolvoAlExtraer = async (spritId, rareza, nivelEspiritu) => {
+    if (!rareza || !nivelEspiritu) return;
+    
+    const polvo = await obtenerPolvoAlExtraer(rareza, nivelEspiritu);
+    
+    // Actualizar el sprit en el estado local
+    setSprits(prevSprits => 
+      prevSprits.map(sprit => 
+        sprit.id === spritId 
+          ? { ...sprit, polvoAlExtraer: polvo }
+          : sprit
+      )
+    );
+    
+    // Opcional: Actualizar en el backend
+    try {
+      await spritsService.update(spritId, { polvoAlExtraer: polvo });
+    } catch (error) {
+      console.error('Error al actualizar polvoAlExtraer en el backend:', error);
+    }
+  };
+
   const calcularProgreso = (condicion) => {
     const total = sprits.length;
     const completados = sprits.filter(condicion).length;
@@ -150,6 +203,39 @@ function SpritsList() {
   useEffect(() => {
     cargarSprits();
   }, []);
+
+  // Para editar el Sprite
+  useEffect(() => {
+    const cargarPolvoEdicion = async () => {
+      // Solo ejecutar si estamos en modo edición y tenemos rareza y nivel
+      if (showEditModal && editSprit.rareza && editSprit.nivelEspiritu) {
+        const polvo = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        if (polvo > 0) {
+          setEditSprit(prev => ({
+            ...prev,
+            polvoAlExtraer: polvo.toString()
+          }));
+        }
+      }
+    };
+    cargarPolvoEdicion();
+  }, [showEditModal, editSprit.rareza, editSprit.nivelEspiritu]);
+
+  // Para creación de Sprite
+  useEffect(() => {
+    const cargarPolvoCreacion = async () => {
+      if (newSprit.rareza && newSprit.nivelEspiritu && !editando) {
+        const polvo = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
+        if (polvo > 0) {
+          setNewSprit(prev => ({
+            ...prev,
+            polvoAlExtraer: polvo.toString()
+          }));
+        }
+      }
+    };
+    cargarPolvoCreacion();
+  }, [newSprit.rareza, newSprit.nivelEspiritu, editando]);
 
   const cargarSprits = async () => {
     try {
@@ -210,45 +296,69 @@ function SpritsList() {
       
       // Si el sprit está dominado, resetear todo
       if (spritActual?.estaDominado) {
+        const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+
         setSprits(prevSprits => 
           prevSprits.map(sprit => 
             sprit.id === id 
-              ? { ...sprit, estaDominado: false, estaEnInventario: false }
+              ? { ...sprit, estaDominado: false, estaEnInventario: false, nivelEspiritu: 1, polvoAlExtraer: polvoNivel1 }
               : sprit
           )
         );
         
         await spritsService.update(id, {
           estaDominado: false,
-          estaEnInventario: false
+          estaEnInventario: false,
+          nivelEspiritu: 1,
+          polvoAlExtraer: polvoNivel1
         });
         return;
       }
       
       // 🔵 Alternar inventario
       const nuevoEstadoInventario = !spritActual.estaEnInventario;
+      const nuevoNivel = nuevoEstadoInventario ? (spritActual.nivelEspiritu || 1) : 1;
+      
+      let nuevoPolvo = spritActual.polvoAlExtraer || 0;
+      if (!nuevoEstadoInventario) {
+        // Si se quita del inventario, nivel = 1
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+      } else if (spritActual.nivelEspiritu) {
+        // Si se agrega al inventario, usar el nivel actual
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, spritActual.nivelEspiritu);
+      }
       
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
           sprit.id === id 
-            ? { ...sprit, estaEnInventario: nuevoEstadoInventario }
+            ? { 
+                ...sprit, 
+                estaEnInventario: nuevoEstadoInventario,
+                nivelEspiritu: nuevoNivel,
+                polvoAlExtraer: nuevoPolvo
+              }
             : sprit
         )
       );
       
       await spritsService.toggleInventario(id);
       
-      // 🔵 Si se está agregando al inventario (nuevoEstadoInventario = true)
-      // y el sprit tiene yaFueDominado = false, NO hacemos nada con yaFueDominado
-      // porque eso solo se activa al dominar
-      
+      if (!nuevoEstadoInventario) {
+        await spritsService.update(id, { 
+          nivelEspiritu: 1,
+          polvoAlExtraer: nuevoPolvo
+        });
+      } else if (spritActual.nivelEspiritu) {
+        await spritsService.update(id, { 
+          polvoAlExtraer: nuevoPolvo 
+        });
+      }
     } catch (err) {
       console.error('Error al manejar clic en imagen:', err);
       cargarSprits();
     }
   };
 
-  // 🔵 MODIFICADO: toggleDominado ahora también activa yaFueDominado
   const toggleDominado = async (id, e) => {
     e.stopPropagation();
     
@@ -256,14 +366,15 @@ function SpritsList() {
       const spritActual = sprits.find(s => s.id === id);
       if (!spritActual) return;
       
-      // 🔵 Si el sprit ya fue dominado (yaFueDominado = true), no se puede desmarcar
       if (spritActual.yaFueDominado && spritActual.estaDominado) {
         alert('💪 Este sprit ya fue dominado y no se puede desmarcar');
         return;
       }
       
-      // 🔵 Alternar estaDominado
       const nuevoEstadoDominado = !spritActual.estaDominado;
+      const nuevoNivel = nuevoEstadoDominado ? 5 : 1;
+      
+      const nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, nuevoNivel);
       
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
@@ -271,22 +382,27 @@ function SpritsList() {
             ? { 
                 ...sprit, 
                 estaDominado: nuevoEstadoDominado,
-                // 🔵 Si se está dominando (nuevoEstadoDominado = true), marcar yaFueDominado como true
-                yaFueDominado: nuevoEstadoDominado ? true : sprit.yaFueDominado
+                yaFueDominado: nuevoEstadoDominado ? true : sprit.yaFueDominado,
+                nivelEspiritu: nuevoNivel,
+                polvoAlExtraer: nuevoPolvo
               }
             : sprit
         )
       );
       
-      // 🔵 Si se está activando el dominado, también actualizar yaFueDominado en el backend
       if (nuevoEstadoDominado) {
         await spritsService.update(id, {
           estaDominado: true,
-          yaFueDominado: true
+          yaFueDominado: true,
+          nivelEspiritu: 5,
+          polvoAlExtraer: nuevoPolvo
         });
       } else {
-        // Si se está desactivando, solo actualizar estaDominado (yaFueDominado se mantiene)
-        await spritsService.toggleDominado(id);
+        await spritsService.update(id, {
+          estaDominado: false,
+          nivelEspiritu: 1,
+          polvoAlExtraer: nuevoPolvo
+        });
       }
       
     } catch (err) {
@@ -305,6 +421,13 @@ function SpritsList() {
 
   const abrirEditModal = (sprit, e) => {
     e.stopPropagation();
+    
+    // Si el sprit tiene rareza y nivel, obtener el polvo
+    if (sprit.rareza && sprit.nivelEspiritu) {
+      // Actualizar el polvo al extraer automáticamente
+      actualizarPolvoAlExtraer(sprit.id, sprit.rareza, sprit.nivelEspiritu);
+    }
+    
     setEditSprit({
       id: sprit.id,
       nombre: sprit.nombre,
@@ -348,13 +471,27 @@ function SpritsList() {
 
     setEditando(true);
     try {
+      // 🔵 Si tiene rareza y nivel, obtener el polvo al extraer
+      let polvoAlExtraer = editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null;
+      
+      if (editSprit.rareza && editSprit.nivelEspiritu) {
+        const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        if (polvoCalculado > 0) {
+          polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      let nivel = editSprit.nivelEspiritu ? parseInt(editSprit.nivelEspiritu) : 1;
+      if (nivel < 1) nivel = 1;
+      if (nivel > 5) nivel = 5;
+      
       const data = {
         nombre: editSprit.nombre,
         rareza: editSprit.rareza,
         material: editSprit.material,
         nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
-        nivelEspiritu: editSprit.nivelEspiritu ? parseInt(editSprit.nivelEspiritu) : null,
-        polvoAlExtraer: editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null,
+        nivelEspiritu: nivel,
+        polvoAlExtraer: polvoAlExtraer,
         polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
       };
 
@@ -412,13 +549,25 @@ function SpritsList() {
 
     setAgregando(true);
     try {
+      // 🔵 Si tiene rareza y nivel, obtener el polvo al extraer
+      let polvoAlExtraer = newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null;
+      
+      if (newSprit.rareza && newSprit.nivelEspiritu) {
+        const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
+        if (polvoCalculado > 0) {
+          polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      const nivel = newSprit.nivelEspiritu ? parseInt(newSprit.nivelEspiritu) : 1;
+      
       const data = {
         nombre: newSprit.nombre,
         rareza: newSprit.rareza,
         material: newSprit.material,
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
-        nivelEspiritu: newSprit.nivelEspiritu ? parseInt(newSprit.nivelEspiritu) : null,
-        polvoAlExtraer: newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null,
+        nivelEspiritu: nivel,
+        polvoAlExtraer: polvoAlExtraer,
         polvoAlInvocar: newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null,
         yaFueDominado: false,
         estaDominado: false,
@@ -465,7 +614,12 @@ function SpritsList() {
     'Espíritu Dormilón',
     'Espíritu Punk',
     'Espíritu del Punto Cero',
-    'Cacahuate Tostado'
+    'Cacahuate Tostado',
+    'Espíritu de Pez',
+    'Espíritu Goleador',
+    'Espíritu de Aura',
+    'Espíritu Jefe',
+    'Espíritu Parca'
   ];
 
   const spritsFiltrados = sprits.filter(sprit => {
@@ -679,19 +833,28 @@ function SpritsList() {
                   {/* {sprit.yaFueDominado && (
                     <span className="ya-dominado-icon" title="Ya fue dominado alguna vez">🏆</span>
                   )} */}
-                  
+                  <span className="nivel-badge">
+                    ✨ Nv. {sprit.nivelEspiritu || 1}
+                  </span>
+                  <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
+                    {sprit.rareza}
+                  </span>
+                </div>
+
+                <div className="sprit-nombre">
+                  {/* 🔵 Corona antes del nombre */}
                   {sprit.estaEnInventario && !sprit.estaDominado && (
                     <span 
-                      className="corona-icon clickable"
+                      className="corona-icon clickable nombre-corona"
                       onClick={(e) => toggleDominado(sprit.id, e)}
                       title={sprit.yaFueDominado ? '✅ Ya fue dominado (no se puede desmarcar)' : 'Haz clic para dominar este sprit'}
                     >
                       👑
                     </span>
                   )}
-                  <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
-                    {sprit.rareza}
-                  </span>
+                  <h4 className={`nombre-material-${sprit.material.toLowerCase()}`}>
+                    {sprit.nombre}
+                  </h4>
                   <span 
                     className="eye-icon clickable"
                     onClick={(e) => toggleFlip(sprit.id, e)}
@@ -699,10 +862,6 @@ function SpritsList() {
                   >
                     👁️
                   </span>
-                </div>
-
-                <div className="sprit-nombre">
-                  <h4>{sprit.nombre}</h4>
                 </div>
               </div>
 
@@ -717,11 +876,9 @@ function SpritsList() {
                   )}
                   <div className="detail-item">
                     <span className="detail-label">📦 Material:</span>
-                    <span className="detail-value">{sprit.material}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">✨ Nivel de Espíritu:</span>
-                    <span className="detail-value">{sprit.nivelEspiritu || 0}</span>
+                    <span className={`detail-value material-${sprit.material.toLowerCase()}`}>
+                      {sprit.material}
+                    </span>
                   </div>
                   <div className="detail-item">
                     <img
@@ -729,7 +886,7 @@ function SpritsList() {
                       alt="Polvo al extraer"
                       className="polvo-icon-small"
                     />
-                    <span className="detail-label">Polvo al Extraer para el Nivel 1:</span>
+                    <span className="detail-label">Polvo al Extraer para el Nivel {sprit.nivelEspiritu || 1}:</span>
                     <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
                   </div>
                   <div className="detail-item">
@@ -848,13 +1005,25 @@ function SpritsList() {
 
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
-                  <input
-                    type="number"
-                    name="polvoAlExtraer"
-                    placeholder="Ej: 800"
-                    value={newSprit.polvoAlExtraer}
-                    onChange={handleAddChange}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlExtraer"
+                      placeholder="Se calcula automáticamente"
+                      value={newSprit.polvoAlExtraer || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#35cf35'
+                      }}
+                    />
+                  </div>
+                  <small style={{ color: '#666' }}>
+                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
+                  </small>
                 </div>
 
                 <div className="form-group">
@@ -866,11 +1035,6 @@ function SpritsList() {
                     value={newSprit.polvoAlInvocar}
                     onChange={handleAddChange}
                   />
-                </div>
-
-                <div className="form-hint">
-                  <p>💡 Los campos con <strong>*</strong> son obligatorios</p>
-                  <p>💡 Los campos <strong>yaFueDominado</strong>, <strong>estaDominado</strong>, <strong>estaEnInventario</strong> y <strong>estaDesbloqueado</strong> se establecen como <strong>false</strong> automáticamente</p>
                 </div>
               </div>
             </div>
@@ -958,13 +1122,25 @@ function SpritsList() {
 
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
-                  <input
-                    type="number"
-                    name="polvoAlExtraer"
-                    placeholder="Ej: 800"
-                    value={editSprit.polvoAlExtraer}
-                    onChange={handleEditChange}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlExtraer"
+                      placeholder="Se calcula automáticamente"
+                      value={editSprit.polvoAlExtraer || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#35cf35'
+                      }}
+                    />
+                  </div>
+                  <small style={{ color: '#666' }}>
+                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
+                  </small>
                 </div>
 
                 <div className="form-group">
@@ -976,11 +1152,6 @@ function SpritsList() {
                     value={editSprit.polvoAlInvocar}
                     onChange={handleEditChange}
                   />
-                </div>
-
-                <div className="form-hint">
-                  <p>💡 Los campos con <strong>*</strong> son obligatorios</p>
-                  <p>💡 Los estados <strong>estaColeccionado</strong> y <strong>estaDominado</strong> no se modifican</p>
                 </div>
               </div>
             </div>

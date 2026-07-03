@@ -33,7 +33,6 @@
 ```
 
 ### Cosas que editar
-- Actualizar e implementar los valores del Polvo al Extraer
 
 ### Cosas Nuevas para Añadir
 - Generar un backup de los espíritus que se tengan en la base de datos
