@@ -1,6 +1,5 @@
-from app.database import SessionLocal, engine
+from app.database import SessionLocal, engine, Base
 from app.models import Sprit, CantidadPolvoEspiritu
-from app.database import Base
 
 # Datos de Sprits
 sprits_data = [
@@ -810,14 +809,130 @@ sprits_data = [
 
 # Datos de CantidadPolvoEspiritu
 cantidad_polvo_data = [
-    # Nivel 1
+    # Raro
     {
         "numeroOrden": 1,
-        "material": "Normal", 
         "rareza": "Raro", 
         "nivelEspiritu": 1, 
         "cantidad": 500
-    }
+    },
+    {
+        "numeroOrden": 2,
+        "rareza": "Raro", 
+        "nivelEspiritu": 2, 
+        "cantidad": 625
+    },
+    {
+        "numeroOrden": 3,
+        "rareza": "Raro", 
+        "nivelEspiritu": 3, 
+        "cantidad": 750
+    },
+    {
+        "numeroOrden": 4,
+        "rareza": "Raro", 
+        "nivelEspiritu": 4, 
+        "cantidad": 875
+    },
+    {
+        "numeroOrden": 5,
+        "rareza": "Raro", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1000
+    },
+    # Épico
+    {
+        "numeroOrden": 6,
+        "rareza": "Épico", 
+        "nivelEspiritu": 1, 
+        "cantidad": 550
+    },
+    {
+        "numeroOrden": 7,
+        "rareza": "Épico", 
+        "nivelEspiritu": 2, 
+        "cantidad": 700
+    },
+    {
+        "numeroOrden": 8,
+        "rareza": "Épico", 
+        "nivelEspiritu": 3, 
+        "cantidad": 825
+    },
+    {
+        "numeroOrden": 9,
+        "rareza": "Épico", 
+        "nivelEspiritu": 4, 
+        "cantidad": 950
+    },
+    {
+        "numeroOrden": 10,
+        "rareza": "Épico", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1100
+    },
+    # Legendario
+    {
+        "numeroOrden": 11,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 1, 
+        "cantidad": 600
+    },
+    {
+        "numeroOrden": 12,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 2, 
+        "cantidad": 750
+    },
+    {
+        "numeroOrden": 13,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 3, 
+        "cantidad": 900
+    },
+    {
+        "numeroOrden": 14,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 4, 
+        "cantidad": 1050
+    },
+    {
+        "numeroOrden": 15,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1200
+    },
+    # Mítico
+    {
+        "numeroOrden": 16,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 1, 
+        "cantidad": 650
+    },
+    {
+        "numeroOrden": 17,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 2, 
+        "cantidad": 800
+    },
+    {
+        "numeroOrden": 18,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 3, 
+        "cantidad": 975
+    },
+    {
+        "numeroOrden": 19,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 4, 
+        "cantidad": 1150
+    },
+    {
+        "numeroOrden": 20,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1300
+    },
 ]
 
 def seed_database():
@@ -826,22 +941,27 @@ def seed_database():
     
     db = SessionLocal()
     try:
-        # Verificar si ya hay datos
-        existing = db.query(Sprit).first()
-        if existing:
+        # Verificar si ya hay datos de Spites en la Base de Datos
+        existenSpritesEnDB = db.query(Sprit).first()
+        if existenSpritesEnDB:
             print("La base de datos ya tiene sprits.")
-            
-        # Insertar Sprits
-        for sprit_data in sprits_data:
-            sprit = Sprit(**sprit_data)
-            db.add(sprit)
-        print(f"{len(sprits_data)} sprites insertados con éxito :D")
+        else: 
+            # Insertar Sprits
+            for sprit_data in sprits_data:
+                sprit = Sprit(**sprit_data)
+                db.add(sprit)
+            print(f"{len(sprits_data)} sprites insertados con éxito :D")
 
-        # Insertar Cantidades de Polvo
-        for cantidad_data in cantidad_polvo_data:
-            cantidad = CantidadPolvoEspiritu(**cantidad_data)
-            db.add(cantidad)
-        print(f"{len(cantidad_polvo_data)} cantidades de polvo insertadas con éxito :D")
+        # Verificar si ya hay datos de CantidadPolvoEspiritu en la Base de Datos
+        existenCantidadPolvoEspirituEnDB = db.query(CantidadPolvoEspiritu).first()
+        if existenCantidadPolvoEspirituEnDB:
+            print("La base de datos ya tiene Cantidad de Polvo de Espíritu.")
+        else: 
+            # Insertar Cantidades de Polvo
+            for cantidad_data in cantidad_polvo_data:
+                cantidad = CantidadPolvoEspiritu(**cantidad_data)
+                db.add(cantidad)
+            print(f"{len(cantidad_polvo_data)} cantidades de Polvo de Espíritu insertadas con éxito :D")
         
         db.commit()
         print("Seed completado exitosamente")
