@@ -239,7 +239,7 @@ body {
 /* 🔵 Cards de Sprits */
 .sprits-container .sprit-card {
   perspective: 1000px;
-  min-height: 325px;
+  min-height: 315px;
   border-radius: 12px;
   border: 3px solid #0f3460;
   background: #16213e;
