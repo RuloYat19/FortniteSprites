@@ -1,63 +1,151 @@
-// SpritsList.jsx - Con formulario para agregar, editar y eliminar sprits
-
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { spritsService } from '../services/api';
+import './SpritsList.css';
+import ConfirmModal from './ConfirmModal';
 
 function SpritsList() {
+  const navigate = useNavigate();
   const [sprits, setSprits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filtros, setFiltros] = useState({ 
     rareza: '', 
     material: '',
-    nombre: ''
-  });
-  const [infoVisible, setInfoVisible] = useState({});
-  
-  // 🔵 Estado para el modal de agregar
-  const [showModal, setShowModal] = useState(false);
-  const [nuevoSprit, setNuevoSprit] = useState({
     nombre: '',
-    rareza: '',
-    material: '',
-    nombreArchivoImagen: '',
-    polvoAlExtraer: '',
-    polvoAlInvocar: ''
+    orden: 'default'
   });
-  const [guardando, setGuardando] = useState(false);
-
-  // 🔵 Estado para el modal de editar
+  const [flippedCards, setFlippedCards] = useState({});
+  
   const [showEditModal, setShowEditModal] = useState(false);
   const [editSprit, setEditSprit] = useState({
+    id: null,
     nombre: '',
     rareza: '',
     material: '',
     nombreArchivoImagen: '',
+    nivelEspiritu: '',
     polvoAlExtraer: '',
     polvoAlInvocar: ''
   });
-  const [nombreBusqueda, setNombreBusqueda] = useState('');
   const [editando, setEditando] = useState(false);
-  const [cargandoDatos, setCargandoDatos] = useState(false);
 
-  // 🔵 Estado para el modal de eliminar
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [nombreEliminar, setNombreEliminar] = useState('');
-  const [eliminando, setEliminando] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newSprit, setNewSprit] = useState({
+    nombre: '',
+    rareza: '',
+    material: '',
+    nombreArchivoImagen: '',
+    nivelEspiritu: '',
+    polvoAlExtraer: '',
+    polvoAlInvocar: ''
+  });
+  const [agregando, setAgregando] = useState(false);
 
-  const nombresDisponibles = [
-    'Espíritu de Agua',
-    'Espíritu de Tierra',
-    'Espíritu de Fuego',
-    'Espíritu Pato',
-    'Espíritu Fantasmal',
-    'Espíritu Demoníaco',
-    'Espíritu Rey',
-    'Espíritu Dormilón',
-    'Espíritu Punk',
-    'Espíritu del Punto Cero',
-    'Cacahuate Tostado'
-  ];
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmModalData, setConfirmModalData] = useState({
+    title: '',
+    message: '',
+    type: 'success'
+  });
+
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [spritAEliminar, setSpritAEliminar] = useState(null);
+
+  const ordenMateriales = {
+    'Normal': 1,
+    'Oro': 2,
+    'Gomita': 3,
+    'Galaxia': 4
+  };
+
+  const ordenNombresDefault = {
+    'Espíritu de Agua': 1,
+    'Espíritu de Tierra': 2,
+    'Espíritu de Fuego': 3,
+    'Espíritu Pato': 4,
+    'Espíritu Fantasmal': 5,
+    'Espíritu Demoníaco': 6,
+    'Espíritu Rey': 7,
+    'Espíritu Dormilón': 8,
+    'Espíritu Punk': 9,
+    'Espíritu del Punto Cero': 10,
+    'Cacahuate Tostado': 11,
+    'Espíritu de Pez': 12,
+    'Espíritu Goleador': 13,
+    'Espíritu de Aura': 14,
+    'Espíritu Jefe': 15,
+    'Espíritu Parca': 16
+  };
+
+  const ordenNombresRareza = {
+    'Espíritu de Agua': 1,
+    'Espíritu de Tierra': 2,
+    'Espíritu de Fuego': 3,
+    'Espíritu de Pez': 4,
+    'Espíritu Pato': 5,
+    'Espíritu Fantasmal': 6,
+    'Espíritu Demoníaco': 7,
+    'Espíritu Rey': 8,
+    'Espíritu Goleador': 9,
+    'Espíritu de Aura': 10,
+    'Espíritu Dormilón': 11,
+    'Espíritu Punk': 12,
+    'Espíritu Jefe': 13,
+    'Espíritu Parca': 14,
+    'Espíritu del Punto Cero': 15,
+    'Cacahuate Tostado': 16
+  };
+
+  const ordenarSprits = (spritsList) => {
+    const orden = filtros.orden || 'default';
+    
+    switch(orden) {
+      case 'material':
+        return [...spritsList].sort((a, b) => {
+          const ordenA = ordenMateriales[a.material] || 999;
+          const ordenB = ordenMateriales[b.material] || 999;
+          if (ordenA !== ordenB) return ordenA - ordenB;
+          const nombreA = ordenNombresDefault[a.nombre] || 999;
+          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          return nombreA - nombreB;
+        });
+      
+      case 'rareza':
+        return [...spritsList].sort((a, b) => {
+          const rarezaA = ordenNombresRareza[a.nombre] || 999;
+          const rarezaB = ordenNombresRareza[b.nombre] || 999;
+          if (rarezaA !== rarezaB) return rarezaA - rarezaB;
+          const materialA = ordenMateriales[a.material] || 999;
+          const materialB = ordenMateriales[b.material] || 999;
+          return materialA - materialB;
+        });
+      
+      case 'default':
+      default:
+        return [...spritsList].sort((a, b) => {
+          const nombreA = ordenNombresDefault[a.nombre] || 999;
+          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          const materialA = ordenMateriales[a.material] || 999;
+          const materialB = ordenMateriales[b.material] || 999;
+          return materialA - materialB;
+        });
+    }
+  };
+
+  const calcularPolvoNecesario = () => {
+    return sprits
+      .filter(sprit => !sprit.estaEnInventario)
+      .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
+  };
+
+  const calcularProgreso = (condicion) => {
+    const total = sprits.length;
+    const completados = sprits.filter(condicion).length;
+    const porcentaje = total > 0 ? (completados / total) * 100 : 0;
+    return { completados, total, porcentaje };
+  };
 
   useEffect(() => {
     cargarSprits();
@@ -77,75 +165,276 @@ function SpritsList() {
     }
   };
 
-  const toggleInfo = (id) => {
-    setInfoVisible(prev => ({
+  const mostrarConfirmacion = (title, message, type = 'success') => {
+    setConfirmModalData({ title, message, type });
+    setShowConfirmModal(true);
+    
+    setTimeout(() => {
+      setShowConfirmModal(false);
+    }, 2500);
+  };
+
+  const confirmarEliminacion = (sprit) => {
+    setSpritAEliminar(sprit);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const eliminarSprit = async () => {
+    if (!spritAEliminar) return;
+
+    try {
+      await spritsService.delete(spritAEliminar.id);
+      await cargarSprits();
+      setShowDeleteConfirmModal(false);
+      setSpritAEliminar(null);
+      mostrarConfirmacion(
+        '🗑️ Sprit eliminado',
+        `El sprit "${spritAEliminar.nombre}" se eliminó correctamente`,
+        'success'
+      );
+    } catch (err) {
+      console.error('Error al eliminar sprit:', err);
+      setShowDeleteConfirmModal(false);
+      mostrarConfirmacion(
+        '❌ Error',
+        'Hubo un error al eliminar el sprit',
+        'error'
+      );
+    }
+  };
+
+  // 🔵 MODIFICADO: handleImageClick ahora también maneja yaFueDominado
+  const handleImageClick = async (id) => {
+    try {
+      const spritActual = sprits.find(s => s.id === id);
+      
+      // Si el sprit está dominado, resetear todo
+      if (spritActual?.estaDominado) {
+        setSprits(prevSprits => 
+          prevSprits.map(sprit => 
+            sprit.id === id 
+              ? { ...sprit, estaDominado: false, estaEnInventario: false }
+              : sprit
+          )
+        );
+        
+        await spritsService.update(id, {
+          estaDominado: false,
+          estaEnInventario: false
+        });
+        return;
+      }
+      
+      // 🔵 Alternar inventario
+      const nuevoEstadoInventario = !spritActual.estaEnInventario;
+      
+      setSprits(prevSprits => 
+        prevSprits.map(sprit => 
+          sprit.id === id 
+            ? { ...sprit, estaEnInventario: nuevoEstadoInventario }
+            : sprit
+        )
+      );
+      
+      await spritsService.toggleInventario(id);
+      
+      // 🔵 Si se está agregando al inventario (nuevoEstadoInventario = true)
+      // y el sprit tiene yaFueDominado = false, NO hacemos nada con yaFueDominado
+      // porque eso solo se activa al dominar
+      
+    } catch (err) {
+      console.error('Error al manejar clic en imagen:', err);
+      cargarSprits();
+    }
+  };
+
+  // 🔵 MODIFICADO: toggleDominado ahora también activa yaFueDominado
+  const toggleDominado = async (id, e) => {
+    e.stopPropagation();
+    
+    try {
+      const spritActual = sprits.find(s => s.id === id);
+      if (!spritActual) return;
+      
+      // 🔵 Si el sprit ya fue dominado (yaFueDominado = true), no se puede desmarcar
+      if (spritActual.yaFueDominado && spritActual.estaDominado) {
+        alert('💪 Este sprit ya fue dominado y no se puede desmarcar');
+        return;
+      }
+      
+      // 🔵 Alternar estaDominado
+      const nuevoEstadoDominado = !spritActual.estaDominado;
+      
+      setSprits(prevSprits => 
+        prevSprits.map(sprit => 
+          sprit.id === id 
+            ? { 
+                ...sprit, 
+                estaDominado: nuevoEstadoDominado,
+                // 🔵 Si se está dominando (nuevoEstadoDominado = true), marcar yaFueDominado como true
+                yaFueDominado: nuevoEstadoDominado ? true : sprit.yaFueDominado
+              }
+            : sprit
+        )
+      );
+      
+      // 🔵 Si se está activando el dominado, también actualizar yaFueDominado en el backend
+      if (nuevoEstadoDominado) {
+        await spritsService.update(id, {
+          estaDominado: true,
+          yaFueDominado: true
+        });
+      } else {
+        // Si se está desactivando, solo actualizar estaDominado (yaFueDominado se mantiene)
+        await spritsService.toggleDominado(id);
+      }
+      
+    } catch (err) {
+      console.error('Error al alternar dominado:', err);
+      cargarSprits();
+    }
+  };
+
+  const toggleFlip = (id, e) => {
+    e.stopPropagation();
+    setFlippedCards(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
   };
 
-  const toggleColeccionado = async (id) => {
+  const abrirEditModal = (sprit, e) => {
+    e.stopPropagation();
+    setEditSprit({
+      id: sprit.id,
+      nombre: sprit.nombre,
+      rareza: sprit.rareza,
+      material: sprit.material,
+      nombreArchivoImagen: sprit.nombreArchivoImagen || '',
+      nivelEspiritu: sprit.nivelEspiritu || '',
+      polvoAlExtraer: sprit.polvoAlExtraer || '',
+      polvoAlInvocar: sprit.polvoAlInvocar || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const cerrarEditModal = () => {
+    setShowEditModal(false);
+    setEditSprit({
+      id: null,
+      nombre: '',
+      rareza: '',
+      material: '',
+      nombreArchivoImagen: '',
+      nivelEspiritu: '',
+      polvoAlExtraer: '',
+      polvoAlInvocar: ''
+    });
+    setEditando(false);
+  };
+
+  const handleEditChange = (e) => {
+    setEditSprit({
+      ...editSprit,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const guardarSpritEditado = async () => {
+    if (!editSprit.nombre || !editSprit.rareza || !editSprit.material) {
+      mostrarConfirmacion('⚠️ Campos incompletos', 'Los campos Nombre, Rareza y Material son obligatorios', 'warning');
+      return;
+    }
+
+    setEditando(true);
     try {
-      setSprits(prevSprits => 
-        prevSprits.map(sprit => 
-          sprit.id === id 
-            ? { ...sprit, estaColeccionado: !sprit.estaColeccionado }
-            : sprit
-        )
-      );
-      
-      await spritsService.toggleColeccionado(id);
+      const data = {
+        nombre: editSprit.nombre,
+        rareza: editSprit.rareza,
+        material: editSprit.material,
+        nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
+        nivelEspiritu: editSprit.nivelEspiritu ? parseInt(editSprit.nivelEspiritu) : null,
+        polvoAlExtraer: editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null,
+        polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
+      };
+
+      await spritsService.update(editSprit.id, data);
+      await cargarSprits();
+      cerrarEditModal();
+      mostrarConfirmacion('✅ Sprit actualizado', `El sprit "${editSprit.nombre}" se actualizó correctamente`, 'success');
     } catch (err) {
-      console.error('Error al alternar coleccionado:', err);
-      cargarSprits();
-      alert('❌ Error al actualizar el estado');
+      console.error('Error al actualizar sprit:', err);
+      mostrarConfirmacion('❌ Error', 'Hubo un error al actualizar el sprit', 'error');
+    } finally {
+      setEditando(false);
     }
   };
 
-  const toggleDominado = async (id) => {
-    try {
-      setSprits(prevSprits => 
-        prevSprits.map(sprit => 
-          sprit.id === id 
-            ? { ...sprit, estaDominado: !sprit.estaDominado }
-            : sprit
-        )
-      );
-      
-      await spritsService.toggleDominado(id);
-    } catch (err) {
-      console.error('Error al alternar dominado:', err);
-      cargarSprits();
-      alert('❌ Error al actualizar el estado');
-    }
+  const abrirAddModal = () => {
+    setNewSprit({
+      nombre: '',
+      rareza: '',
+      material: '',
+      nombreArchivoImagen: '',
+      nivelEspiritu: '',
+      polvoAlExtraer: '',
+      polvoAlInvocar: ''
+    });
+    setShowAddModal(true);
   };
 
-  const resetSprit = async (id) => {
+  const cerrarAddModal = () => {
+    setShowAddModal(false);
+    setNewSprit({
+      nombre: '',
+      rareza: '',
+      material: '',
+      nombreArchivoImagen: '',
+      nivelEspiritu: '',
+      polvoAlExtraer: '',
+      polvoAlInvocar: ''
+    });
+    setAgregando(false);
+  };
+
+  const handleAddChange = (e) => {
+    setNewSprit({
+      ...newSprit,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const guardarNuevoSprit = async () => {
+    if (!newSprit.nombre || !newSprit.rareza || !newSprit.material) {
+      mostrarConfirmacion('⚠️ Campos incompletos', 'Los campos Nombre, Rareza y Material son obligatorios', 'warning');
+      return;
+    }
+
+    setAgregando(true);
     try {
-      const sprit = sprits.find(s => s.id === id);
-      if (!sprit) return;
-      
-      if (!sprit.estaColeccionado && !sprit.estaDominado) {
-        alert('⚠️ Este sprit ya está completamente reiniciado');
-        return;
-      }
-      
-      setSprits(prevSprits => 
-        prevSprits.map(sprit => 
-          sprit.id === id 
-            ? { ...sprit, estaColeccionado: false, estaDominado: false }
-            : sprit
-        )
-      );
-      
-      await spritsService.update(id, {
-        estaColeccionado: false,
-        estaDominado: false
-      });
+      const data = {
+        nombre: newSprit.nombre,
+        rareza: newSprit.rareza,
+        material: newSprit.material,
+        nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
+        nivelEspiritu: newSprit.nivelEspiritu ? parseInt(newSprit.nivelEspiritu) : null,
+        polvoAlExtraer: newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null,
+        polvoAlInvocar: newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null,
+        yaFueDominado: false,
+        estaDominado: false,
+        estaEnInventario: false,
+        estaDesbloqueado: false
+      };
+
+      await spritsService.create(data);
+      await cargarSprits();
+      cerrarAddModal();
+      mostrarConfirmacion('✅ Sprit agregado', `Se ha creado correctamente el sprit "${newSprit.nombre}"`, 'success');
     } catch (err) {
-      console.error('Error al resetear sprit:', err);
-      cargarSprits();
-      alert('❌ Error al resetear el sprit');
+      console.error('Error al agregar sprit:', err);
+      mostrarConfirmacion('❌ Error', 'Hubo un error al agregar el sprit', 'error');
+    } finally {
+      setAgregando(false);
     }
   };
 
@@ -160,251 +449,24 @@ function SpritsList() {
     setFiltros({ 
       rareza: '', 
       material: '',
-      nombre: ''
-    });
-  };
-
-  // 🔵 Manejar cambios en el formulario de agregar
-  const handleInputChange = (e) => {
-    setNuevoSprit({
-      ...nuevoSprit,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  // 🔵 Manejar cambios en el formulario de editar
-  const handleEditInputChange = (e) => {
-    setEditSprit({
-      ...editSprit,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  // 🔵 Abrir el modal de agregar
-  const abrirModal = () => {
-    setNuevoSprit({
       nombre: '',
-      rareza: '',
-      material: '',
-      nombreArchivoImagen: '',
-      polvoAlExtraer: '',
-      polvoAlInvocar: ''
-    });
-    setShowModal(true);
-  };
-
-  // 🔵 Cerrar el modal de agregar
-  const cerrarModal = () => {
-    setShowModal(false);
-    setNuevoSprit({
-      nombre: '',
-      rareza: '',
-      material: '',
-      nombreArchivoImagen: '',
-      polvoAlExtraer: '',
-      polvoAlInvocar: ''
+      orden: 'default'
     });
   };
 
-  // 🔵 Abrir el modal de editar
-  const abrirEditModal = () => {
-    setEditSprit({
-      nombre: '',
-      rareza: '',
-      material: '',
-      nombreArchivoImagen: '',
-      polvoAlExtraer: '',
-      polvoAlInvocar: ''
-    });
-    setNombreBusqueda('');
-    setShowEditModal(true);
-  };
-
-  // 🔵 Cerrar el modal de editar
-  const cerrarEditModal = () => {
-    setShowEditModal(false);
-    setEditSprit({
-      nombre: '',
-      rareza: '',
-      material: '',
-      nombreArchivoImagen: '',
-      polvoAlExtraer: '',
-      polvoAlInvocar: ''
-    });
-    setNombreBusqueda('');
-    setCargandoDatos(false);
-  };
-
-  // 🔵 Abrir el modal de eliminar
-  const abrirDeleteModal = () => {
-    setNombreEliminar('');
-    setShowDeleteModal(true);
-  };
-
-  // 🔵 Cerrar el modal de eliminar
-  const cerrarDeleteModal = () => {
-    setShowDeleteModal(false);
-    setNombreEliminar('');
-    setEliminando(false);
-  };
-
-  // 🔵 Buscar y rellenar datos del sprit por nombre
-  const buscarYrellenarDatos = async () => {
-    if (!nombreBusqueda.trim()) {
-      alert('⚠️ Por favor ingresa un nombre para buscar');
-      return;
-    }
-
-    setCargandoDatos(true);
-    try {
-      const response = await spritsService.getAll();
-      const spritEncontrado = response.data.find(
-        s => s.nombre.toLowerCase() === nombreBusqueda.trim().toLowerCase()
-      );
-
-      if (!spritEncontrado) {
-        alert(`❌ No se encontró ningún sprit con el nombre "${nombreBusqueda}"`);
-        setCargandoDatos(false);
-        return;
-      }
-
-      setEditSprit({
-        nombre: spritEncontrado.nombre,
-        rareza: spritEncontrado.rareza,
-        material: spritEncontrado.material,
-        nombreArchivoImagen: spritEncontrado.nombreArchivoImagen || '',
-        polvoAlExtraer: spritEncontrado.polvoAlExtraer || '',
-        polvoAlInvocar: spritEncontrado.polvoAlInvocar || ''
-      });
-
-      alert(`✅ Sprit "${spritEncontrado.nombre}" encontrado. Puedes editar sus datos.`);
-    } catch (err) {
-      console.error('Error al buscar sprit:', err);
-      alert('❌ Error al buscar el sprit');
-    } finally {
-      setCargandoDatos(false);
-    }
-  };
-
-  // 🔵 Guardar los cambios del sprit editado
-  const guardarSpritEditado = async () => {
-    if (!editSprit.nombre || !editSprit.rareza || !editSprit.material) {
-      alert('⚠️ Los campos Nombre, Rareza y Material son obligatorios');
-      return;
-    }
-
-    setEditando(true);
-    try {
-      const response = await spritsService.getAll();
-      const spritEncontrado = response.data.find(
-        s => s.nombre.toLowerCase() === editSprit.nombre.trim().toLowerCase()
-      );
-
-      if (!spritEncontrado) {
-        alert('❌ No se encontró el sprit a editar');
-        setEditando(false);
-        return;
-      }
-
-      const data = {
-        nombre: editSprit.nombre,
-        rareza: editSprit.rareza,
-        material: editSprit.material,
-        nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
-        polvoAlExtraer: editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null,
-        polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
-      };
-
-      await spritsService.update(spritEncontrado.id, data);
-      await cargarSprits();
-      cerrarEditModal();
-      alert('✅ Sprit actualizado exitosamente');
-    } catch (err) {
-      console.error('Error al actualizar sprit:', err);
-      alert('❌ Error al actualizar el sprit');
-    } finally {
-      setEditando(false);
-    }
-  };
-
-  // 🔵 Guardar el nuevo sprit
-  const guardarSprit = async () => {
-    if (!nuevoSprit.nombre || !nuevoSprit.rareza || !nuevoSprit.material) {
-      alert('⚠️ Los campos Nombre, Rareza y Material son obligatorios');
-      return;
-    }
-
-    setGuardando(true);
-    try {
-      const data = {
-        nombre: nuevoSprit.nombre,
-        rareza: nuevoSprit.rareza,
-        material: nuevoSprit.material,
-        nombreArchivoImagen: nuevoSprit.nombreArchivoImagen || null,
-        polvoAlExtraer: nuevoSprit.polvoAlExtraer ? parseInt(nuevoSprit.polvoAlExtraer) : null,
-        polvoAlInvocar: nuevoSprit.polvoAlInvocar ? parseInt(nuevoSprit.polvoAlInvocar) : null,
-        estaColeccionado: false,
-        estaDominado: false
-      };
-
-      await spritsService.create(data);
-      await cargarSprits();
-      cerrarModal();
-      alert('✅ Sprit agregado exitosamente');
-    } catch (err) {
-      console.error('Error al agregar sprit:', err);
-      alert('❌ Error al agregar el sprit');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  // 🔵 Eliminar un sprit por nombre
-  const eliminarSprit = async () => {
-    if (!nombreEliminar.trim()) {
-      alert('⚠️ Por favor ingresa el nombre del sprit a eliminar');
-      return;
-    }
-
-    setEliminando(true);
-    try {
-      // Buscar el sprit por nombre
-      const response = await spritsService.getAll();
-      const spritEncontrado = response.data.find(
-        s => s.nombre.toLowerCase() === nombreEliminar.trim().toLowerCase()
-      );
-
-      if (!spritEncontrado) {
-        alert(`❌ No se encontró ningún sprit con el nombre "${nombreEliminar}"`);
-        setEliminando(false);
-        return;
-      }
-
-      // Confirmar eliminación
-      const confirmar = window.confirm(
-        `⚠️ ¿Estás seguro de eliminar el sprit "${spritEncontrado.nombre}"?\n\n` +
-        `ID: ${spritEncontrado.id}\n` +
-        `Rareza: ${spritEncontrado.rareza}\n` +
-        `Material: ${spritEncontrado.material}\n\n` +
-        `Esta acción no se puede deshacer.`
-      );
-
-      if (!confirmar) {
-        setEliminando(false);
-        return;
-      }
-
-      await spritsService.delete(spritEncontrado.id);
-      await cargarSprits();
-      cerrarDeleteModal();
-      alert(`✅ Sprit "${spritEncontrado.nombre}" eliminado exitosamente`);
-    } catch (err) {
-      console.error('Error al eliminar sprit:', err);
-      alert('❌ Error al eliminar el sprit');
-    } finally {
-      setEliminando(false);
-    }
-  };
+  const nombresDisponibles = [
+    'Espíritu de Agua',
+    'Espíritu de Tierra',
+    'Espíritu de Fuego',
+    'Espíritu Pato',
+    'Espíritu Fantasmal',
+    'Espíritu Demoníaco',
+    'Espíritu Rey',
+    'Espíritu Dormilón',
+    'Espíritu Punk',
+    'Espíritu del Punto Cero',
+    'Cacahuate Tostado'
+  ];
 
   const spritsFiltrados = sprits.filter(sprit => {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
@@ -413,14 +475,33 @@ function SpritsList() {
     return true;
   });
 
+  const spritsOrdenados = ordenarSprits(spritsFiltrados);
+
   if (loading) return <div className="loading">Cargando sprits...</div>;
   if (error) return <div className="error">{error}</div>;
+
+  const polvoNecesario = calcularPolvoNecesario();
+  
+  const progresoInventario = calcularProgreso(s => s.estaEnInventario);
+  const progresoDominadosInventario = calcularProgreso(s => s.estaDominado);
+  const progresoDominadosGeneral = calcularProgreso(s => s.yaFueDominado);
 
   return (
     <div className="sprits-container">
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
+        <select 
+          name="orden" 
+          value={filtros.orden} 
+          onChange={handleFiltroChange}
+          className="filtro-orden"
+        >
+          <option value="default">Por Orden (Default)</option>
+          <option value="material">Por Orden (Material)</option>
+          <option value="rareza">Por Orden (Rareza)</option>
+        </select>
+
         <select 
           name="nombre" 
           value={filtros.nombre} 
@@ -454,200 +535,362 @@ function SpritsList() {
           Limpiar filtros
         </button>
 
-        {/* 🔵 Botón para agregar sprit */}
-        <button className="btn-agregar" onClick={abrirModal}>
-          ➕
-        </button>
-
-        {/* 🔵 Botón para editar sprit */}
-        <button className="btn-editar" onClick={abrirEditModal}>
-          ✏️
-        </button>
-
-        {/* 🔵 Botón para eliminar sprit */}
-        <button className="btn-eliminar" onClick={abrirDeleteModal}>
-          🗑️
-        </button>
+        <div className="filtros-botones">
+          <button className="btn-agregar" onClick={abrirAddModal}>
+            ➕ Agregar Sprit
+          </button>
+          <button 
+            className="btn-volver"
+            onClick={() => navigate('/')}
+            title="Volver al inicio"
+          >
+            ←
+          </button>
+        </div>
       </div>
 
+      <div className="polvo-info">
+        <div className="polvo-info-content">
+          <img 
+            src="./imagenesSprites/polvoEspiritu.png" 
+            alt="Polvo de Espíritu"
+            className="polvo-info-icon"
+          />
+          <span className="polvo-info-text">
+            Polvo de Espíritu necesario para tener en el inventario a todos:
+          </span>
+          <span className="polvo-info-cantidad">{polvoNecesario.toLocaleString()}</span>
+        </div>
+      </div>
+
+      <div className="progresos-container">
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">📦 Progreso de Inventario</span>
+            <span className="progreso-numero">
+              {progresoInventario.completados}/{progresoInventario.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado" 
+              style={{ width: `${progresoInventario.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoInventario.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">👑 Dominados en Inventario</span>
+            <span className="progreso-numero">
+              {progresoDominadosInventario.completados}/{progresoDominadosInventario.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado dorado" 
+              style={{ width: `${progresoDominadosInventario.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoDominadosInventario.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+
+        <div className="progreso-item">
+          <div className="progreso-header">
+            <span className="progreso-titulo">🏆 Dominados en General</span>
+            <span className="progreso-numero">
+              {progresoDominadosGeneral.completados}/{progresoDominadosGeneral.total}
+            </span>
+          </div>
+          <div className="progreso-barra">
+            <div 
+              className="progreso-llenado mitico" 
+              style={{ width: `${progresoDominadosGeneral.porcentaje}%` }}
+            />
+          </div>
+          <span className="progreso-porcentaje">
+            {progresoDominadosGeneral.porcentaje.toFixed(1)}%
+          </span>
+        </div>
+      </div>
+
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        title={confirmModalData.title}
+        message={confirmModalData.message}
+        type={confirmModalData.type}
+        confirmText="Aceptar"
+      />
+
+      <ConfirmModal
+        isOpen={showDeleteConfirmModal}
+        onClose={() => setShowDeleteConfirmModal(false)}
+        title="⚠️ Confirmar eliminación"
+        message={`¿Estás seguro de eliminar el sprit "${spritAEliminar?.nombre}"?\nEsta acción no se puede deshacer.`}
+        type="warning"
+        confirmText="Eliminar"
+        onConfirm={eliminarSprit}
+        showCancelButton={true}
+      />
+
       <div className="sprits-grid">
-        {spritsFiltrados.map((sprit) => (
-          <div key={sprit.id} className="sprit-card">
-            <div className="sprit-header">
-              <h4>{sprit.nombre}</h4>
-              <div className="header-actions">
-                <span className={`rareza ${sprit.rareza.toLowerCase()}`}>
-                  {sprit.rareza}
-                </span>
-                <button 
-                  className="btn-toggle-info"
-                  onClick={() => toggleInfo(sprit.id)}
-                  title="Mostrar/Ocultar información"
+        {spritsOrdenados.map((sprit) => (
+          <div 
+            key={sprit.id} 
+            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
+          >
+            <div className="sprit-card-inner">
+              <div className="sprit-card-front">
+                <div 
+                  className="sprit-image-wrapper"
+                  onClick={() => handleImageClick(sprit.id)}
                 >
-                  {infoVisible[sprit.id] ? '👁️‍🗨️' : '👁️'}
-                </button>
-              </div>
-            </div>
-            
-            {sprit.nombreArchivoImagen && (
-              <div className={`sprit-image ${sprit.estaDominado ? 'dominado' : ''}`}>
-                <img 
-                  src={sprit.nombreArchivoImagen} 
-                  alt={sprit.nombre}
-                  className="sprit-img"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/150/16213e/ffffff?text=Sin+imagen';
-                  }}
-                />
-              </div>
-            )}
-            
-            {infoVisible[sprit.id] && (
-              <div className="sprit-info">
-                <p><strong>Material:</strong> {sprit.material}</p>
-                <div className="polvos">
-                  <p>
-                    <span className="polvo-emoji" style={{ backgroundImage: 'url(/imagenesSprites/polvoEspiritu.png)' }} />
-                    <strong>Polvo al invocar:</strong> {sprit.polvoAlInvocar}
-                  </p>
-                  <p>
-                    <span className="polvo-emoji" style={{ backgroundImage: 'url(/imagenesSprites/polvoEspiritu.png)' }} />
-                    <strong>Polvo al extraer:</strong> {sprit.polvoAlExtraer || 0}
-                  </p>
+                  {sprit.nombreArchivoImagen ? (
+                    <img 
+                      src={sprit.nombreArchivoImagen} 
+                      alt={sprit.nombre}
+                      className="sprit-img"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/200/16213e/ffffff?text=Sin+imagen';
+                      }}
+                    />
+                  ) : (
+                    <div className="sprit-img-placeholder">
+                      🖼️ Sin imagen
+                    </div>
+                  )}
+                  
+                  {sprit.estaDominado && (
+                    <div className="corona-overlay">
+                      <span className="corona-dominada">👑</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="sprit-rareza-wrapper">
+                  {/* 🔵 Mostrar icono de dominado general si yaFueDominado es true */}
+                  {/* {sprit.yaFueDominado && (
+                    <span className="ya-dominado-icon" title="Ya fue dominado alguna vez">🏆</span>
+                  )} */}
+                  
+                  {sprit.estaEnInventario && !sprit.estaDominado && (
+                    <span 
+                      className="corona-icon clickable"
+                      onClick={(e) => toggleDominado(sprit.id, e)}
+                      title={sprit.yaFueDominado ? '✅ Ya fue dominado (no se puede desmarcar)' : 'Haz clic para dominar este sprit'}
+                    >
+                      👑
+                    </span>
+                  )}
+                  <span className={`rareza-badge ${sprit.rareza.toLowerCase()}`}>
+                    {sprit.rareza}
+                  </span>
+                  <span 
+                    className="eye-icon clickable"
+                    onClick={(e) => toggleFlip(sprit.id, e)}
+                    title="Ver detalles del sprit"
+                  >
+                    👁️
+                  </span>
+                </div>
+
+                <div className="sprit-nombre">
+                  <h4>{sprit.nombre}</h4>
                 </div>
               </div>
-            )}
-            
-            <div className="sprit-actions">
-              <button 
-                className={`btn ${sprit.estaColeccionado ? 'active' : ''}`}
-                onClick={() => toggleColeccionado(sprit.id)}
-              >
-                {sprit.estaColeccionado ? '✅ Coleccionado' : 'Aún no coleccionado'}
-              </button>
-              
-              <button 
-                className={`btn ${sprit.estaDominado ? 'active' : ''}`}
-                onClick={() => toggleDominado(sprit.id)}
-              >
-                {sprit.estaDominado ? '👑 Dominado' : 'Aún no dominado'}
-              </button>
-              
-              <button 
-                className="btn btn-reset"
-                onClick={() => resetSprit(sprit.id)}
-                title="Restablecer coleccionado y dominado a false"
-              >
-                F
-              </button>
+
+              <div className="sprit-card-back">
+                <div className="back-details">
+                  {/**/}
+                  {sprit.yaFueDominado && (
+                    <div className="detail-item ya-dominado-detail">
+                      <span className="detail-label">🏆 Ya fue dominado</span>
+                      <span className="detail-value">✅</span>
+                    </div>
+                  )}
+                  <div className="detail-item">
+                    <span className="detail-label">📦 Material:</span>
+                    <span className="detail-value">{sprit.material}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">✨ Nivel de Espíritu:</span>
+                    <span className="detail-value">{sprit.nivelEspiritu || 0}</span>
+                  </div>
+                  <div className="detail-item">
+                    <img
+                      src="./imagenesSprites/polvoEspiritu.png"
+                      alt="Polvo al extraer"
+                      className="polvo-icon-small"
+                    />
+                    <span className="detail-label">Polvo al Extraer para el Nivel 1:</span>
+                    <span className="detail-value">{sprit.polvoAlExtraer || 0}</span>
+                  </div>
+                  <div className="detail-item">
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo al invocar"
+                      className="polvo-icon-small"
+                    />
+                    <span className="detail-label">Polvo al Invocar:</span>
+                    <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
+                  </div>
+                  
+                </div>
+
+                <div className="back-actions">
+                  <span 
+                    className="action-icon"
+                    title="Editar"
+                    onClick={(e) => abrirEditModal(sprit, e)}
+                  >
+                    ✏️
+                  </span>
+                  <span 
+                    className="action-icon"
+                    title="Eliminar"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirmarEliminacion(sprit);
+                    }}
+                  >
+                    🗑️
+                  </span>
+                  <span 
+                    className="action-icon"
+                    title="Volver"
+                    onClick={(e) => toggleFlip(sprit.id, e)}
+                  >
+                    🔄
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
       
-      {spritsFiltrados.length === 0 && (
+      {spritsOrdenados.length === 0 && (
         <p className="no-results">No hay sprits que coincidan con los filtros</p>
       )}
 
-      {/* 🔵 Modal para agregar sprit */}
-      {showModal && (
-        <div className="modal-overlay" onClick={cerrarModal}>
+      {/* MODALES DE AGREGAR Y EDITAR */}
+      {showAddModal && (
+        <div className="modal-overlay" onClick={cerrarAddModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>➕ Agregar Nuevo Sprit</h2>
-              <button className="modal-close" onClick={cerrarModal}>✕</button>
+              <button className="modal-close" onClick={cerrarAddModal}>✕</button>
             </div>
             
             <div className="modal-body">
-              <div className="form-group">
-                <label>Nombre</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  placeholder="Ej: Espíritu del Punto Cero"
-                  value={nuevoSprit.nombre}
-                  onChange={handleInputChange}
-                />
-              </div>
+              <div className="edit-form">
+                <div className="form-group">
+                  <label>Nombre *</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Ej: Espíritu del Punto Cero"
+                    value={newSprit.nombre}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Rareza</label>
-                <input
-                  type="text"
-                  name="rareza"
-                  placeholder="Ej: Mítico"
-                  value={nuevoSprit.rareza}
-                  onChange={handleInputChange}
-                />
-              </div>
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <input
+                    type="text"
+                    name="rareza"
+                    placeholder="Ej: Mítico"
+                    value={newSprit.rareza}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Material</label>
-                <input
-                  type="text"
-                  name="material"
-                  placeholder="Ej: Galaxia"
-                  value={nuevoSprit.material}
-                  onChange={handleInputChange}
-                />
-              </div>
+                <div className="form-group">
+                  <label>Material *</label>
+                  <input
+                    type="text"
+                    name="material"
+                    placeholder="Ej: Galaxia"
+                    value={newSprit.material}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Ruta de la Imagen</label>
-                <input
-                  type="text"
-                  name="nombreArchivoImagen"
-                  placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
-                  value={nuevoSprit.nombreArchivoImagen}
-                  onChange={handleInputChange}
-                />
-              </div>
+                <div className="form-group">
+                  <label>Ruta de la Imagen</label>
+                  <input
+                    type="text"
+                    name="nombreArchivoImagen"
+                    placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
+                    value={newSprit.nombreArchivoImagen}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Polvo al Extraer</label>
-                <input
-                  type="number"
-                  name="polvoAlExtraer"
-                  placeholder="Ej: 800"
-                  value={nuevoSprit.polvoAlExtraer}
-                  onChange={handleInputChange}
-                />
-              </div>
+                <div className="form-group">
+                  <label>Nivel de Espíritu</label>
+                  <input
+                    type="number"
+                    name="nivelEspiritu"
+                    placeholder="Ej: 1"
+                    value={newSprit.nivelEspiritu}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>Polvo al Invocar</label>
-                <input
-                  type="number"
-                  name="polvoAlInvocar"
-                  placeholder="Ej: 15000"
-                  value={nuevoSprit.polvoAlInvocar}
-                  onChange={handleInputChange}
-                />
-              </div>
+                <div className="form-group">
+                  <label>Polvo al Extraer</label>
+                  <input
+                    type="number"
+                    name="polvoAlExtraer"
+                    placeholder="Ej: 800"
+                    value={newSprit.polvoAlExtraer}
+                    onChange={handleAddChange}
+                  />
+                </div>
 
-              <div className="form-hint">
-                <p>⚠️ Todos los campos son obligatorios</p>
+                <div className="form-group">
+                  <label>Polvo al Invocar</label>
+                  <input
+                    type="number"
+                    name="polvoAlInvocar"
+                    placeholder="Ej: 15000"
+                    value={newSprit.polvoAlInvocar}
+                    onChange={handleAddChange}
+                  />
+                </div>
+
+                <div className="form-hint">
+                  <p>💡 Los campos con <strong>*</strong> son obligatorios</p>
+                  <p>💡 Los campos <strong>yaFueDominado</strong>, <strong>estaDominado</strong>, <strong>estaEnInventario</strong> y <strong>estaDesbloqueado</strong> se establecen como <strong>false</strong> automáticamente</p>
+                </div>
               </div>
             </div>
 
             <div className="modal-footer">
-              <button className="btn-cancelar" onClick={cerrarModal}>
+              <button className="btn-cancelar" onClick={cerrarAddModal}>
                 Cancelar
               </button>
               <button 
                 className="btn-guardar" 
-                onClick={guardarSprit}
-                disabled={guardando}
+                onClick={guardarNuevoSprit}
+                disabled={agregando}
               >
-                {guardando ? '⏳ Guardando...' : '💾 Guardar Sprit'}
+                {agregando ? '⏳ Guardando...' : '💾 Agregar Sprit'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 🔵 Modal para editar sprit */}
       {showEditModal && (
         <div className="modal-overlay" onClick={cerrarEditModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -657,66 +900,37 @@ function SpritsList() {
             </div>
             
             <div className="modal-body">
-              <div className="search-section">
-                <div className="form-group search-group">
-                  <label>🔍 Buscar Sprit por Nombre</label>
-                  <div className="search-input-group">
-                    <input
-                      type="text"
-                      placeholder="Ej: Espíritu del Punto Cero"
-                      value={nombreBusqueda}
-                      onChange={(e) => setNombreBusqueda(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && buscarYrellenarDatos()}
-                    />
-                    <button 
-                      className="btn-buscar"
-                      onClick={buscarYrellenarDatos}
-                      disabled={cargandoDatos}
-                    >
-                      {cargandoDatos ? '⏳ Buscando...' : '🔍 Buscar'}
-                    </button>
-                  </div>
-                </div>
-                <div className="search-hint">
-                  <p>💡 Ingresa el nombre exacto del sprit que deseas editar</p>
-                </div>
-              </div>
-
-              <hr className="divider" />
-
               <div className="edit-form">
                 <div className="form-group">
-                  <label>Nombre (solo lectura)</label>
+                  <label>Nombre *</label>
                   <input
                     type="text"
                     name="nombre"
                     placeholder="Ej: Espíritu del Punto Cero"
                     value={editSprit.nombre}
-                    onChange={handleEditInputChange}
-                    disabled
-                    className="disabled-input"
+                    onChange={handleEditChange}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Rareza</label>
+                  <label>Rareza *</label>
                   <input
                     type="text"
                     name="rareza"
                     placeholder="Ej: Mítico"
                     value={editSprit.rareza}
-                    onChange={handleEditInputChange}
+                    onChange={handleEditChange}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Material</label>
+                  <label>Material *</label>
                   <input
                     type="text"
                     name="material"
                     placeholder="Ej: Galaxia"
                     value={editSprit.material}
-                    onChange={handleEditInputChange}
+                    onChange={handleEditChange}
                   />
                 </div>
 
@@ -727,7 +941,18 @@ function SpritsList() {
                     name="nombreArchivoImagen"
                     placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
                     value={editSprit.nombreArchivoImagen}
-                    onChange={handleEditInputChange}
+                    onChange={handleEditChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Nivel de Espíritu</label>
+                  <input
+                    type="number"
+                    name="nivelEspiritu"
+                    placeholder="Ej: 1"
+                    value={editSprit.nivelEspiritu}
+                    onChange={handleEditChange}
                   />
                 </div>
 
@@ -738,7 +963,7 @@ function SpritsList() {
                     name="polvoAlExtraer"
                     placeholder="Ej: 800"
                     value={editSprit.polvoAlExtraer}
-                    onChange={handleEditInputChange}
+                    onChange={handleEditChange}
                   />
                 </div>
 
@@ -749,8 +974,13 @@ function SpritsList() {
                     name="polvoAlInvocar"
                     placeholder="Ej: 15000"
                     value={editSprit.polvoAlInvocar}
-                    onChange={handleEditInputChange}
+                    onChange={handleEditChange}
                   />
+                </div>
+
+                <div className="form-hint">
+                  <p>💡 Los campos con <strong>*</strong> son obligatorios</p>
+                  <p>💡 Los estados <strong>estaColeccionado</strong> y <strong>estaDominado</strong> no se modifican</p>
                 </div>
               </div>
             </div>
@@ -762,52 +992,9 @@ function SpritsList() {
               <button 
                 className="btn-guardar" 
                 onClick={guardarSpritEditado}
-                disabled={editando || !editSprit.nombre}
+                disabled={editando}
               >
                 {editando ? '⏳ Guardando...' : '💾 Guardar Cambios'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 🔵 Modal para eliminar sprit */}
-      {showDeleteModal && (
-        <div className="modal-overlay" onClick={cerrarDeleteModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>🗑️ Eliminar Sprit</h2>
-              <button className="modal-close" onClick={cerrarDeleteModal}>✕</button>
-            </div>
-            
-            <div className="modal-body">
-              <div className="form-group">
-                <label>Nombre del Sprit a eliminar</label>
-                <input
-                  type="text"
-                  placeholder="Ej: Espíritu del Punto Cero"
-                  value={nombreEliminar}
-                  onChange={(e) => setNombreEliminar(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && eliminarSprit()}
-                />
-              </div>
-              
-              <div className="form-hint">
-                <p>⚠️ Ingresa el nombre exacto del sprit que deseas eliminar</p>
-                <p>⚠️ Esta acción es <strong>permanente</strong> y no se puede deshacer</p>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button className="btn-cancelar" onClick={cerrarDeleteModal}>
-                Cancelar
-              </button>
-              <button 
-                className="btn-eliminar-confirmar" 
-                onClick={eliminarSprit}
-                disabled={eliminando || !nombreEliminar.trim()}
-              >
-                {eliminando ? '⏳ Eliminando...' : '🗑️ Eliminar'}
               </button>
             </div>
           </div>

@@ -10,9 +10,24 @@ class Sprit(Base):
     rareza = Column(String(50), nullable=False)  # Ej: "Legendario", "Épico", etc.
     material = Column(String(50), nullable=False) # Ej: "Normal", "Oro", "Gomita", etc
     nombreArchivoImagen = Column(String(255), nullable=True) # Ej: "/home/rauly/FortniteSprites/imagenesSprites/aguaNormal" o si es posible mejor "./imagenesSprites/aguaNormal"
-    estaColeccionado = Column(Boolean, default=True)
-    estaDominado = Column(Boolean, default=True)
+    yaFueDominado = Column(Boolean, default=False)
+    estaDominado = Column(Boolean, default=False)
+    estaEnInventario = Column(Boolean, default=False)
+    estaDesbloqueado = Column(Boolean, default=False)
+    nivelEspiritu = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
     polvoAlExtraer = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
     polvoAlInvocar = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+class CantidadPolvoEspiritu(Base):
+    __tablename__ = "cantidadPolvoEspiritu"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    material = Column(String(50), nullable=False)
+    rareza = Column(String(50), nullable=False)
+    nivelEspiritu = Column(Integer, nullable=False)
+    cantidad = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

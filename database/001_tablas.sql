@@ -8,26 +8,72 @@ GO
 USE FORTNITEDB;
 GO
 
--- Crear la tabla sprits
-CREATE TABLE sprits (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    rareza VARCHAR(50) NOT NULL,
-    material VARCHAR(50) NOT NULL,
-    nombreArchivoImagen VARCHAR(255) NULL,
-    estaColeccionado BIT DEFAULT 1,
-    estaDominado BIT DEFAULT 0,
-    polvoAlExtraer INT NULL,
-    polvoAlInvocar INT NULL,
-    created_at DATETIME DEFAULT GETDATE(),
-    updated_at DATETIME NULL
-);
+-- ============================================
+-- TABLA: Sprits
+-- ============================================
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sprits')
+BEGIN
+    CREATE TABLE sprits (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        nombreArchivoImagen VARCHAR(255) NULL,
+        yaFueDominado BIT DEFAULT 0,
+        estaDominado BIT DEFAULT 0,
+        estaEnInventario BIT DEFAULT 0,
+        estaDesbloqueado BIT DEFAULT 0,
+        nivelEspiritu INT NULL,
+        polvoAlExtraer INT NULL,
+        polvoAlInvocar INT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
 
 -- Crear índices para mejorar rendimiento
-CREATE INDEX idx_sprits_nombre ON sprits(nombre);
-CREATE INDEX idx_sprits_rareza ON sprits(rareza);
-CREATE INDEX idx_sprits_material ON sprits(material);
+    CREATE INDEX idx_sprits_nombre ON sprits(nombre);
+    CREATE INDEX idx_sprits_rareza ON sprits(rareza);
+    CREATE INDEX idx_sprits_material ON sprits(material);
 
--- Verificar que la tabla se creó
-SELECT * FROM sys.tables WHERE name = 'sprits';
+    PRINT '✅ Tabla sprits creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla sprits ya existe';
+END
+GO
+
+-- ============================================
+-- TABLA: Material
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspiritu')
+BEGIN
+    CREATE TABLE cantidadPolvoEspiritu (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        nivelEspiritu INT NOT NULL,
+        cantidad INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    -- Índices
+    CREATE INDEX idx_cantidadPolvoEspiritu_material ON cantidadPolvoEspiritu(material);
+    CREATE INDEX idx_cantidadPolvoEspiritu_rareza ON cantidadPolvoEspiritu(rareza);
+    CREATE INDEX idx_cantidadPolvoEspiritu_nivelEspiritu ON cantidadPolvoEspiritu(nivelEspiritu);
+    CREATE INDEX idx_cantidadPolvoEspiritu_cantidad ON cantidadPolvoEspiritu(cantidad);
+    
+    PRINT '✅ Tabla cantidadPolvoEspiritu creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla cantidadPolvoEspiritu ya existe';
+END
+GO
+
+-- Verificar que las tablas se crearon
+SELECT * FROM sys.tables WHERE name IN ('sprits', 'cantidadPolvoEspiritu');
 GO

@@ -1,8 +1,8 @@
 from app.database import SessionLocal, engine
-from app.models import Sprit
+from app.models import Sprit, CantidadPolvoEspiritu
 from app.database import Base
 
-# Datos de ejemplo
+# Datos de Sprits
 sprits_data = [
     # Sprits Normales
     {
@@ -10,10 +10,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/aguaNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -22,10 +23,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/tierraNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -34,10 +36,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/fuegoNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -46,10 +49,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/patoNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -58,10 +62,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/fantasmalNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -70,10 +75,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/demoniacoNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -82,10 +88,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/reyNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -94,11 +101,12 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/dormilonNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
-        "polvoAlExtraer": 600,
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
+        "polvoAlExtraer": 600, #Confirmado
         "polvoAlInvocar": 5000
     },
     {
@@ -106,11 +114,12 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/punkNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
-        "polvoAlExtraer": 600,
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
+        "polvoAlExtraer": 600, # Confirmado
         "polvoAlInvocar": 5000
     },
     {
@@ -118,10 +127,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/puntoCeroNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
@@ -130,10 +140,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/pezNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 100
     },
@@ -142,10 +153,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/goleadorNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 3000
     },
@@ -154,10 +166,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/auraNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 3000
     },
@@ -166,10 +179,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/jefeNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 5000
     },
@@ -178,10 +192,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/parcaNormal.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
@@ -192,10 +207,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/aguaOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -204,10 +220,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/tierraOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -216,10 +233,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/fuegoOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -228,10 +246,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/patoOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -240,10 +259,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/fantasmalOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -252,10 +272,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/demoniacoOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -264,10 +285,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/reyOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -276,10 +298,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/dormilonOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -288,10 +311,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/punkOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -300,10 +324,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/puntoCeroOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -312,10 +337,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/pezOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -324,10 +350,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/goleadorOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -336,10 +363,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/auraOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -348,10 +376,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/jefeOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -360,10 +389,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Oro",
         "nombreArchivoImagen": "./imagenesSprites/parcaOro.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -374,10 +404,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/aguaGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -386,10 +417,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/tierraGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -398,10 +430,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/fuegoGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -410,10 +443,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/patoGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -422,10 +456,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/fantasmalGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -434,10 +469,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/demoniacoGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -446,10 +482,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/reyGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -458,10 +495,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/dormilonGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -470,10 +508,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/punkGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -482,10 +521,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/puntoCeroGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -494,10 +534,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/pezGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -506,10 +547,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/goleadorGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -518,10 +560,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/auraGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -530,10 +573,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/jefeGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -542,10 +586,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Gomita",
         "nombreArchivoImagen": "./imagenesSprites/parcaGomita.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -556,10 +601,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/aguaGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -568,10 +614,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/tierraGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -580,10 +627,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/fuegoGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -592,10 +640,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/patoGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -604,10 +653,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/fantasmalGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -616,10 +666,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/demoniacoGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -628,10 +679,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/reyGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -640,10 +692,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/dormilonGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -652,10 +705,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/punkGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -664,10 +718,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/puntoCeroGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -676,10 +731,11 @@ sprits_data = [
         "rareza": "Raro",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/pezGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -688,10 +744,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/goleadorGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -700,10 +757,11 @@ sprits_data = [
         "rareza": "Épico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/auraGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -712,10 +770,11 @@ sprits_data = [
         "rareza": "Legendario",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/jefeGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -724,10 +783,11 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Galaxia",
         "nombreArchivoImagen": "./imagenesSprites/parcaGalaxia.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -738,13 +798,26 @@ sprits_data = [
         "rareza": "Mítico",
         "material": "Normal",
         "nombreArchivoImagen": "./imagenesSprites/cacahuateTostado.png",
-        "yaFueDominado": False
-        "estaDominado": False
-        "estaEnInventario": False
-        "estaDesbloqueado": False
+        "yaFueDominado": False,
+        "estaDominado": False,
+        "estaEnInventario": False,
+        "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
+]
+
+# Datos de CantidadPolvoEspiritu
+cantidad_polvo_data = [
+    # Nivel 1
+    {
+        "numeroOrden": 1,
+        "material": "Normal", 
+        "rareza": "Raro", 
+        "nivelEspiritu": 1, 
+        "cantidad": 500
+    }
 ]
 
 def seed_database():
@@ -758,17 +831,24 @@ def seed_database():
         if existing:
             print("La base de datos ya tiene sprits.")
             
-        # Insertar los datos
+        # Insertar Sprits
         for sprit_data in sprits_data:
             sprit = Sprit(**sprit_data)
             db.add(sprit)
+        print(f"{len(sprits_data)} sprites insertados con éxito :D")
+
+        # Insertar Cantidades de Polvo
+        for cantidad_data in cantidad_polvo_data:
+            cantidad = CantidadPolvoEspiritu(**cantidad_data)
+            db.add(cantidad)
+        print(f"{len(cantidad_polvo_data)} cantidades de polvo insertadas con éxito :D")
         
         db.commit()
-        print(f"{len(sprits_data)} sprits insertados con éxito :D")
+        print("Seed completado exitosamente")
         
     except Exception as e:
         db.rollback()
-        print(f"Hubo problemas al insertar los sprits: {e}")
+        print(f"Hubo problemas al insertar los datos: {e}")
     finally:
         db.close()
 

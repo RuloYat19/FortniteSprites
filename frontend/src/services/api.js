@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Usar URL relativa para producción (nginx proxy)
 const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:8000/api';
 
 const api = axios.create({
@@ -17,7 +16,20 @@ export const spritsService = {
   update: (id, data) => api.put(`/sprits/${id}`, data),
   toggleColeccionado: (id) => api.patch(`/sprits/${id}/coleccionar`),
   toggleDominado: (id) => api.patch(`/sprits/${id}/dominar`),
+  toggleInventario: (id) => api.patch(`/sprits/${id}/inventario`),
   delete: (id) => api.delete(`/sprits/${id}`),
+};
+
+export const cantidadPolvoService = {
+  getAll: () => axios.get(`${API_URL}/cantidad-polvo`),
+  getById: (id) => axios.get(`${API_URL}/cantidad-polvo/${id}`),
+  getByCombinacion: (material, rareza, nivelEspiritu) => 
+    axios.get(`${API_URL}/cantidad-polvo/buscar/`, { 
+      params: { material, rareza, nivel_espiritu: nivelEspiritu } 
+    }),
+  create: (data) => axios.post(`${API_URL}/cantidad-polvo`, data),
+  update: (id, data) => axios.put(`${API_URL}/cantidad-polvo/${id}`, data),
+  delete: (id) => axios.delete(`${API_URL}/cantidad-polvo/${id}`),
 };
 
 export default api;
