@@ -90,11 +90,32 @@ function Administrador() {
     });
   };
 
-  // 🔵 Abrir modal para crear
+  // 🔵 Función para obtener el siguiente número de orden disponible
+  const obtenerSiguienteNumeroOrden = () => {
+    if (cantidades.length === 0) return 1;
+    
+    // Obtener todos los números de orden existentes y ordenarlos
+    const numerosExistentes = cantidades.map(item => item.numeroOrden).sort((a, b) => a - b);
+    
+    // Buscar el primer número faltante
+    let numeroEsperado = 1;
+    for (let i = 0; i < numerosExistentes.length; i++) {
+      if (numerosExistentes[i] > numeroEsperado) {
+        return numeroEsperado; // Encontramos un hueco
+      }
+      numeroEsperado++;
+    }
+    
+    // Si no hay huecos, devolver el siguiente número
+    return numerosExistentes.length + 1;
+  };
+
+  // 🔵 Abrir modal para crear (con número de orden automático)
   const abrirCrearModal = () => {
+    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
-      numeroOrden: '',
+      numeroOrden: siguienteNumero.toString(),
       material: '',
       rareza: '',
       nivelEspiritu: '',
@@ -147,6 +168,26 @@ function Administrador() {
       return;
     }
 
+    // 🔵 Validar que el número de orden no exista (solo para creación)
+    if (!editando) {
+      const numeroExistente = cantidades.some(
+        item => item.numeroOrden === parseInt(formData.numeroOrden)
+      );
+      if (numeroExistente) {
+        const siguienteNumero = obtenerSiguienteNumeroOrden();
+        mostrarConfirmacion(
+          '⚠️ Número duplicado', 
+          `El número de orden ${formData.numeroOrden} ya existe. Se usará el siguiente disponible: ${siguienteNumero}`,
+          'warning'
+        );
+        setFormData({
+          ...formData,
+          numeroOrden: siguienteNumero.toString()
+        });
+        return;
+      }
+    }
+
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
@@ -161,7 +202,7 @@ function Administrador() {
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
         await cantidadPolvoService.create(data);
-        mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
+        //mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
@@ -223,7 +264,11 @@ function Administrador() {
             <div className="nav-section-title">📊 Módulos</div>
             <ul>
               <li className="active">
-                <span className="nav-icon">💎</span>
+                <img 
+                  src="./imagenesSprites/polvoEspiritu.png" 
+                  alt="Polvo de Espíritu"
+                  className="nav-icon-img"
+                />
                 <span>Polvo de Espíritu</span>
                 <span className="nav-badge">{totalRegistros}</span>
               </li>
@@ -245,7 +290,6 @@ function Administrador() {
       <main className="admin-main">
         <header className="admin-header">
           <h1>Módulo de Administrador</h1>
-          <p className="admin-subtitle">Gestión de cantidades de polvo de espíritu</p>
         </header>
 
         {/* 🔵 FILTROS */}
@@ -288,7 +332,7 @@ function Administrador() {
             </select>
 
             <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
-              🧹 Limpiar
+              Limpiar Filtros
             </button>
           </div>
 
@@ -311,13 +355,6 @@ function Administrador() {
             <div>
               <span className="stat-label">Mostrando</span>
               <span className="stat-value">{totalFiltrados}</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <span className="stat-icon">📦</span>
-            <div>
-              <span className="stat-label">Materiales</span>
-              <span className="stat-value">{materiales.length}</span>
             </div>
           </div>
         </div>
@@ -385,12 +422,6 @@ function Administrador() {
             </tbody>
           </table>
         </div>
-
-        {/* 🔵 FOOTER DE LA TABLA */}
-        <div className="admin-table-footer">
-          <span>Mostrando {datosFiltrados.length} de {totalRegistros} registros</span>
-          <span className="footer-hint">Ordenados por número de orden (ascendente)</span>
-        </div>
       </main>
 
       {/* 🔵 MODAL PARA CREAR/EDITAR */}
@@ -413,7 +444,13 @@ function Administrador() {
                     value={formData.numeroOrden}
                     onChange={handleFormChange}
                     min="1"
+                    disabled={!editando}  // 🔵 Deshabilitar en creación (es automático)
                   />
+                  {!editando && (
+                    <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
+                      💡 Número asignado automáticamente
+                    </small>
+                  )}
                 </div>
 
                 <div className="form-group">
