@@ -13,7 +13,6 @@ function Administrador() {
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
-    material: '',
     rareza: '',
     nivelEspiritu: ''
   });
@@ -24,7 +23,6 @@ function Administrador() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
-    material: '',
     rareza: '',
     nivelEspiritu: '',
     cantidad: ''
@@ -40,8 +38,7 @@ function Administrador() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
 
-  // 🔵 Materiales y Rarezas disponibles
-  const materiales = ['Normal', 'Oro', 'Gomita', 'Galaxia'];
+  // 🔵 Niveles y Rarezas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
   const niveles = [1, 2, 3, 4, 5];
 
@@ -84,18 +81,37 @@ function Administrador() {
 
   const limpiarFiltros = () => {
     setFiltros({
-      material: '',
       rareza: '',
       nivelEspiritu: ''
     });
   };
 
-  // 🔵 Abrir modal para crear
+  // 🔵 Función para obtener el siguiente número de orden disponible
+  const obtenerSiguienteNumeroOrden = () => {
+    if (cantidades.length === 0) return 1;
+    
+    // Obtener todos los números de orden existentes y ordenarlos
+    const numerosExistentes = cantidades.map(item => item.numeroOrden).sort((a, b) => a - b);
+    
+    // Buscar el primer número faltante
+    let numeroEsperado = 1;
+    for (let i = 0; i < numerosExistentes.length; i++) {
+      if (numerosExistentes[i] > numeroEsperado) {
+        return numeroEsperado; // Encontramos un hueco
+      }
+      numeroEsperado++;
+    }
+    
+    // Si no hay huecos, devolver el siguiente número
+    return numerosExistentes.length + 1;
+  };
+
+  // 🔵 Abrir modal para crear (con número de orden automático)
   const abrirCrearModal = () => {
+    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
-      numeroOrden: '',
-      material: '',
+      numeroOrden: siguienteNumero.toString(),
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -109,7 +125,6 @@ function Administrador() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
-      material: registro.material,
       rareza: registro.rareza,
       nivelEspiritu: registro.nivelEspiritu,
       cantidad: registro.cantidad
@@ -123,7 +138,6 @@ function Administrador() {
     setFormData({
       id: null,
       numeroOrden: '',
-      material: '',
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -141,16 +155,35 @@ function Administrador() {
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
     // Validaciones
-    if (!formData.numeroOrden || !formData.material || !formData.rareza || 
+    if (!formData.numeroOrden || !formData.rareza || 
         !formData.nivelEspiritu || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
+    // 🔵 Validar que el número de orden no exista (solo para creación)
+    if (!editando) {
+      const numeroExistente = cantidades.some(
+        item => item.numeroOrden === parseInt(formData.numeroOrden)
+      );
+      if (numeroExistente) {
+        const siguienteNumero = obtenerSiguienteNumeroOrden();
+        mostrarConfirmacion(
+          '⚠️ Número duplicado', 
+          `El número de orden ${formData.numeroOrden} ya existe. Se usará el siguiente disponible: ${siguienteNumero}`,
+          'warning'
+        );
+        setFormData({
+          ...formData,
+          numeroOrden: siguienteNumero.toString()
+        });
+        return;
+      }
+    }
+
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
-        material: formData.material,
         rareza: formData.rareza,
         nivelEspiritu: parseInt(formData.nivelEspiritu),
         cantidad: parseInt(formData.cantidad)
@@ -161,7 +194,7 @@ function Administrador() {
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
         await cantidadPolvoService.create(data);
-        mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
+        //mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
@@ -196,7 +229,6 @@ function Administrador() {
 
   // 🔵 Filtrar datos
   const datosFiltrados = cantidades.filter(item => {
-    if (filtros.material && item.material !== filtros.material) return false;
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
     if (filtros.nivelEspiritu && item.nivelEspiritu !== parseInt(filtros.nivelEspiritu)) return false;
     return true;
@@ -223,7 +255,11 @@ function Administrador() {
             <div className="nav-section-title">📊 Módulos</div>
             <ul>
               <li className="active">
-                <span className="nav-icon">💎</span>
+                <img 
+                  src="./imagenesSprites/polvoEspiritu.png" 
+                  alt="Polvo de Espíritu"
+                  className="nav-icon-img"
+                />
                 <span>Polvo de Espíritu</span>
                 <span className="nav-badge">{totalRegistros}</span>
               </li>
@@ -245,24 +281,11 @@ function Administrador() {
       <main className="admin-main">
         <header className="admin-header">
           <h1>Módulo de Administrador</h1>
-          <p className="admin-subtitle">Gestión de cantidades de polvo de espíritu</p>
         </header>
 
         {/* 🔵 FILTROS */}
         <div className="admin-filtros">
           <div className="filtros-group">
-            <select 
-              name="material" 
-              value={filtros.material} 
-              onChange={handleFiltroChange}
-              className="filtro-select"
-            >
-              <option value="">Todos los materiales</option>
-              {materiales.map(m => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-            </select>
-
             <select 
               name="rareza" 
               value={filtros.rareza} 
@@ -288,7 +311,7 @@ function Administrador() {
             </select>
 
             <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
-              🧹 Limpiar
+              Limpiar Filtros
             </button>
           </div>
 
@@ -313,13 +336,6 @@ function Administrador() {
               <span className="stat-value">{totalFiltrados}</span>
             </div>
           </div>
-          <div className="stat-card">
-            <span className="stat-icon">📦</span>
-            <div>
-              <span className="stat-label">Materiales</span>
-              <span className="stat-value">{materiales.length}</span>
-            </div>
-          </div>
         </div>
 
         {/* 🔵 TABLA */}
@@ -328,7 +344,6 @@ function Administrador() {
             <thead>
               <tr>
                 <th># Orden</th>
-                <th>Material</th>
                 <th>Rareza</th>
                 <th>Nivel</th>
                 <th>Cantidad</th>
@@ -346,7 +361,6 @@ function Administrador() {
                 datosFiltrados.map((item) => (
                   <tr key={item.id}>
                     <td className="td-orden">{item.numeroOrden}</td>
-                    <td className="td-material">{item.material}</td>
                     <td>
                       <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
                         {item.rareza}
@@ -385,12 +399,6 @@ function Administrador() {
             </tbody>
           </table>
         </div>
-
-        {/* 🔵 FOOTER DE LA TABLA */}
-        <div className="admin-table-footer">
-          <span>Mostrando {datosFiltrados.length} de {totalRegistros} registros</span>
-          <span className="footer-hint">Ordenados por número de orden (ascendente)</span>
-        </div>
       </main>
 
       {/* 🔵 MODAL PARA CREAR/EDITAR */}
@@ -413,21 +421,13 @@ function Administrador() {
                     value={formData.numeroOrden}
                     onChange={handleFormChange}
                     min="1"
+                    disabled={!editando}  // 🔵 Deshabilitar en creación (es automático)
                   />
-                </div>
-
-                <div className="form-group">
-                  <label>Material *</label>
-                  <select
-                    name="material"
-                    value={formData.material}
-                    onChange={handleFormChange}
-                  >
-                    <option value="">Seleccionar material</option>
-                    {materiales.map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
+                  {!editando && (
+                    <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
+                      💡 Número asignado automáticamente
+                    </small>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -499,7 +499,7 @@ function Administrador() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro #${registroAEliminar?.numeroOrden}?\nMaterial: ${registroAEliminar?.material} - Rareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro Rareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}

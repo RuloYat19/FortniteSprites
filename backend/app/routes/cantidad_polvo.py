@@ -15,20 +15,17 @@ def get_all_cantidades(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    material: Optional[str] = None,
     rareza: Optional[str] = None,
     nivel_espiritu: Optional[int] = None,
     numero_orden: Optional[int] = None
 ):
     """
     Obtener todas las cantidades de polvo de espíritu.
-    Se pueden aplicar filtros opcionales por material, rareza, nivel o número de orden.
+    Se pueden aplicar filtros opcionales por rareza, nivel o número de orden.
     """
     query = db.query(models.CantidadPolvoEspiritu)
     
     # Aplicar filtros
-    if material:
-        query = query.filter(models.CantidadPolvoEspiritu.material == material)
     if rareza:
         query = query.filter(models.CantidadPolvoEspiritu.rareza == rareza)
     if nivel_espiritu:
@@ -36,10 +33,9 @@ def get_all_cantidades(
     if numero_orden:
         query = query.filter(models.CantidadPolvoEspiritu.numeroOrden == numero_orden)
     
-    # Ordenar por número de orden, material, rareza y nivel
+    # Ordenar por número de orden, rareza y nivel
     query = query.order_by(
         models.CantidadPolvoEspiritu.numeroOrden,
-        models.CantidadPolvoEspiritu.material,
         models.CantidadPolvoEspiritu.rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu
     )
@@ -74,17 +70,15 @@ def get_cantidad_by_id(
 # ============================================
 @router.get("/buscar/", response_model=Optional[schemas.CantidadPolvoResponse])
 def get_cantidad_by_combinacion(
-    material: str = Query(..., description="Material del sprit"),
     rareza: str = Query(..., description="Rareza del sprit"),
     nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
     db: Session = Depends(get_db)
 ):
     """
     Obtener la cantidad de polvo para una combinación específica
-    de material, rareza y nivel de espíritu.
+    de rareza y nivel de espíritu.
     """
     cantidad = db.query(models.CantidadPolvoEspiritu).filter(
-        models.CantidadPolvoEspiritu.material == material,
         models.CantidadPolvoEspiritu.rareza == rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu == nivel_espiritu
     ).first()
@@ -92,7 +86,7 @@ def get_cantidad_by_combinacion(
     if not cantidad:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró cantidad para {material} - {rareza} - Nivel {nivel_espiritu}"
+            detail=f"No se encontró cantidad para {rareza} - Nivel {nivel_espiritu}"
         )
     
     return cantidad
@@ -121,35 +115,6 @@ def get_cantidades_by_orden(
     
     return cantidades
 
-
-# ============================================
-# GET - Obtener cantidades por material
-# ============================================
-@router.get("/material/{material}", response_model=List[schemas.CantidadPolvoResponse])
-def get_cantidades_by_material(
-    material: str,
-    db: Session = Depends(get_db)
-):
-    """
-    Obtener todas las cantidades de polvo por material.
-    """
-    cantidades = db.query(models.CantidadPolvoEspiritu).filter(
-        models.CantidadPolvoEspiritu.material == material
-    ).order_by(
-        models.CantidadPolvoEspiritu.numeroOrden,
-        models.CantidadPolvoEspiritu.rareza,
-        models.CantidadPolvoEspiritu.nivelEspiritu
-    ).all()
-    
-    if not cantidades:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontraron cantidades para el material {material}"
-        )
-    
-    return cantidades
-
-
 # ============================================
 # GET - Obtener cantidades por rareza
 # ============================================
@@ -165,7 +130,6 @@ def get_cantidades_by_rareza(
         models.CantidadPolvoEspiritu.rareza == rareza
     ).order_by(
         models.CantidadPolvoEspiritu.numeroOrden,
-        models.CantidadPolvoEspiritu.material,
         models.CantidadPolvoEspiritu.nivelEspiritu
     ).all()
     
@@ -196,7 +160,6 @@ def create_cantidad(
     """
     # Verificar si ya existe una combinación igual
     existing = db.query(models.CantidadPolvoEspiritu).filter(
-        models.CantidadPolvoEspiritu.material == cantidad.material,
         models.CantidadPolvoEspiritu.rareza == cantidad.rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu == cantidad.nivelEspiritu
     ).first()
@@ -204,7 +167,7 @@ def create_cantidad(
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe una cantidad para {cantidad.material} - {cantidad.rareza} - Nivel {cantidad.nivelEspiritu}"
+            detail=f"Ya existe una cantidad para {cantidad.rareza} - Nivel {cantidad.nivelEspiritu}"
         )
     
     # Verificar que el número de orden no esté duplicado (opcional)
@@ -250,7 +213,6 @@ def update_cantidad(
     
     # Verificar duplicados (excluyendo el mismo registro)
     existing = db.query(models.CantidadPolvoEspiritu).filter(
-        models.CantidadPolvoEspiritu.material == cantidad_update.material,
         models.CantidadPolvoEspiritu.rareza == cantidad_update.rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu == cantidad_update.nivelEspiritu,
         models.CantidadPolvoEspiritu.id != cantidad_id
@@ -259,7 +221,7 @@ def update_cantidad(
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe una cantidad para {cantidad_update.material} - {cantidad_update.rareza} - Nivel {cantidad_update.nivelEspiritu}"
+            detail=f"Ya existe una cantidad para {cantidad_update.rareza} - Nivel {cantidad_update.nivelEspiritu}"
         )
     
     # Verificar duplicado de número de orden (excluyendo el mismo registro)
@@ -349,16 +311,14 @@ def delete_cantidad(
 # ============================================
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cantidad_by_combinacion(
-    material: str = Query(..., description="Material del sprit"),
     rareza: str = Query(..., description="Rareza del sprit"),
     nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
     db: Session = Depends(get_db)
 ):
     """
-    Eliminar una cantidad de polvo por combinación de material, rareza y nivel.
+    Eliminar una cantidad de polvo por combinación de rareza y nivel.
     """
     db_cantidad = db.query(models.CantidadPolvoEspiritu).filter(
-        models.CantidadPolvoEspiritu.material == material,
         models.CantidadPolvoEspiritu.rareza == rareza,
         models.CantidadPolvoEspiritu.nivelEspiritu == nivel_espiritu
     ).first()
@@ -366,7 +326,7 @@ def delete_cantidad_by_combinacion(
     if not db_cantidad:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró cantidad para {material} - {rareza} - Nivel {nivel_espiritu}"
+            detail=f"No se encontró cantidad para {rareza} - Nivel {nivel_espiritu}"
         )
     
     db.delete(db_cantidad)
