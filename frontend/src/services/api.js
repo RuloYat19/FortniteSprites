@@ -23,9 +23,9 @@ export const spritsService = {
 export const cantidadPolvoService = {
   getAll: () => axios.get(`${API_URL}/cantidad-polvo`),
   getById: (id) => axios.get(`${API_URL}/cantidad-polvo/${id}`),
-  getByCombinacion: (material, rareza, nivelEspiritu) => 
+  getByCombinacion: (rareza, nivelEspiritu) => 
     axios.get(`${API_URL}/cantidad-polvo/buscar/`, { 
-      params: { material, rareza, nivel_espiritu: nivelEspiritu } 
+      params: { rareza, nivel_espiritu: nivelEspiritu } 
     }),
   create: (data) => axios.post(`${API_URL}/cantidad-polvo`, data),
   update: (id, data) => axios.put(`${API_URL}/cantidad-polvo/${id}`, data),
