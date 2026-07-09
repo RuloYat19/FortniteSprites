@@ -60,7 +60,8 @@ function SpritsList() {
     'Normal': 1,
     'Oro': 2,
     'Gomita': 3,
-    'Galaxia': 4
+    'Galaxia': 4,
+    'Holofoil': 5
   };
 
   const ordenNombresDefault = {
@@ -103,6 +104,12 @@ function SpritsList() {
 
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
+
+    const obtenerOrdenDefault = (sprit) => {
+      const nombreA = ordenNombresDefault[sprit.nombre] || 999;
+      const materialA = ordenMateriales[sprit.material] || 999;
+      return { nombreA, materialA };
+    };
     
     switch(orden) {
       case 'material':
@@ -123,6 +130,21 @@ function SpritsList() {
           const materialA = ordenMateriales[a.material] || 999;
           const materialB = ordenMateriales[b.material] || 999;
           return materialA - materialB;
+        });
+      
+      case 'no-inventario':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
         });
       
       case 'default':
@@ -654,6 +676,7 @@ function SpritsList() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
+          <option value="no-inventario">Faltan en Inventario</option>
         </select>
 
         <select 
@@ -683,6 +706,7 @@ function SpritsList() {
           <option value="Oro">Oro</option>
           <option value="Gomita">Gomita</option>
           <option value="Galaxia">Galaxia</option>
+          <option value="Holofoil">Holofoil</option>
         </select>
         
         <button onClick={limpiarFiltros}>

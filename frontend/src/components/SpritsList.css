@@ -421,7 +421,8 @@ body {
 .detail-value.material-normal,
 .detail-value.material-oro,
 .detail-value.material-gomita,
-.detail-value.material-galaxia {
+.detail-value.material-galaxia,
+.detail-value.material-holofoil{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -455,6 +456,13 @@ body {
   background: linear-gradient(90deg, #1a237e, #4a148c);
   border-color: #4a148c;
   color: #ffffff;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d);
+  border-color: #4a148c;
+  color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -626,7 +634,8 @@ body {
 .sprit-card-front .nombre-material-normal,
 .sprit-card-front .nombre-material-oro,
 .sprit-card-front .nombre-material-gomita,
-.sprit-card-front .nombre-material-galaxia {
+.sprit-card-front .nombre-material-galaxia,
+.sprit-card-front .nombre-material-holofoil {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -654,7 +663,7 @@ body {
 }
 
 .sprit-card-front .nombre-material-oro {
-  background: #FFD700 !important;
+  background: #f2d219 !important;
   border-color: #1a1a2e !important;
   color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
@@ -672,6 +681,13 @@ body {
   border-color: #4a148c;
   color: #ffffff;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.3);
+}
+
+.sprit-card-front .nombre-material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d);
+  border-color: #4a148c;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
 /* 🔵 Ojo en el nombre */
@@ -833,6 +849,9 @@ body {
     font-size: 0.75rem;
   }
   .nombre-material-galaxia {
+    font-size: 0.75rem;
+  }
+  .nombre-material-holofoil {
     font-size: 0.75rem;
   }
 }
