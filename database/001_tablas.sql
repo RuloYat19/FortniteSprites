@@ -45,7 +45,7 @@ END
 GO
 
 -- ============================================
--- TABLA: Material
+-- TABLA: Cantidad de Polvo de Espíritu
 -- ============================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspiritu')
 BEGIN
@@ -73,6 +73,49 @@ BEGIN
 END
 GO
 
+-- ============================================
+-- TABLA: Material
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'material')
+BEGIN
+    CREATE TABLE material (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+    );
+    
+    -- Índices
+    CREATE INDEX idx_material_nombre ON material(nombre);
+    
+    PRINT '✅ Tabla material creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla material ya existe';
+END
+GO
+
+-- ============================================
+-- TABLA: Nombres de Sprites
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombresSprites')
+BEGIN
+    CREATE TABLE nombresSprites (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        nombre VARCHAR(50) NOT NULL,
+    );
+    
+    -- Índices
+    CREATE INDEX idx_nombresSprites_nombre ON nombresSprites(nombre);
+    
+    PRINT '✅ Tabla nombresSprites creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla nombresSprites ya existe';
+END
+GO
+
 -- Verificar que las tablas se crearon
-SELECT * FROM sys.tables WHERE name IN ('sprits', 'cantidadPolvoEspiritu');
+SELECT * FROM sys.tables WHERE name IN ('sprits', 'nombresSprites');
 GO
