@@ -60,7 +60,8 @@ function SpritsList() {
     'Normal': 1,
     'Oro': 2,
     'Gomita': 3,
-    'Galaxia': 4
+    'Galaxia': 4,
+    'Holofoil': 5
   };
 
   const ordenNombresDefault = {
@@ -683,6 +684,7 @@ function SpritsList() {
           <option value="Oro">Oro</option>
           <option value="Gomita">Gomita</option>
           <option value="Galaxia">Galaxia</option>
+          <option value="Holofoil">Holofoil</option>
         </select>
         
         <button onClick={limpiarFiltros}>
