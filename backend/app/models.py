@@ -30,3 +30,12 @@ class CantidadPolvoEspiritu(Base):
     cantidad = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
+
+class Material(Base):
+    __tablename__ = "material"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    nombre = Column(String(50), nullable=False, unique=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())

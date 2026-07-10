@@ -58,3 +58,25 @@ class CantidadPolvoResponse(CantidadPolvoBase):
     
     class Config:
         from_attributes = True
+
+# ============================================
+# SCHEMAS PARA MATERIALES
+# ============================================
+class MaterialBase(BaseModel):
+    numeroOrden: int
+    nombre: str
+
+class MaterialCreate(MaterialBase):
+    pass
+
+class MaterialUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    nombre: Optional[str] = None
+
+class MaterialResponse(MaterialBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True

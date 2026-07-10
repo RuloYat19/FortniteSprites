@@ -1,5 +1,5 @@
 from app.database import SessionLocal, engine, Base
-from app.models import Sprit, CantidadPolvoEspiritu
+from app.models import Sprit, CantidadPolvoEspiritu, Material
 
 # Datos de Sprits
 sprits_data = [
@@ -935,6 +935,14 @@ cantidad_polvo_data = [
     },
 ]
 
+materiales_data = [
+    {"numeroOrden": 1, "nombre": "Normal"},
+    {"numeroOrden": 2, "nombre": "Oro"},
+    {"numeroOrden": 3, "nombre": "Gomita"},
+    {"numeroOrden": 4, "nombre": "Galaxia"},
+    {"numeroOrden": 5, "nombre": "Holofoil"},
+]
+
 def seed_database():
     # Crear las tablas si no existen
     Base.metadata.create_all(bind=engine)
@@ -962,6 +970,17 @@ def seed_database():
                 cantidad = CantidadPolvoEspiritu(**cantidad_data)
                 db.add(cantidad)
             print(f"{len(cantidad_polvo_data)} cantidades de Polvo de Espíritu insertadas con éxito :D")
+
+        # Verificar si ya hay datos de Material en la Base de Datos
+        existenMateriales = db.query(Material).first()
+        if existenMateriales:
+            print("La base de datos ya tiene Materiales.")
+        else: 
+            # Insertar Cantidades de Polvo
+            for material_data in materiales_data:
+                material = Material(**material_data)
+                db.add(material)
+            print(f"{len(materiales_data)} materiales insertadas con éxito :D")
         
         db.commit()
         print("Seed completado exitosamente")
