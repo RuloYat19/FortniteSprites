@@ -116,6 +116,72 @@ BEGIN
 END
 GO
 
+-- ============================================
+-- TABLA: Orden de Sprites Default
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenDefault')
+BEGIN
+    CREATE TABLE ordenDefault (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+    );
+    
+    -- Índices
+    CREATE INDEX idx_ordenDefault_nombre ON ordenDefault(nombre);
+    
+    PRINT '✅ Tabla ordenDefault creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla ordenDefault ya existe';
+END
+GO
+
+-- ============================================
+-- TABLA: Orden de Sprites por Rarezas
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRarezas')
+BEGIN
+    CREATE TABLE ordenRarezas (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+    );
+    
+    -- Índices
+    CREATE INDEX idx_ordenRarezas_nombre ON ordenRarezas(nombre);
+    
+    PRINT '✅ Tabla ordenRarezas creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla ordenRarezas ya existe';
+END
+GO
+
+-- ============================================
+-- TABLA: Orden de Sprites por Material
+-- ============================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenMateriales')
+BEGIN
+    CREATE TABLE ordenMateriales (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+    );
+    
+    -- Índices
+    CREATE INDEX idx_ordenMateriales_nombre ON ordenMateriales(nombre);
+    
+    PRINT '✅ Tabla ordenMateriales creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla ordenMateriales ya existe';
+END
+GO
+
 -- Verificar que las tablas se crearon
-SELECT * FROM sys.tables WHERE name IN ('sprits', 'nombresSprites');
+SELECT * FROM sys.tables WHERE name IN ('sprits', 'cantidadPolvoEspiritu', 'material', 'nombresSprites', 'ordenDefault', 'ordenRarezas', 'ordenMateriales');
 GO
