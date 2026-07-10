@@ -1,1 +1,1 @@
-from . import sprits, cantidad_polvo, material
+from . import sprits, cantidad_polvo, material, nombres_sprites

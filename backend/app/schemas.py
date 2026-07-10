@@ -80,3 +80,23 @@ class MaterialResponse(MaterialBase):
     
     class Config:
         from_attributes = True
+
+# ============================================
+# SCHEMAS PARA NOMBRES DE SPRITES
+# ============================================
+class NombreSpritBase(BaseModel):
+    nombre: str
+
+class NombreSpritCreate(NombreSpritBase):
+    pass
+
+class NombreSpritUpdate(BaseModel):
+    nombre: Optional[str] = None
+
+class NombreSpritResponse(NombreSpritBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True

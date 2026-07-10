@@ -81,6 +81,9 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 # Tabla de Material
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'material' ORDER BY ORDINAL_POSITION"
 
+# Tabla de Nombres de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'nombresSprites' ORDER BY ORDINAL_POSITION"
+
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed
 ```
@@ -102,5 +105,24 @@ docker compose start
 
 ## Para eliminar una tabla de la base de datos
 ```bash
+# Tabla de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE sprits;"
+
+# Tabla de Cantidad de Polvo de Espíritu
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE cantidadPolvoEspiritu;"
+
+# Tabla de Materiales
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE material;"
+
+# Tabla de Nombres de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE nombresSprites;"
+
+# Tabla de Orden Default
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenDefault;"
+
+# Tabla de Orden Rareza
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenRareza;"
+
+# Tabla de Orden Material
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenMaterial;"
 ```
