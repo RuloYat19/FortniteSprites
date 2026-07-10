@@ -5,7 +5,7 @@ import Inicio from './components/Inicio';
 import SpritsList from './components/SpritsList';
 import CalculadoraPolvoEspiritu from './components/CalculadoraPolvoEspiritu';
 import Dominados from './components/Dominados';
-import Administrador from './components/Administrador';
+import Administrador from './components/Administrador/Administrador';
 
 // Componente wrapper para manejar la navegación desde Inicio
 function InicioWrapper() {
