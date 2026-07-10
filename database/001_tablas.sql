@@ -168,30 +168,6 @@ BEGIN
 END
 GO
 
--- ============================================
--- TABLA: Orden de Sprites por Material
--- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenMaterial')
-BEGIN
-    CREATE TABLE ordenMaterial (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        numeroOrden INT NOT NULL,
-        nombre VARCHAR(50) NOT NULL,
-        created_at DATETIME DEFAULT GETDATE(),
-        updated_at DATETIME NULL
-    );
-    
-    -- Índices
-    CREATE INDEX idx_ordenMaterial_nombre ON ordenMaterial(nombre);
-    
-    PRINT '✅ Tabla ordenMaterial creada';
-END
-ELSE
-BEGIN
-    PRINT '⚠️ Tabla ordenMaterial ya existe';
-END
-GO
-
 -- Verificar que las tablas se crearon
 SELECT * FROM sys.tables WHERE name IN ('sprits', 'cantidadPolvoEspiritu', 'material', 'nombresSprites', 'ordenDefault', 'ordenRarezas', 'ordenMateriales');
 GO
