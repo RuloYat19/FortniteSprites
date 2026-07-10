@@ -122,3 +122,25 @@ class OrdenDefaultResponse(OrdenDefaultBase):
     
     class Config:
         from_attributes = True
+
+# ============================================
+# SCHEMAS PARA ORDEN RAREZA
+# ============================================
+class OrdenRarezaBase(BaseModel):
+    numeroOrden: int
+    nombre: str
+
+class OrdenRarezaCreate(OrdenRarezaBase):
+    pass
+
+class OrdenRarezaUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    nombre: Optional[str] = None
+
+class OrdenRarezaResponse(OrdenRarezaBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True

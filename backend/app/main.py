@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routes import sprits, cantidad_polvo, material, nombres_sprites, orden_default
+from app.routes import sprits, cantidad_polvo, material, nombres_sprites, orden_default, orden_rareza
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)
@@ -33,6 +33,7 @@ app.include_router(cantidad_polvo.router)
 app.include_router(material.router)
 app.include_router(nombres_sprites.router)
 app.include_router(orden_default.router)
+app.include_router(orden_rareza.router)
 
 @app.get("/")
 def root():
