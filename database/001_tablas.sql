@@ -82,6 +82,8 @@ BEGIN
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
     );
     
     -- Índices
@@ -103,6 +105,8 @@ BEGIN
     CREATE TABLE nombresSprites (
         id INT IDENTITY(1,1) PRIMARY KEY,
         nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
     );
     
     -- Índices
@@ -125,6 +129,8 @@ BEGIN
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
     );
     
     -- Índices
@@ -141,44 +147,48 @@ GO
 -- ============================================
 -- TABLA: Orden de Sprites por Rarezas
 -- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRarezas')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRareza')
 BEGIN
-    CREATE TABLE ordenRarezas (
+    CREATE TABLE ordenRareza (
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
     );
     
     -- Índices
-    CREATE INDEX idx_ordenRarezas_nombre ON ordenRarezas(nombre);
+    CREATE INDEX idx_ordenRareza_nombre ON ordenRareza(nombre);
     
-    PRINT '✅ Tabla ordenRarezas creada';
+    PRINT '✅ Tabla ordenRareza creada';
 END
 ELSE
 BEGIN
-    PRINT '⚠️ Tabla ordenRarezas ya existe';
+    PRINT '⚠️ Tabla ordenRareza ya existe';
 END
 GO
 
 -- ============================================
 -- TABLA: Orden de Sprites por Material
 -- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenMateriales')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenMaterial')
 BEGIN
-    CREATE TABLE ordenMateriales (
+    CREATE TABLE ordenMaterial (
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
     );
     
     -- Índices
-    CREATE INDEX idx_ordenMateriales_nombre ON ordenMateriales(nombre);
+    CREATE INDEX idx_ordenMaterial_nombre ON ordenMaterial(nombre);
     
-    PRINT '✅ Tabla ordenMateriales creada';
+    PRINT '✅ Tabla ordenMaterial creada';
 END
 ELSE
 BEGIN
-    PRINT '⚠️ Tabla ordenMateriales ya existe';
+    PRINT '⚠️ Tabla ordenMaterial ya existe';
 END
 GO
 
