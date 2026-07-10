@@ -1,5 +1,5 @@
 from app.database import SessionLocal, engine, Base
-from app.models import Sprit, CantidadPolvoEspiritu, Material, NombreSprit
+from app.models import Sprit, CantidadPolvoEspiritu, Material, NombreSprit, OrdenDefault
 
 # Datos de Sprits
 sprits_data = [
@@ -962,6 +962,25 @@ nombres_data = [
     "Espíritu Parca"
 ]
 
+orden_defaults_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
+]
+
 def seed_database():
     # Crear las tablas si no existen
     Base.metadata.create_all(bind=engine)
@@ -1011,6 +1030,17 @@ def seed_database():
                 nombre = NombreSprit(nombre=nombre_data)
                 db.add(nombre)
             print(f"{len(nombres_data)} nombres de Sprites insertadas con éxito :D")
+
+        # Verificar si ya hay datos en Orden Default en la Base de Datos
+        existenOrdenDefault = db.query(OrdenDefault).first()
+        if existenOrdenDefault:
+            print("La base de datos ya tiene datos en Orden Default.")
+        else: 
+            # Insertar Cantidades de Polvo
+            for orden_default_data in orden_defaults_data:
+                orden = OrdenDefault(**orden_default_data)
+                db.add(orden)
+            print(f"{len(orden_defaults_data)} cantidad de datos insertadas en Orden Default con éxito :D")
         
         db.commit()
         print("Seed completado exitosamente")

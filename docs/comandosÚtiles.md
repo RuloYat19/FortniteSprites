@@ -84,6 +84,9 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 # Tabla de Nombres de Sprites
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'nombresSprites' ORDER BY ORDINAL_POSITION"
 
+# Tabla de Orden Default
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ordenDefault' ORDER BY ORDINAL_POSITION"
+
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed
 ```

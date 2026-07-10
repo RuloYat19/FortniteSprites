@@ -100,3 +100,25 @@ class NombreSpritResponse(NombreSpritBase):
     
     class Config:
         from_attributes = True
+
+# ============================================
+# SCHEMAS PARA ORDEN DEFAULT
+# ============================================
+class OrdenDefaultBase(BaseModel):
+    numeroOrden: int
+    nombre: str
+
+class OrdenDefaultCreate(OrdenDefaultBase):
+    pass
+
+class OrdenDefaultUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    nombre: Optional[str] = None
+
+class OrdenDefaultResponse(OrdenDefaultBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
