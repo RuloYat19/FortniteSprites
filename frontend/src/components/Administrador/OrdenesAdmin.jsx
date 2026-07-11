@@ -471,7 +471,7 @@ function OrdenesAdmin() {
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
-                  <td style={{ textAlign: 'left', paddingLeft: '20px' }}>
+                  <td style={{ textAlign: 'center', paddingLeft: '20px' }}>
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>
                       {item.nombre}
                     </span>
