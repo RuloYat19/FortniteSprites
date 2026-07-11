@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService } from '../../services/api';
+import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -26,6 +26,11 @@ function SpritsList() {
   const [ordenRareza, setOrdenRareza] = useState({});
   const [ordenMaterial, setOrdenMaterial] = useState({});
   const [ordenesCargados, setOrdenesCargados] = useState(false);
+
+  // 🔵 ESTADOS PARA FILTROS DINÁMICOS
+  const [nombresDisponibles, setNombresDisponibles] = useState([]);
+  const [materialesDisponibles, setMaterialesDisponibles] = useState([]);
+  const [filtrosCargados, setFiltrosCargados] = useState(false);
   
   const [showEditModal, setShowEditModal] = useState(false);
   const [editSprit, setEditSprit] = useState({
@@ -71,7 +76,6 @@ function SpritsList() {
         materialesService.getAll()
       ]);
 
-      // Convertir arrays a objetos con el nombre como key y numeroOrden como value
       const defaultObj = {};
       defaultRes.data.forEach(item => {
         defaultObj[item.nombre] = item.numeroOrden;
@@ -92,7 +96,32 @@ function SpritsList() {
       setOrdenMaterial(materialObj);
       setOrdenesCargados(true);
     } catch (err) {
-      console.error('Error al cargar órdenes, usando fallbacks:', err);
+      console.error('Error al cargar órdenes:', err);
+      setOrdenesCargados(true);
+    }
+  };
+
+  // 🔵 Cargar nombres y materiales para los filtros
+  const cargarFiltros = async () => {
+    try {
+      const [nombresRes, materialesRes] = await Promise.all([
+        nombresSpritesService.getAll(),
+        materialesService.getAll()
+      ]);
+
+      // Extraer solo los nombres
+      const nombresOrdenados = nombresRes.data
+        .sort((a, b) => a.id - b.id)
+        .map(item => item.nombre);
+
+      const materiales = materialesRes.data.map(item => item.nombre);
+
+      setNombresDisponibles(nombresOrdenados);
+      setMaterialesDisponibles(materiales);
+      setFiltrosCargados(true);
+    } catch (err) {
+      console.error('Error al cargar filtros:', err);
+      setFiltrosCargados(true);
     }
   };
 
@@ -213,10 +242,11 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
-  // 🔵 EFECTO PRINCIPAL - Cargar sprits y órdenes
+  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes y filtros
   useEffect(() => {
     cargarSprits();
-    cargarOrdenes(); // 🔵 IMPORTANTE: Llamar a cargarOrdenes
+    cargarOrdenes();
+    cargarFiltros(); // 🔵 NUEVO: Cargar nombres y materiales para filtros
   }, []);
 
   // Para editar el Sprite
@@ -608,25 +638,6 @@ function SpritsList() {
     });
   };
 
-  const nombresDisponibles = [
-    'Espíritu de Agua',
-    'Espíritu de Tierra',
-    'Espíritu de Fuego',
-    'Espíritu Pato',
-    'Espíritu Fantasmal',
-    'Espíritu Demoníaco',
-    'Espíritu Rey',
-    'Espíritu Dormilón',
-    'Espíritu Punk',
-    'Espíritu del Punto Cero',
-    'Cacahuate Tostado',
-    'Espíritu de Pez',
-    'Espíritu Goleador',
-    'Espíritu de Aura',
-    'Espíritu Jefe',
-    'Espíritu Parca'
-  ];
-
   const spritsFiltrados = sprits.filter(sprit => {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
@@ -686,11 +697,11 @@ function SpritsList() {
         
         <select name="material" value={filtros.material} onChange={handleFiltroChange}>
           <option value="">Todos los materiales</option>
-          <option value="Normal">Normal</option>
-          <option value="Oro">Oro</option>
-          <option value="Gomita">Gomita</option>
-          <option value="Galaxia">Galaxia</option>
-          <option value="Holofoil">Holofoil</option>
+          {materialesDisponibles.map((material) => (
+            <option key={material} value={material}>
+              {material}
+            </option>
+          ))}
         </select>
         
         <button onClick={limpiarFiltros}>
