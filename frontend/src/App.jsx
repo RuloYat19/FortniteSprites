@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Inicio from './components/Inicio';
 import SpritsList from './components/Sprites/SpritsList';
 import CalculadoraPolvoEspiritu from './components/CalculadoraPolvoEspiritu';
-import Dominados from './components/Dominados';
+import Dominados from './components/Sprites/Dominados';
 import Administrador from './components/Administrador/Administrador';
 
 // Componente wrapper para manejar la navegación desde Inicio
