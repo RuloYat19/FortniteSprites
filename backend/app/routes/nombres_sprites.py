@@ -122,6 +122,8 @@ def create_nombre(
     db.commit()
     db.refresh(db_nombre)
 
+    return db_nombre
+
 # ============================================
 # POST - Crear múltiples nombres
 # ============================================
