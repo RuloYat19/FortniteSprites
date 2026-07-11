@@ -104,6 +104,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombresSprites')
 BEGIN
     CREATE TABLE nombresSprites (
         id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
         nombre VARCHAR(50) NOT NULL,
         created_at DATETIME DEFAULT GETDATE(),
         updated_at DATETIME NULL

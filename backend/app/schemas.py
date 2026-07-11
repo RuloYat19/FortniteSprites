@@ -85,12 +85,14 @@ class MaterialResponse(MaterialBase):
 # SCHEMAS PARA NOMBRES DE SPRITES
 # ============================================
 class NombreSpritBase(BaseModel):
+    numeroOrden: int
     nombre: str
 
 class NombreSpritCreate(NombreSpritBase):
     pass
 
 class NombreSpritUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
     nombre: Optional[str] = None
 
 class NombreSpritResponse(NombreSpritBase):

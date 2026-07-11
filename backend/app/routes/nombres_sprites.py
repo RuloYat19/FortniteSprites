@@ -21,12 +21,10 @@ def get_all_nombres(
     """
     query = db.query(models.NombreSprit)
     
-    # Aplicar filtros
     if nombre:
         query = query.filter(models.NombreSprit.nombre.ilike(f"%{nombre}%"))
     
-    # Ordenar alfabéticamente
-    query = query.order_by(models.NombreSprit.nombre)
+    query = query.order_by(models.NombreSprit.numeroOrden)
     
     return query.offset(skip).limit(limit).all()
 
@@ -109,12 +107,20 @@ def create_nombre(
             detail=f"Ya existe un nombre de sprit: '{nombre.nombre}'"
         )
     
+    existing_orden = db.query(models.NombreSprit).filter(
+        models.NombreSprit.numeroOrden == nombre.numeroOrden
+    ).first()
+    
+    if existing_orden:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe un nombre con el número de orden {nombre.numeroOrden}"
+        )
+    
     db_nombre = models.NombreSprit(**nombre.model_dump())
     db.add(db_nombre)
     db.commit()
     db.refresh(db_nombre)
-    
-    return db_nombre
 
 # ============================================
 # POST - Crear múltiples nombres
@@ -146,6 +152,15 @@ def create_nombres_batch(
                 errores.append(f"'{nombre_data.nombre}' ya existe")
                 continue
             
+            # 🔵 Verificar número de orden duplicado
+            existing_orden = db.query(models.NombreSprit).filter(
+                models.NombreSprit.numeroOrden == nombre_data.numeroOrden
+            ).first()
+            
+            if existing_orden:
+                errores.append(f"Número de orden {nombre_data.numeroOrden} ya está en uso")
+                continue
+            
             db_nombre = models.NombreSprit(**nombre_data.model_dump())
             db.add(db_nombre)
             creados.append(nombre_data.nombre)
@@ -155,7 +170,6 @@ def create_nombres_batch(
     
     if creados:
         db.commit()
-        # Refrescar los creados
         nombres_creados = db.query(models.NombreSprit).filter(
             models.NombreSprit.nombre.in_(creados)
         ).all()
@@ -199,6 +213,19 @@ def update_nombre(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Ya existe un nombre de sprit: '{nombre_update.nombre}'"
+            )
+    
+    # 🔵 Verificar duplicado de número de orden (excluyendo el mismo registro)
+    if nombre_update.numeroOrden:
+        existing_orden = db.query(models.NombreSprit).filter(
+            models.NombreSprit.numeroOrden == nombre_update.numeroOrden,
+            models.NombreSprit.id != nombre_id
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un nombre con el número de orden {nombre_update.numeroOrden}"
             )
     
     # Actualizar campos
