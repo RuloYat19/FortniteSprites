@@ -944,23 +944,24 @@ materiales_data = [
 ]
 
 nombres_data = [
-    "Espíritu de Agua",
-    "Espíritu de Tierra",
-    "Espíritu de Fuego",
-    "Espíritu Pato",
-    "Espíritu Fantasmal",
-    "Espíritu Demoníaco",
-    "Espíritu Rey",
-    "Espíritu Dormilón",
-    "Espíritu Punk",
-    "Espíritu del Punto Cero",
-    "Cacahuate Tostado",
-    "Espíritu de Pez",
-    "Espíritu Goleador",
-    "Espíritu de Aura",
-    "Espíritu Jefe",
-    "Espíritu Parca"
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
 ]
+
 
 orden_defaults_data = [
     {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
@@ -1046,7 +1047,7 @@ def seed_database():
         else: 
             # Insertar Nombres de Sprites
             for nombre_data in nombres_data:
-                nombre = NombreSprit(nombre=nombre_data)
+                nombre = NombreSprit(**nombre_data)
                 db.add(nombre)
             print(f"{len(nombres_data)} nombres de Sprites insertadas con éxito :D")
 
