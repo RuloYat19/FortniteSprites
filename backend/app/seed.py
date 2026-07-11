@@ -1,5 +1,5 @@
 from app.database import SessionLocal, engine, Base
-from app.models import Sprit, CantidadPolvoEspiritu
+from app.models import Sprit, CantidadPolvoEspiritu, Material, NombreSprit, OrdenDefault, OrdenRareza
 
 # Datos de Sprits
 sprits_data = [
@@ -935,6 +935,72 @@ cantidad_polvo_data = [
     },
 ]
 
+materiales_data = [
+    {"numeroOrden": 1, "nombre": "Normal"},
+    {"numeroOrden": 2, "nombre": "Oro"},
+    {"numeroOrden": 3, "nombre": "Gomita"},
+    {"numeroOrden": 4, "nombre": "Galaxia"},
+    {"numeroOrden": 5, "nombre": "Holofoil"},
+]
+
+nombres_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
+]
+
+
+orden_defaults_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
+]
+
+orden_rarezas_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 5, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 6, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 7, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 8, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 9, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 10, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 11, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 12, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 13, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 14, "nombre": "Espíritu Parca"},
+    {"numeroOrden": 15, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 16, "nombre": "Cacahuate Tostado"}
+]
+
 def seed_database():
     # Crear las tablas si no existen
     Base.metadata.create_all(bind=engine)
@@ -962,6 +1028,50 @@ def seed_database():
                 cantidad = CantidadPolvoEspiritu(**cantidad_data)
                 db.add(cantidad)
             print(f"{len(cantidad_polvo_data)} cantidades de Polvo de Espíritu insertadas con éxito :D")
+
+        # Verificar si ya hay datos de Material en la Base de Datos
+        existenMateriales = db.query(Material).first()
+        if existenMateriales:
+            print("La base de datos ya tiene Materiales.")
+        else: 
+            # Insertar Materiales
+            for material_data in materiales_data:
+                material = Material(**material_data)
+                db.add(material)
+            print(f"{len(materiales_data)} materiales insertadas con éxito :D")
+
+        # Verificar si ya hay datos de Nombres de Sprites en la Base de Datos
+        existenNombresSprites = db.query(NombreSprit).first()
+        if existenNombresSprites:
+            print("La base de datos ya tiene Nombres de Sprites.")
+        else: 
+            # Insertar Nombres de Sprites
+            for nombre_data in nombres_data:
+                nombre = NombreSprit(**nombre_data)
+                db.add(nombre)
+            print(f"{len(nombres_data)} nombres de Sprites insertadas con éxito :D")
+
+        # Verificar si ya hay datos en Orden Default en la Base de Datos
+        existenOrdenDefault = db.query(OrdenDefault).first()
+        if existenOrdenDefault:
+            print("La base de datos ya tiene datos en Orden Default.")
+        else: 
+            # Insertar datos del Orden Default
+            for orden_default_data in orden_defaults_data:
+                orden = OrdenDefault(**orden_default_data)
+                db.add(orden)
+            print(f"{len(orden_defaults_data)} cantidad de datos insertadas en Orden Default con éxito :D")
+        
+        # Verificar si ya hay datos en Orden Rareza en la Base de Datos
+        existenOrdenRareza = db.query(OrdenRareza).first()
+        if existenOrdenRareza:
+            print("La base de datos ya tiene datos en Orden Rareza.")
+        else: 
+            # Insertar datos del Orden Rareza
+            for orden_rareza_data in orden_rarezas_data:
+                orden = OrdenRareza(**orden_rareza_data)
+                db.add(orden)
+            print(f"{len(orden_rarezas_data)} cantidad de datos insertadas en Orden Rareza con éxito :D")
         
         db.commit()
         print("Seed completado exitosamente")
