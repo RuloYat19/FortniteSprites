@@ -1,4 +1,3 @@
-// frontend/src/components/MaterialesAdmin.jsx
 import React, { useState, useEffect } from 'react';
 import { materialesService } from '../../services/api';
 import './Administrador.css';
@@ -206,6 +205,25 @@ function MaterialesAdmin() {
     }
   };
 
+  // 🔵 Función para obtener la clase CSS del material
+  const getMaterialClass = (nombre) => {
+    const nombreLower = nombre.toLowerCase();
+    switch(nombreLower) {
+      case 'normal':
+        return 'material-normal';
+      case 'oro':
+        return 'material-oro';
+      case 'gomita':
+        return 'material-gomita';
+      case 'galaxia':
+        return 'material-galaxia';
+      case 'holofoil':
+        return 'material-holofoil';
+      default:
+        return 'material-normal';
+    }
+  };
+
   // 🔵 Filtrar datos
   const datosFiltrados = materiales.filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
@@ -218,18 +236,6 @@ function MaterialesAdmin() {
 
   if (loading) return <div className="loading">Cargando materiales...</div>;
   if (error) return <div className="error">{error}</div>;
-
-  // 🔵 Colores para los badges de material
-  const getMaterialColor = (nombre) => {
-    const colores = {
-      'Normal': { bg: '#0f3460', color: '#ffffff' },
-      'Oro': { bg: '#FFD700', color: '#1a1a2e' },
-      'Gomita': { bg: 'linear-gradient(90deg, #4CAF50, #FF69B4)', color: '#1a1a2e' },
-      'Galaxia': { bg: 'linear-gradient(90deg, #1a237e, #4a148c)', color: '#ffffff' },
-      'Holofoil': { bg: 'linear-gradient(90deg, #d490f4, #60f76d)', color: '#1a1a2e' }
-    };
-    return colores[nombre] || { bg: '#0f3460', color: '#ffffff' };
-  };
 
   return (
     <div className="admin-main" style={{ padding: '30px 35px', flex: 1 }}>
@@ -299,24 +305,12 @@ function MaterialesAdmin() {
               </tr>
             ) : (
               datosFiltrados.map((item) => {
-                const colors = getMaterialColor(item.nombre);
+                const materialClass = getMaterialClass(item.nombre);
                 return (
                   <tr key={item.id}>
                     <td className="td-orden">{item.numeroOrden}</td>
                     <td>
-                      <span 
-                        className="detail-value material-normal"
-                        style={{
-                          background: colors.bg,
-                          color: colors.color,
-                          padding: '4px 16px',
-                          borderRadius: '20px',
-                          display: 'inline-block',
-                          fontWeight: '600',
-                          fontSize: '0.9rem',
-                          border: '2px solid #0f3460'
-                        }}
-                      >
+                      <span className={`detail-value ${materialClass}`}>
                         {item.nombre}
                       </span>
                     </td>

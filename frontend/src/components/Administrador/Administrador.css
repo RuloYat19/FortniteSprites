@@ -475,6 +475,81 @@
   color: #fff;
 }
 
+/* 🔵 BADGE DE MATERIAL EN ADMIN */
+.detail-value.material-normal,
+.detail-value.material-oro,
+.detail-value.material-gomita,
+.detail-value.material-galaxia,
+.detail-value.material-holofoil {
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid #0f3460;
+  transition: all 0.3s ease;
+}
+
+.detail-value.material-normal {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #ffffff !important;
+}
+
+.detail-value.material-oro {
+  background: #FFD700 !important;
+  border-color: #FFD700 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.detail-value.material-gomita {
+  background: linear-gradient(90deg, #4CAF50, #FF69B4) !important;
+  border-color: #4CAF50 !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.15);
+}
+
+.detail-value.material-galaxia {
+  background: linear-gradient(90deg, #1a237e, #4a148c) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d) !important;
+  border-color: #4a148c !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+/* 🔵 Hover effect para los badges de material */
+.detail-value.material-normal:hover,
+.detail-value.material-oro:hover,
+.detail-value.material-gomita:hover,
+.detail-value.material-galaxia:hover,
+.detail-value.material-holofoil:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.detail-value.material-oro:hover {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+.detail-value.material-gomita:hover {
+  box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+}
+
+.detail-value.material-galaxia:hover {
+  box-shadow: 0 0 30px rgba(26, 35, 126, 0.4);
+}
+
+.detail-value.material-holofoil:hover {
+  box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
+}
+
 /* 🔵 RESPONSIVE */
 @media (max-width: 1024px) {
   .admin-sidebar {
