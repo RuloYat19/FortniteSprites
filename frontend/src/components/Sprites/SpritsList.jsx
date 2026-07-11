@@ -704,11 +704,10 @@ function SpritsList() {
           ))}
         </select>
         
-        <button onClick={limpiarFiltros}>
-          Limpiar filtros
-        </button>
-
         <div className="filtros-botones">
+          <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+            🗑️ Limpiar filtros
+          </button>
           <button className="btn-agregar" onClick={abrirAddModal}>
             ➕ Agregar Sprit
           </button>
