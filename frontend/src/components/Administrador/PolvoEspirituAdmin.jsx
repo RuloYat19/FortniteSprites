@@ -1,12 +1,9 @@
-// frontend/src/components/Administrador.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { cantidadPolvoService } from '../services/api';
+import { cantidadPolvoService } from '../../services/api';
 import './Administrador.css';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../ConfirmModal';
 
-function Administrador() {
-  const navigate = useNavigate();
+function PolvoEspirituAdmin() {
   const [cantidades, setCantidades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,7 +47,6 @@ function Administrador() {
     try {
       setLoading(true);
       const response = await cantidadPolvoService.getAll();
-      // Ordenar por numeroOrden ascendente
       const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
       setCantidades(dataOrdenada);
       setError(null);
@@ -90,23 +86,20 @@ function Administrador() {
   const obtenerSiguienteNumeroOrden = () => {
     if (cantidades.length === 0) return 1;
     
-    // Obtener todos los números de orden existentes y ordenarlos
     const numerosExistentes = cantidades.map(item => item.numeroOrden).sort((a, b) => a - b);
     
-    // Buscar el primer número faltante
     let numeroEsperado = 1;
     for (let i = 0; i < numerosExistentes.length; i++) {
       if (numerosExistentes[i] > numeroEsperado) {
-        return numeroEsperado; // Encontramos un hueco
+        return numeroEsperado;
       }
       numeroEsperado++;
     }
     
-    // Si no hay huecos, devolver el siguiente número
     return numerosExistentes.length + 1;
   };
 
-  // 🔵 Abrir modal para crear (con número de orden automático)
+  // 🔵 Abrir modal para crear
   const abrirCrearModal = () => {
     const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
@@ -154,14 +147,12 @@ function Administrador() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    // Validaciones
     if (!formData.numeroOrden || !formData.rareza || 
         !formData.nivelEspiritu || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
-    // 🔵 Validar que el número de orden no exista (solo para creación)
     if (!editando) {
       const numeroExistente = cantidades.some(
         item => item.numeroOrden === parseInt(formData.numeroOrden)
@@ -194,7 +185,6 @@ function Administrador() {
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
         await cantidadPolvoService.create(data);
-        //mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
@@ -234,7 +224,6 @@ function Administrador() {
     return true;
   });
 
-  // 🔵 Calcular estadísticas
   const totalRegistros = cantidades.length;
   const totalFiltrados = datosFiltrados.length;
 
@@ -242,164 +231,134 @@ function Administrador() {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="admin-container">
-      {/* 🔵 BARRA LATERAL */}
-      <aside className="admin-sidebar">
-        <div className="sidebar-logo">
-          <span className="sidebar-icon">⚙️</span>
-          <h2>Panel Admin</h2>
-        </div>
-        
-        <nav className="sidebar-nav">
-          <div className="nav-section">
-            <div className="nav-section-title">📊 Módulos</div>
-            <ul>
-              <li className="active">
-                <img 
-                  src="./imagenesSprites/polvoEspiritu.png" 
-                  alt="Polvo de Espíritu"
-                  className="nav-icon-img"
-                />
-                <span>Polvo de Espíritu</span>
-                <span className="nav-badge">{totalRegistros}</span>
-              </li>
-            </ul>
-          </div>
-        </nav>
+    <div className="admin-main" style={{ padding: '30px 35px', flex: 1 }}>
+      <header className="admin-header">
+        <img 
+          src="/imagenesSprites/polvoEspiritu.png" 
+          alt="Polvo de Espíritu"
+          className="nav-icon-img"
+        />
+        <span className="titulo">
+          Gestión de Polvo de Espíritu
+        </span>
+      </header>
 
-        <div className="sidebar-footer">
-          <button 
-            className="btn-volver-sidebar"
-            onClick={() => navigate('/')}
+      {/* 🔵 FILTROS */}
+      <div className="admin-filtros">
+        <div className="filtros-group">
+          <select 
+            name="rareza" 
+            value={filtros.rareza} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
           >
-            ← Regresar a Inicio
-          </button>
-        </div>
-      </aside>
+            <option value="">Todas las rarezas</option>
+            {rarezas.map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
 
-      {/* 🔵 CONTENIDO PRINCIPAL */}
-      <main className="admin-main">
-        <header className="admin-header">
-          <h1>Módulo de Administrador</h1>
-        </header>
+          <select 
+            name="nivelEspiritu" 
+            value={filtros.nivelEspiritu} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+          >
+            <option value="">Todos los niveles</option>
+            {niveles.map(n => (
+              <option key={n} value={n}>Nivel {n}</option>
+            ))}
+          </select>
 
-        {/* 🔵 FILTROS */}
-        <div className="admin-filtros">
-          <div className="filtros-group">
-            <select 
-              name="rareza" 
-              value={filtros.rareza} 
-              onChange={handleFiltroChange}
-              className="filtro-select"
-            >
-              <option value="">Todas las rarezas</option>
-              {rarezas.map(r => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-
-            <select 
-              name="nivelEspiritu" 
-              value={filtros.nivelEspiritu} 
-              onChange={handleFiltroChange}
-              className="filtro-select"
-            >
-              <option value="">Todos los niveles</option>
-              {niveles.map(n => (
-                <option key={n} value={n}>Nivel {n}</option>
-              ))}
-            </select>
-
-            <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
-              Limpiar Filtros
-            </button>
-          </div>
-
-          <button className="btn-agregar-admin" onClick={abrirCrearModal}>
-            ➕ Agregar registro
+          <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+            Limpiar Filtros
           </button>
         </div>
 
-        {/* 🔵 ESTADÍSTICAS RÁPIDAS */}
-        <div className="admin-stats">
-          <div className="stat-card">
-            <span className="stat-icon">📊</span>
-            <div>
-              <span className="stat-label">Total registros</span>
-              <span className="stat-value">{totalRegistros}</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <span className="stat-icon">🔍</span>
-            <div>
-              <span className="stat-label">Mostrando</span>
-              <span className="stat-value">{totalFiltrados}</span>
-            </div>
+        <button className="btn-agregar-admin" onClick={abrirCrearModal}>
+          ➕ Agregar registro
+        </button>
+      </div>
+
+      {/* 🔵 ESTADÍSTICAS */}
+      <div className="admin-stats">
+        <div className="stat-card">
+          <span className="stat-icon">📊</span>
+          <div>
+            <span className="stat-label">Total registros</span>
+            <span className="stat-value">{totalRegistros}</span>
           </div>
         </div>
+        <div className="stat-card">
+          <span className="stat-icon">🔍</span>
+          <div>
+            <span className="stat-label">Mostrando</span>
+            <span className="stat-value">{totalFiltrados}</span>
+          </div>
+        </div>
+      </div>
 
-        {/* 🔵 TABLA */}
-        <div className="admin-table-container">
-          <table className="admin-table">
-            <thead>
+      {/* 🔵 TABLA */}
+      <div className="admin-table-container">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th># Orden</th>
+              <th>Rareza</th>
+              <th>Nivel</th>
+              <th>Cantidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datosFiltrados.length === 0 ? (
               <tr>
-                <th># Orden</th>
-                <th>Rareza</th>
-                <th>Nivel</th>
-                <th>Cantidad</th>
-                <th>Acciones</th>
+                <td colSpan="5" className="no-data">
+                  {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {datosFiltrados.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="no-data">
-                    {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
+            ) : (
+              datosFiltrados.map((item) => (
+                <tr key={item.id}>
+                  <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
+                      {item.rareza}
+                    </span>
+                  </td>
+                  <td className="td-nivel">✨ Nivel {item.nivelEspiritu}</td>
+                  <td className="td-cantidad">
+                    <span className="cantidad-valor">
+                      {item.cantidad.toLocaleString()}
+                    </span>
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      className="polvo-icon-admin-small"
+                    />
+                  </td>
+                  <td className="td-acciones">
+                    <button 
+                      className="btn-editar"
+                      onClick={() => abrirEditarModal(item)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="btn-eliminar"
+                      onClick={() => confirmarEliminacion(item)}
+                      title="Eliminar"
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
-              ) : (
-                datosFiltrados.map((item) => (
-                  <tr key={item.id}>
-                    <td className="td-orden">{item.numeroOrden}</td>
-                    <td>
-                      <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
-                        {item.rareza}
-                      </span>
-                    </td>
-                    <td className="td-nivel">✨ Nivel {item.nivelEspiritu}</td>
-                    <td className="td-cantidad">
-                      <span className="cantidad-valor">
-                        {item.cantidad.toLocaleString()}
-                      </span>
-                      <img 
-                        src="./imagenesSprites/polvoEspiritu.png" 
-                        alt="Polvo"
-                        className="polvo-icon-admin-small"
-                      />
-                    </td>
-                    <td className="td-acciones">
-                      <button 
-                        className="btn-editar"
-                        onClick={() => abrirEditarModal(item)}
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        className="btn-eliminar"
-                        onClick={() => confirmarEliminacion(item)}
-                        title="Eliminar"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </main>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* 🔵 MODAL PARA CREAR/EDITAR */}
       {showModal && (
@@ -421,7 +380,7 @@ function Administrador() {
                     value={formData.numeroOrden}
                     onChange={handleFormChange}
                     min="1"
-                    disabled={!editando}  // 🔵 Deshabilitar en creación (es automático)
+                    disabled={!editando}
                   />
                   {!editando && (
                     <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
@@ -499,7 +458,7 @@ function Administrador() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro Rareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro Rareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
@@ -509,4 +468,4 @@ function Administrador() {
   );
 }
 
-export default Administrador;
+export default PolvoEspirituAdmin;

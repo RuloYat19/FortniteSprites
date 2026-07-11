@@ -44,7 +44,7 @@ body {
   border-radius: 8px;
   border: 2px solid #35cf35;
   background: #16213e;
-  color: #fff;
+  color: #35cf35;
   font-size: 14px;
   cursor: pointer;
   min-width: 150px;
@@ -69,18 +69,19 @@ body {
 
 .sprits-container .filtro-orden {
   border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
   min-width: 180px !important;
 }
 
 .sprits-container .filtro-orden:focus {
   border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
   box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
 }
 
-/* 🔵 Opcional: estilo para los options del select */
 .sprits-container .filtro-orden option {
   background: #16213e;
-  color: #fff;
+  color: #9c27b0;
 }
 
 /* 🔵 INFO DE POLVO NECESARIO */
@@ -421,7 +422,8 @@ body {
 .detail-value.material-normal,
 .detail-value.material-oro,
 .detail-value.material-gomita,
-.detail-value.material-galaxia {
+.detail-value.material-galaxia,
+.detail-value.material-holofoil{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -455,6 +457,13 @@ body {
   background: linear-gradient(90deg, #1a237e, #4a148c);
   border-color: #4a148c;
   color: #ffffff;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d);
+  border-color: #4a148c;
+  color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -626,7 +635,8 @@ body {
 .sprit-card-front .nombre-material-normal,
 .sprit-card-front .nombre-material-oro,
 .sprit-card-front .nombre-material-gomita,
-.sprit-card-front .nombre-material-galaxia {
+.sprit-card-front .nombre-material-galaxia,
+.sprit-card-front .nombre-material-holofoil {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -654,7 +664,7 @@ body {
 }
 
 .sprit-card-front .nombre-material-oro {
-  background: #FFD700 !important;
+  background: #f2d219 !important;
   border-color: #1a1a2e !important;
   color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
@@ -672,6 +682,13 @@ body {
   border-color: #4a148c;
   color: #ffffff;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.3);
+}
+
+.sprit-card-front .nombre-material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d);
+  border-color: #4a148c;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
 /* 🔵 Ojo en el nombre */
@@ -833,6 +850,9 @@ body {
     font-size: 0.75rem;
   }
   .nombre-material-galaxia {
+    font-size: 0.75rem;
+  }
+  .nombre-material-holofoil {
     font-size: 0.75rem;
   }
 }
@@ -1016,13 +1036,25 @@ body {
   }
 }
 
-/* 🔵 Botón para agregar sprit */
-.btn-agregar {
-  padding: 10px 25px;
+/* 🔵 Botón para limpiar filtros */
+.btn-limpiar-filtros {
+  padding: 10px 18px !important;
   border: none;
   border-radius: 8px;
-  background: #4caf50;
-  color: #fff;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+/* 🔵 Botón para agregar sprit */
+.btn-agregar {
+  padding: 10px 18px !important;
+  border: none;
+  border-radius: 8px;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
@@ -1061,20 +1093,18 @@ body {
 
 /* 🔵 Botón para volver al inicio */
 .sprits-container .btn-volver {
-  padding: 10px 18px;
+  padding: 10px 10px !important;
   border: 2px solid #0f3460;
   border-radius: 8px;
-  background: transparent;
-  color: #fff;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: bold !important;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
 }
 
 .sprits-container .btn-volver:hover {
