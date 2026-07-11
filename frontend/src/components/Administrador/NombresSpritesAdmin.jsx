@@ -18,6 +18,7 @@ function NombresSpritesAdmin() {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
+    numeroOrden: '',
     nombre: ''
   });
 
@@ -40,20 +41,20 @@ function NombresSpritesAdmin() {
   }, []);
 
 const cargarNombres = async () => {
-    try {
-        setLoading(true);
-        const response = await nombresSpritesService.getAll();
-        // 🔵 Ordenar por ID ascendente
-        const dataOrdenada = response.data.sort((a, b) => a.id - b.id);
-        setNombres(dataOrdenada);
-        setError(null);
-    } catch (err) {
-        setError('Error al cargar los nombres');
-        console.error(err);
-    } finally {
-        setLoading(false);
-    }
+  try {
+    setLoading(true);
+    const response = await nombresSpritesService.getAll();
+    const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
+    setNombres(dataOrdenada);
+    setError(null);
+  } catch (err) {
+    setError('Error al cargar los nombres');
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
 };
+
 
   // 🔵 Mostrar confirmación simple
   const mostrarConfirmacion = (title, message, type = 'success') => {
@@ -78,20 +79,38 @@ const cargarNombres = async () => {
     });
   };
 
-  // 🔵 Abrir modal para crear
   const abrirCrearModal = () => {
+    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
+      numeroOrden: siguienteNumero.toString(),
       nombre: ''
     });
     setEditando(false);
     setShowModal(true);
   };
 
+  const obtenerSiguienteNumeroOrden = () => {
+    if (nombres.length === 0) return 1;
+    
+    const numerosExistentes = nombres.map(item => item.numeroOrden).sort((a, b) => a - b);
+    
+    let numeroEsperado = 1;
+    for (let i = 0; i < numerosExistentes.length; i++) {
+      if (numerosExistentes[i] > numeroEsperado) {
+        return numeroEsperado;
+      }
+      numeroEsperado++;
+    }
+    
+    return numerosExistentes.length + 1;
+  };
+
   // 🔵 Abrir modal para editar
   const abrirEditarModal = (registro) => {
     setFormData({
       id: registro.id,
+      numeroOrden: registro.numeroOrden,
       nombre: registro.nombre
     });
     setEditando(true);
@@ -114,15 +133,15 @@ const cargarNombres = async () => {
     });
   };
 
-  // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.nombre.trim()) {
-      mostrarConfirmacion('⚠️ Campo incompleto', 'El nombre es obligatorio', 'warning');
+    if (!formData.numeroOrden || !formData.nombre.trim()) {
+      mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
     try {
       const data = {
+        numeroOrden: parseInt(formData.numeroOrden),
         nombre: formData.nombre.trim()
       };
 
@@ -138,7 +157,8 @@ const cargarNombres = async () => {
       cargarNombres();
     } catch (err) {
       console.error('Error al guardar:', err);
-      mostrarConfirmacion('❌ Error', err.response?.data?.detail || 'Error al guardar el nombre', 'error');
+      const mensaje = err.response?.data?.detail || 'Error al guardar el nombre';
+      mostrarConfirmacion('❌ Error', mensaje, 'error');
     }
   };
 
@@ -282,7 +302,7 @@ const cargarNombres = async () => {
         <table className="admin-table">
           <thead>
             <tr>
-              <th># ID</th>
+              <th># Orden</th>
               <th>Nombre</th>
               <th>Acciones</th>
             </tr>
@@ -297,7 +317,7 @@ const cargarNombres = async () => {
             ) : (
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
-                  <td className="td-orden">#{item.id}</td>
+                  <td className="td-orden">#{item.numeroOrden}</td>
                   <td style={{ textAlign: 'center', paddingLeft: '20px' }}>
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>
                       {item.nombre}
@@ -337,6 +357,24 @@ const cargarNombres = async () => {
             
             <div className="modal-body">
               <div className="admin-form">
+                <div className="form-group">
+                  <label>Número de Orden *</label>
+                  <input
+                    type="number"
+                    name="numeroOrden"
+                    placeholder="Ej: 1"
+                    value={formData.numeroOrden}
+                    onChange={handleFormChange}
+                    min="1"
+                    disabled={!editando}
+                  />
+                  {!editando && (
+                    <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
+                      💡 Número asignado automáticamente
+                    </small>
+                  )}
+                </div>
+
                 <div className="form-group">
                   <label>Nombre del Sprite *</label>
                   <input
