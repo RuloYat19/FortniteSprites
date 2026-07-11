@@ -234,8 +234,9 @@ function MaterialesAdmin() {
   return (
     <div className="admin-main" style={{ padding: '30px 35px', flex: 1 }}>
       <header className="admin-header">
-        <h1>📦 Gestión de Materiales</h1>
-        <p className="admin-subtitle">Administra los materiales disponibles para los sprits</p>
+        <span className="titulo">
+          📦 Gestión de Materiales
+        </span>
       </header>
 
       {/* 🔵 FILTROS */}

@@ -233,8 +233,14 @@ function PolvoEspirituAdmin() {
   return (
     <div className="admin-main" style={{ padding: '30px 35px', flex: 1 }}>
       <header className="admin-header">
-        <h1>⚗️ Gestión de Polvo de Espíritu</h1>
-        <p className="admin-subtitle">Administra las cantidades de polvo por rareza y nivel de espíritu</p>
+        <img 
+          src="/imagenesSprites/polvoEspiritu.png" 
+          alt="Polvo de Espíritu"
+          className="nav-icon-img"
+        />
+        <span className="titulo">
+          Gestión de Polvo de Espíritu
+        </span>
       </header>
 
       {/* 🔵 FILTROS */}
