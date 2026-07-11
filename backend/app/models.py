@@ -44,6 +44,7 @@ class NombreSprit(Base):
     __tablename__ = "nombresSprites"
     
     id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
     nombre = Column(String(50), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
