@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoService } from '../services/api';
+import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService } from '../../services/api';
 import './SpritsList.css';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../ConfirmModal';
 
 function SpritsList() {
   const navigate = useNavigate();
@@ -20,6 +20,12 @@ function SpritsList() {
     orden: 'default'
   });
   const [flippedCards, setFlippedCards] = useState({});
+
+  // 🔵 ESTADOS PARA LOS ÓRDENES
+  const [ordenDefault, setOrdenDefault] = useState({});
+  const [ordenRareza, setOrdenRareza] = useState({});
+  const [ordenMaterial, setOrdenMaterial] = useState({});
+  const [ordenesCargados, setOrdenesCargados] = useState(false);
   
   const [showEditModal, setShowEditModal] = useState(false);
   const [editSprit, setEditSprit] = useState({
@@ -56,79 +62,68 @@ function SpritsList() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
 
-  const ordenMateriales = {
-    'Normal': 1,
-    'Oro': 2,
-    'Gomita': 3,
-    'Galaxia': 4,
-    'Holofoil': 5
+  // 🔵 Cargar órdenes desde el backend
+  const cargarOrdenes = async () => {
+    try {
+      const [defaultRes, rarezaRes, materialRes] = await Promise.all([
+        ordenDefaultService.getAll(),
+        ordenRarezaService.getAll(),
+        materialesService.getAll()
+      ]);
+
+      // Convertir arrays a objetos con el nombre como key y numeroOrden como value
+      const defaultObj = {};
+      defaultRes.data.forEach(item => {
+        defaultObj[item.nombre] = item.numeroOrden;
+      });
+
+      const rarezaObj = {};
+      rarezaRes.data.forEach(item => {
+        rarezaObj[item.nombre] = item.numeroOrden;
+      });
+
+      const materialObj = {};
+      materialRes.data.forEach(item => {
+        materialObj[item.nombre] = item.numeroOrden;
+      });
+
+      setOrdenDefault(defaultObj);
+      setOrdenRareza(rarezaObj);
+      setOrdenMaterial(materialObj);
+      setOrdenesCargados(true);
+    } catch (err) {
+      console.error('Error al cargar órdenes, usando fallbacks:', err);
+    }
   };
 
-  const ordenNombresDefault = {
-    'Espíritu de Agua': 1,
-    'Espíritu de Tierra': 2,
-    'Espíritu de Fuego': 3,
-    'Espíritu Pato': 4,
-    'Espíritu Fantasmal': 5,
-    'Espíritu Demoníaco': 6,
-    'Espíritu Rey': 7,
-    'Espíritu Dormilón': 8,
-    'Espíritu Punk': 9,
-    'Espíritu del Punto Cero': 10,
-    'Cacahuate Tostado': 11,
-    'Espíritu de Pez': 12,
-    'Espíritu Goleador': 13,
-    'Espíritu de Aura': 14,
-    'Espíritu Jefe': 15,
-    'Espíritu Parca': 16
-  };
-
-  const ordenNombresRareza = {
-    'Espíritu de Agua': 1,
-    'Espíritu de Tierra': 2,
-    'Espíritu de Fuego': 3,
-    'Espíritu de Pez': 4,
-    'Espíritu Pato': 5,
-    'Espíritu Fantasmal': 6,
-    'Espíritu Demoníaco': 7,
-    'Espíritu Rey': 8,
-    'Espíritu Goleador': 9,
-    'Espíritu de Aura': 10,
-    'Espíritu Dormilón': 11,
-    'Espíritu Punk': 12,
-    'Espíritu Jefe': 13,
-    'Espíritu Parca': 14,
-    'Espíritu del Punto Cero': 15,
-    'Cacahuate Tostado': 16
-  };
-
+  // 🔵 Función de ordenamiento que usa los datos del backend
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
 
     const obtenerOrdenDefault = (sprit) => {
-      const nombreA = ordenNombresDefault[sprit.nombre] || 999;
-      const materialA = ordenMateriales[sprit.material] || 999;
+      const nombreA = ordenDefault[sprit.nombre] || 999;
+      const materialA = ordenMaterial[sprit.material] || 999;
       return { nombreA, materialA };
     };
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          const ordenA = ordenMateriales[a.material] || 999;
-          const ordenB = ordenMateriales[b.material] || 999;
+          const ordenA = ordenMaterial[a.material] || 999;
+          const ordenB = ordenMaterial[b.material] || 999;
           if (ordenA !== ordenB) return ordenA - ordenB;
-          const nombreA = ordenNombresDefault[a.nombre] || 999;
-          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
           return nombreA - nombreB;
         });
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          const rarezaA = ordenNombresRareza[a.nombre] || 999;
-          const rarezaB = ordenNombresRareza[b.nombre] || 999;
+          const rarezaA = ordenRareza[a.nombre] || 999;
+          const rarezaB = ordenRareza[b.nombre] || 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          const materialA = ordenMateriales[a.material] || 999;
-          const materialB = ordenMateriales[b.material] || 999;
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
           return materialA - materialB;
         });
       
@@ -150,11 +145,11 @@ function SpritsList() {
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          const nombreA = ordenNombresDefault[a.nombre] || 999;
-          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
           if (nombreA !== nombreB) return nombreA - nombreB;
-          const materialA = ordenMateriales[a.material] || 999;
-          const materialB = ordenMateriales[b.material] || 999;
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
           return materialA - materialB;
         });
     }
@@ -171,7 +166,6 @@ function SpritsList() {
     
     const clave = `${rareza}-${nivelEspiritu}`;
     
-    // Si ya está en caché, devolver el valor
     if (cantidadesPolvo[clave] !== undefined) {
       return cantidadesPolvo[clave];
     }
@@ -180,7 +174,6 @@ function SpritsList() {
       const response = await cantidadPolvoService.getByCombinacion(rareza, nivelEspiritu);
       const cantidad = response.data?.cantidad || 0;
       
-      // Guardar en caché
       setCantidadesPolvo(prev => ({
         ...prev,
         [clave]: cantidad
@@ -198,7 +191,6 @@ function SpritsList() {
     
     const polvo = await obtenerPolvoAlExtraer(rareza, nivelEspiritu);
     
-    // Actualizar el sprit en el estado local
     setSprits(prevSprits => 
       prevSprits.map(sprit => 
         sprit.id === spritId 
@@ -207,7 +199,6 @@ function SpritsList() {
       )
     );
     
-    // Opcional: Actualizar en el backend
     try {
       await spritsService.update(spritId, { polvoAlExtraer: polvo });
     } catch (error) {
@@ -222,14 +213,15 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
+  // 🔵 EFECTO PRINCIPAL - Cargar sprits y órdenes
   useEffect(() => {
     cargarSprits();
+    cargarOrdenes(); // 🔵 IMPORTANTE: Llamar a cargarOrdenes
   }, []);
 
   // Para editar el Sprite
   useEffect(() => {
     const cargarPolvoEdicion = async () => {
-      // Solo ejecutar si estamos en modo edición y tenemos rareza y nivel
       if (showEditModal && editSprit.rareza && editSprit.nivelEspiritu) {
         const polvo = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvo > 0) {
@@ -311,12 +303,10 @@ function SpritsList() {
     }
   };
 
-  // 🔵 MODIFICADO: handleImageClick ahora también maneja yaFueDominado
   const handleImageClick = async (id) => {
     try {
       const spritActual = sprits.find(s => s.id === id);
       
-      // Si el sprit está dominado, resetear todo
       if (spritActual?.estaDominado) {
         const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
 
@@ -337,16 +327,13 @@ function SpritsList() {
         return;
       }
       
-      // 🔵 Alternar inventario
       const nuevoEstadoInventario = !spritActual.estaEnInventario;
       const nuevoNivel = nuevoEstadoInventario ? (spritActual.nivelEspiritu || 1) : 1;
       
       let nuevoPolvo = spritActual.polvoAlExtraer || 0;
       if (!nuevoEstadoInventario) {
-        // Si se quita del inventario, nivel = 1
         nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
       } else if (spritActual.nivelEspiritu) {
-        // Si se agrega al inventario, usar el nivel actual
         nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, spritActual.nivelEspiritu);
       }
       
@@ -444,9 +431,7 @@ function SpritsList() {
   const abrirEditModal = (sprit, e) => {
     e.stopPropagation();
     
-    // Si el sprit tiene rareza y nivel, obtener el polvo
     if (sprit.rareza && sprit.nivelEspiritu) {
-      // Actualizar el polvo al extraer automáticamente
       actualizarPolvoAlExtraer(sprit.id, sprit.rareza, sprit.nivelEspiritu);
     }
     
@@ -493,7 +478,6 @@ function SpritsList() {
 
     setEditando(true);
     try {
-      // 🔵 Si tiene rareza y nivel, obtener el polvo al extraer
       let polvoAlExtraer = editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null;
       
       if (editSprit.rareza && editSprit.nivelEspiritu) {
@@ -571,7 +555,6 @@ function SpritsList() {
 
     setAgregando(true);
     try {
-      // 🔵 Si tiene rareza y nivel, obtener el polvo al extraer
       let polvoAlExtraer = newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null;
       
       if (newSprit.rareza && newSprit.nivelEspiritu) {
@@ -651,7 +634,8 @@ function SpritsList() {
     return true;
   });
 
-  const spritsOrdenados = ordenarSprits(spritsFiltrados);
+  // 🔵 Solo ordenar cuando los órdenes estén cargados
+  const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
 
   if (loading) return <div className="loading">Cargando sprits...</div>;
   if (error) return <div className="error">{error}</div>;
