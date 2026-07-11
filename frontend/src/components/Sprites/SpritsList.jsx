@@ -109,11 +109,11 @@ function SpritsList() {
         materialesService.getAll()
       ]);
 
-      // Extraer solo los nombres
+      // 🔵 ORDENAR POR numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
-
+      
       const materiales = materialesRes.data.map(item => item.nombre);
 
       setNombresDisponibles(nombresOrdenados);
