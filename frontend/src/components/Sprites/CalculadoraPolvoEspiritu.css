@@ -44,7 +44,7 @@ body {
   border-radius: 8px;
   border: 2px solid #35cf35;
   background: #16213e;
-  color: #fff;
+  color: #35cf35;
   font-size: 14px;
   cursor: pointer;
   min-width: 150px;
@@ -52,18 +52,20 @@ body {
 
 /* 🔵 Estilo para el filtro "Por Orden" */
 .calculadora-container .filtro-orden {
-  border-color: #9c27b0 !important;  /* 🔵 Color púrpura para distinguirlo */
+  border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
   min-width: 180px !important;
 }
 
 .calculadora-container .filtro-orden:focus {
   border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
   box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
 }
 
 .calculadora-container .filtro-orden option {
   background: #16213e;
-  color: #fff;
+  color: #9c27b0;
 }
 
 .calculadora-container .filtros button {
@@ -85,13 +87,12 @@ body {
 
 /* 🔵 Botón para limpiar selección */
 .calculadora-container .btn-limpiar-seleccion {
-  padding: 10px 25px;
+  padding: 10px 18px !important;
   border: none;
   border-radius: 8px;
-  background: #f44336;
-  color: #fff;
-  font-size: 1.0rem;
-  font-weight: bold;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
+  font-weight: bold !important;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -488,20 +489,18 @@ body {
 }
 
 .calculadora-container .btn-volver {
-  padding: 10px 18px;
+  padding: 10px 10px !important;
   border: 2px solid #0f3460;
   border-radius: 8px;
-  background: transparent;
-  color: #fff;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: bold !important;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
 }
 
 .calculadora-container .btn-volver:hover {
