@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Inicio from './components/Inicio';
 import SpritsList from './components/Sprites/SpritsList';
-import CalculadoraPolvoEspiritu from './components/CalculadoraPolvoEspiritu';
-import Dominados from './components/Dominados';
+import CalculadoraPolvoEspiritu from './components/Sprites/CalculadoraPolvoEspiritu';
+import Dominados from './components/Sprites/Dominados';
 import Administrador from './components/Administrador/Administrador';
 
 // Componente wrapper para manejar la navegación desde Inicio
