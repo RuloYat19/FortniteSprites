@@ -84,6 +84,59 @@ body {
   color: #9c27b0;
 }
 
+/* 🔵 Select de nombres con scroll*/
+.sprits-container .filtro-nombres {
+  max-height: 200px; /* Altura para mostrar ~10 opciones */
+  overflow-y: auto; /* Scroll vertical */
+  scrollbar-width: thin; /* Scroll más delgado en Firefox */
+  scrollbar-color: #35cf35 #16213e; /* Color del scroll en Firefox */
+}
+
+/* 🔵 Estilo del scroll para Chrome, Edge y Safari */
+.sprits-container .filtro-nombres::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sprits-container .filtro-nombres::-webkit-scrollbar-track {
+  background: #16213e;
+  border-radius: 4px;
+}
+
+.sprits-container .filtro-nombres::-webkit-scrollbar-thumb {
+  background: #35cf35;
+  border-radius: 4px;
+}
+
+.sprits-container .filtro-nombres::-webkit-scrollbar-thumb:hover {
+  background: #2db82d;
+}
+
+/* 🔵 Estilo para las opciones del select */
+.sprits-container .filtro-nombres option {
+  padding: 8px 12px;
+  cursor: pointer;
+  background: #16213e;
+  color: #35cf35;
+}
+
+.sprits-container .filtro-nombres option:hover {
+  background: #35cf35;
+  color: #1a1a2e;
+}
+
+/* 🔵 Estilo para la opción seleccionada */
+.sprits-container .filtro-nombres option:checked {
+  background: #35cf35;
+  color: #1a1a2e;
+}
+
+/* 🔵 Responsive */
+@media (max-width: 768px) {
+  .sprits-container .filtro-nombres {
+    max-height: 150px; /* Menos altura en móviles */
+  }
+}
+
 /* 🔵 INFO DE POLVO NECESARIO */
 .sprits-container .polvo-info {
   display: flex;
