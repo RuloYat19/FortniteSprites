@@ -109,11 +109,11 @@ function SpritsList() {
         materialesService.getAll()
       ]);
 
-      // Extraer solo los nombres
+      // 🔵 ORDENAR POR numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
-
+      
       const materiales = materialesRes.data.map(item => item.nombre);
 
       setNombresDisponibles(nombresOrdenados);
@@ -170,7 +170,28 @@ function SpritsList() {
           }
           return ordenA.materialA - ordenB.materialA;
         });
-      
+
+      case 'no-dominado':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaDominado !== b.estaDominado) {
+            return a.estaDominado ? 1 : -1;
+          }
+          
+          if (!a.estaDominado && !b.estaDominado) {
+            if (a.estaEnInventario !== b.estaEnInventario) {
+              return a.estaEnInventario ? -1 : 1;
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+        
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
@@ -672,12 +693,14 @@ function SpritsList() {
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
           <option value="no-inventario">Faltan en Inventario</option>
+          <option value="no-dominado">Faltan por Dominar</option>
         </select>
 
         <select 
           name="nombre" 
           value={filtros.nombre} 
           onChange={handleFiltroChange}
+          className="filtro-nombres"
         >
           <option value="">Todos los nombres</option>
           {nombresDisponibles.map((nombre) => (
@@ -704,11 +727,10 @@ function SpritsList() {
           ))}
         </select>
         
-        <button onClick={limpiarFiltros}>
-          Limpiar filtros
-        </button>
-
         <div className="filtros-botones">
+          <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+            🗑️ Limpiar filtros
+          </button>
           <button className="btn-agregar" onClick={abrirAddModal}>
             ➕ Agregar Sprit
           </button>
