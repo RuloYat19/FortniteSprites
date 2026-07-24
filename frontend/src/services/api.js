@@ -75,4 +75,26 @@ export const ordenRarezaService = {
   delete: (id) => axios.delete(`${API_URL}/orden-rareza/${id}`),
 };
 
+export const backupService = {
+  generarBackup: (incluirId = false) => {
+    const params = new URLSearchParams();
+    if (incluirId) params.append('incluir_id', 'true');
+    const url = `${API_URL}/backup/generar${params.toString() ? '?' + params.toString() : ''}`;
+    return axios.get(url, {
+      responseType: 'blob',
+    });
+  },
+  
+  generarBackupTabla: (tablaNombre, incluirId = false) => {
+    const params = new URLSearchParams();
+    if (incluirId) params.append('incluir_id', 'true');
+    const url = `${API_URL}/backup/tabla/${tablaNombre}${params.toString() ? '?' + params.toString() : ''}`;
+    return axios.get(url, {
+      responseType: 'blob',
+    });
+  },
+  
+  getInfo: () => axios.get(`${API_URL}/backup/info`),
+};
+
 export default api;

@@ -1,10 +1,10 @@
-// frontend/src/components/Administrador/Administrador.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PolvoEspirituAdmin from './PolvoEspirituAdmin';
 import MaterialesAdmin from './MaterialesAdmin';
 import NombresSpritesAdmin from './NombresSpritesAdmin';
 import OrdenesAdmin from './OrdenesAdmin';
+import BackupAdmin from './BackupAdmin'; // 🔵 NUEVO
 import './Administrador.css';
 
 function Administrador() {
@@ -22,6 +22,8 @@ function Administrador() {
         return <NombresSpritesAdmin />;
       case 'ordenes':
         return <OrdenesAdmin />;
+      case 'backup':  // 🔵 NUEVO CASO
+        return <BackupAdmin />;
       case 'polvo':
       default:
         return <PolvoEspirituAdmin />;
@@ -72,13 +74,22 @@ function Administrador() {
                 <span>Nombres de Sprites</span>
               </li>
 
-              {/* 🔵 Sección de Órdenes - NUEVA */}
+              {/* 🔵 Sección de Órdenes */}
               <li 
                 className={seccionActiva === 'ordenes' ? 'active' : ''}
                 onClick={() => setSeccionActiva('ordenes')}
               >
                 <span className="nav-icon">📋</span>
                 <span>Órdenes</span>
+              </li>
+
+              {/* 🔵 Sección de Backup - NUEVA */}
+              <li 
+                className={seccionActiva === 'backup' ? 'active' : ''}
+                onClick={() => setSeccionActiva('backup')}
+              >
+                <span className="nav-icon">💾</span>
+                <span>Backup</span>
               </li>
             </ul>
           </div>
