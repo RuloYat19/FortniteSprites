@@ -4,7 +4,7 @@ from typing import List, Optional
 from app import models, schemas
 from app.database import get_db
 
-router = APIRouter(prefix="/api/cantidad-polvo", tags=["cantidad-polvo"])
+router = APIRouter(prefix="/api/cantidad-polvo-extraer", tags=["cantidad-polvo-extraer"])
 
 # ============================================
 # GET - Obtener todas las cantidades

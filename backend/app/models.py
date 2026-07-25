@@ -31,6 +31,17 @@ class CantidadPolvoEspirituExtraer(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
+class CantidadPolvoEspirituInvocar(Base):
+    __tablename__ = "cantidadPolvoEspirituInvocar"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    material = Column(String(50), nullable=False)
+    rareza = Column(String(50), nullable=False)
+    cantidad = Column(Integer, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
 class Material(Base):
     __tablename__ = "material"
     

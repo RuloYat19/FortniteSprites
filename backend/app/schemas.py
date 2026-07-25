@@ -60,6 +60,34 @@ class CantidadPolvoExtraerResponse(CantidadPolvoExtraerBase):
         from_attributes = True
 
 # ============================================
+# SCHEMAS PARA CANTIDADPOLVOESPIRITUINVOCAR
+# ============================================
+
+class CantidadPolvoInvocarBase(BaseModel):
+    numeroOrden: int
+    material: str
+    rareza: str
+    cantidad: int
+
+class CantidadPolvoInvocarCreate(CantidadPolvoInvocarBase):
+    pass
+
+class CantidadPolvoInvocarUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    material: Optional[str] = None
+    rareza: Optional[str] = None
+    cantidad: Optional[int] = None
+
+class CantidadPolvoInvocarResponse(CantidadPolvoInvocarBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+
+# ============================================
 # SCHEMAS PARA MATERIALES
 # ============================================
 class MaterialBase(BaseModel):

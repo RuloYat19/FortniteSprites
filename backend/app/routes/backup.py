@@ -78,7 +78,8 @@ def generar_backup(
             {"modelo": models.NombreSprit, "nombre": "nombresSprites"},
             {"modelo": models.OrdenDefault, "nombre": "ordenDefault"},
             {"modelo": models.OrdenRareza, "nombre": "ordenRareza"},
-            {"modelo": models.CantidadPolvoEspirituExtraer, "nombre": "CantidadPolvoEspirituExtraer"},
+            {"modelo": models.CantidadPolvoEspirituExtraer, "nombre": "cantidadPolvoEspirituExtraer"},
+            {"modelo": models.CantidadPolvoEspirituInvocar, "nombre": "cantidadPolvoEspirituInvocar"},  # 🔵 NUEVA TABLA
             {"modelo": models.Sprit, "nombre": "sprits"},
         ]
         
@@ -161,12 +162,13 @@ def generar_backup_tabla(
 ):
     """
     Genera un archivo SQL con INSERTs de una tabla específica.
-    Tablas disponibles: sprits, CantidadPolvoEspirituExtraer, material, nombresSprites, ordenDefault, ordenRareza
+    Tablas disponibles: sprits, cantidadPolvoEspirituExtraer, cantidadPolvoEspirituInvocar, material, nombresSprites, ordenDefault, ordenRareza
     """
     # Mapeo de nombres de tabla a modelos
     tabla_map = {
         "sprits": models.Sprit,
-        "CantidadPolvoEspirituExtraer": models.CantidadPolvoEspirituExtraer,
+        "cantidadPolvoEspirituExtraer": models.CantidadPolvoEspirituExtraer,
+        "cantidadPolvoEspirituInvocar": models.CantidadPolvoEspirituInvocar,  # 🔵 NUEVA TABLA
         "material": models.Material,
         "nombresSprites": models.NombreSprit,
         "ordenDefault": models.OrdenDefault,
@@ -251,7 +253,8 @@ def get_backup_info(db: Session = Depends(get_db)):
     """
     tablas = [
         {"nombre": "sprits", "descripcion": "Sprits de Fortnite", "registros": db.query(models.Sprit).count()},
-        {"nombre": "CantidadPolvoEspirituExtraer", "descripcion": "Cantidades de Polvo de Espíritu", "registros": db.query(models.CantidadPolvoEspirituExtraer).count()},
+        {"nombre": "cantidadPolvoEspirituExtraer", "descripcion": "Cantidades de Polvo al Extraer", "registros": db.query(models.CantidadPolvoEspirituExtraer).count()},
+        {"nombre": "cantidadPolvoEspirituInvocar", "descripcion": "Cantidades de Polvo al Invocar", "registros": db.query(models.CantidadPolvoEspirituInvocar).count()},  # 🔵 NUEVA TABLA
         {"nombre": "material", "descripcion": "Materiales", "registros": db.query(models.Material).count()},
         {"nombre": "nombresSprites", "descripcion": "Nombres de Sprites", "registros": db.query(models.NombreSprit).count()},
         {"nombre": "ordenDefault", "descripcion": "Orden Default", "registros": db.query(models.OrdenDefault).count()},
