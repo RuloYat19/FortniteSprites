@@ -27,7 +27,22 @@ services:
         echo 'SQL Server not ready, retrying in 5 seconds...';
         sleep 5;
       done;
-      echo 'SQL Server ready, running scripts...';
+      echo 'SQL Server ready!';
+
+      echo 'Creating database FORTNITEDB if not exists...';
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'YourStrong!Passw0rd' -Q \"
+      IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FORTNITEDB')
+      BEGIN
+        CREATE DATABASE FORTNITEDB;
+        PRINT 'Database FORTNITEDB created successfully';
+      END
+      ELSE
+      BEGIN
+        PRINT 'Database FORTNITEDB already exists';
+      END
+      \";
+
+      echo 'Running SQL scripts...';
       for script in /scripts/*.sql; do
         echo 'Running $script...';
         /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'YourStrong!Passw0rd' -d FORTNITEDB -i \"$script\";

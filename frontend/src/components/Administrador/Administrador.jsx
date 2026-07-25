@@ -1,30 +1,34 @@
+// frontend/src/components/Administrador/Administrador.jsx
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PolvoEspirituAdmin from './PolvoEspirituAdmin';
+import PolvoInvocarAdmin from './PolvoInvocarAdmin';
 import MaterialesAdmin from './MaterialesAdmin';
 import NombresSpritesAdmin from './NombresSpritesAdmin';
 import OrdenesAdmin from './OrdenesAdmin';
-import BackupAdmin from './BackupAdmin'; // 🔵 NUEVO
+import BackupAdmin from './BackupAdmin';
 import './Administrador.css';
 
 function Administrador() {
   const navigate = useNavigate();
   
-  // 🔵 Estado para la sección activa
-  const [seccionActiva, setSeccionActiva] = useState('polvo');
+  const [seccionActiva, setSeccionActiva] = useState('polvo-extraer');
 
-  // 🔵 Renderizar la sección activa
   const renderSeccion = () => {
     switch(seccionActiva) {
+      case 'polvo-extraer':
+        return <PolvoEspirituAdmin />;
+      case 'polvo-invocar': // 🔵 NUEVO CASO
+        return <PolvoInvocarAdmin />;
       case 'materiales':
         return <MaterialesAdmin />;
       case 'nombres':
         return <NombresSpritesAdmin />;
       case 'ordenes':
         return <OrdenesAdmin />;
-      case 'backup':  // 🔵 NUEVO CASO
+      case 'backup':
         return <BackupAdmin />;
-      case 'polvo':
       default:
         return <PolvoEspirituAdmin />;
     }
@@ -32,7 +36,6 @@ function Administrador() {
 
   return (
     <div className="admin-container">
-      {/* 🔵 BARRA LATERAL */}
       <aside className="admin-sidebar">
         <div className="sidebar-logo">
           <span className="sidebar-icon">⚙️</span>
@@ -43,20 +46,33 @@ function Administrador() {
           <div className="nav-section">
             <div className="nav-section-title">📊 Módulos</div>
             <ul>
-              {/* 🔵 Sección de Polvo de Espíritu */}
+              {/* 🔵 Polvo al Extraer */}
               <li 
-                className={seccionActiva === 'polvo' ? 'active' : ''}
-                onClick={() => setSeccionActiva('polvo')}
+                className={seccionActiva === 'polvo-extraer' ? 'active' : ''}
+                onClick={() => setSeccionActiva('polvo-extraer')}
               >
                 <img 
                   src="/imagenesSprites/polvoEspiritu.png" 
-                  alt="Polvo de Espíritu"
+                  alt="Polvo al Extraer"
                   className="nav-icon-img"
                 />
-                <span>Polvo de Espíritu</span>
+                <span>Polvo al Extraer</span>
               </li>
 
-              {/* 🔵 Sección de Materiales */}
+              {/* 🔵 Polvo al Invocar - NUEVO */}
+              <li 
+                className={seccionActiva === 'polvo-invocar' ? 'active' : ''}
+                onClick={() => setSeccionActiva('polvo-invocar')}
+              >
+                <img 
+                  src="/imagenesSprites/polvoEspiritu.png" 
+                  alt="Polvo al Invocar"
+                  className="nav-icon-img"
+                />
+                <span>Polvo al Invocar</span>
+              </li>
+
+              {/* 🔵 Materiales */}
               <li 
                 className={seccionActiva === 'materiales' ? 'active' : ''}
                 onClick={() => setSeccionActiva('materiales')}
@@ -65,7 +81,7 @@ function Administrador() {
                 <span>Materiales</span>
               </li>
 
-              {/* 🔵 Sección de Nombres de Sprites */}
+              {/* 🔵 Nombres de Sprites */}
               <li 
                 className={seccionActiva === 'nombres' ? 'active' : ''}
                 onClick={() => setSeccionActiva('nombres')}
@@ -74,7 +90,7 @@ function Administrador() {
                 <span>Nombres de Sprites</span>
               </li>
 
-              {/* 🔵 Sección de Órdenes */}
+              {/* 🔵 Órdenes */}
               <li 
                 className={seccionActiva === 'ordenes' ? 'active' : ''}
                 onClick={() => setSeccionActiva('ordenes')}
@@ -83,7 +99,7 @@ function Administrador() {
                 <span>Órdenes</span>
               </li>
 
-              {/* 🔵 Sección de Backup - NUEVA */}
+              {/* 🔵 Backup */}
               <li 
                 className={seccionActiva === 'backup' ? 'active' : ''}
                 onClick={() => setSeccionActiva('backup')}
@@ -105,7 +121,6 @@ function Administrador() {
         </div>
       </aside>
 
-      {/* 🔵 CONTENIDO PRINCIPAL */}
       {renderSeccion()}
     </div>
   );
