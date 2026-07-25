@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
+import { spritsService, cantidadPolvoExtraerService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -221,7 +221,7 @@ function SpritsList() {
     }
     
     try {
-      const response = await cantidadPolvoService.getByCombinacion(rareza, nivelEspiritu);
+      const response = await cantidadPolvoExtraerService.getByCombinacion(rareza, nivelEspiritu);
       const cantidad = response.data?.cantidad || 0;
       
       setCantidadesPolvo(prev => ({
