@@ -20,8 +20,8 @@ class Sprit(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-class CantidadPolvoEspiritu(Base):
-    __tablename__ = "cantidadPolvoEspiritu"
+class CantidadPolvoEspirituExtraer(Base):
+    __tablename__ = "cantidadPolvoEspirituExtraer"
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)

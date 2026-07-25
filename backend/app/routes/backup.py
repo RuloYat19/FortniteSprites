@@ -78,7 +78,7 @@ def generar_backup(
             {"modelo": models.NombreSprit, "nombre": "nombresSprites"},
             {"modelo": models.OrdenDefault, "nombre": "ordenDefault"},
             {"modelo": models.OrdenRareza, "nombre": "ordenRareza"},
-            {"modelo": models.CantidadPolvoEspiritu, "nombre": "cantidadPolvoEspiritu"},
+            {"modelo": models.CantidadPolvoEspirituExtraer, "nombre": "CantidadPolvoEspirituExtraer"},
             {"modelo": models.Sprit, "nombre": "sprits"},
         ]
         
@@ -161,12 +161,12 @@ def generar_backup_tabla(
 ):
     """
     Genera un archivo SQL con INSERTs de una tabla específica.
-    Tablas disponibles: sprits, cantidadPolvoEspiritu, material, nombresSprites, ordenDefault, ordenRareza
+    Tablas disponibles: sprits, CantidadPolvoEspirituExtraer, material, nombresSprites, ordenDefault, ordenRareza
     """
     # Mapeo de nombres de tabla a modelos
     tabla_map = {
         "sprits": models.Sprit,
-        "cantidadPolvoEspiritu": models.CantidadPolvoEspiritu,
+        "CantidadPolvoEspirituExtraer": models.CantidadPolvoEspirituExtraer,
         "material": models.Material,
         "nombresSprites": models.NombreSprit,
         "ordenDefault": models.OrdenDefault,
@@ -251,7 +251,7 @@ def get_backup_info(db: Session = Depends(get_db)):
     """
     tablas = [
         {"nombre": "sprits", "descripcion": "Sprits de Fortnite", "registros": db.query(models.Sprit).count()},
-        {"nombre": "cantidadPolvoEspiritu", "descripcion": "Cantidades de Polvo de Espíritu", "registros": db.query(models.CantidadPolvoEspiritu).count()},
+        {"nombre": "CantidadPolvoEspirituExtraer", "descripcion": "Cantidades de Polvo de Espíritu", "registros": db.query(models.CantidadPolvoEspirituExtraer).count()},
         {"nombre": "material", "descripcion": "Materiales", "registros": db.query(models.Material).count()},
         {"nombre": "nombresSprites", "descripcion": "Nombres de Sprites", "registros": db.query(models.NombreSprit).count()},
         {"nombre": "ordenDefault", "descripcion": "Orden Default", "registros": db.query(models.OrdenDefault).count()},

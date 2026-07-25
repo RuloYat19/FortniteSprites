@@ -43,15 +43,15 @@ class SpritResponse(SpritBase):
         from_attributes = True
 
 # ============================================
-# SCHEMAS PARA CANTIDADPOLVOESPIRITU
+# SCHEMAS PARA CANTIDADPOLVOESPIRITUEXTRAER
 # ============================================
-class CantidadPolvoBase(BaseModel):
+class CantidadPolvoExtraerBase(BaseModel):
     numeroOrden: int
     rareza: str
     nivelEspiritu: int
     cantidad: int
 
-class CantidadPolvoResponse(CantidadPolvoBase):
+class CantidadPolvoExtraerResponse(CantidadPolvoExtraerBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

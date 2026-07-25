@@ -88,28 +88,28 @@ INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (18
 INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (19, 'Espíritu de los Siete', '2026-07-16 21:48:11', NULL);
 
 -- ============================================
--- TABLA: cantidadPolvoEspiritu
+-- TABLA: cantidadPolvoEspirituExtraer
 -- ============================================
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (1, 'Raro', 1, 500, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (2, 'Raro', 2, 625, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (3, 'Raro', 3, 750, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (4, 'Raro', 4, 875, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (5, 'Raro', 5, 1000, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (6, 'Épico', 1, 550, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (7, 'Épico', 2, 700, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (8, 'Épico', 3, 825, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (9, 'Épico', 4, 950, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (10, 'Épico', 5, 1100, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (11, 'Legendario', 1, 600, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (12, 'Legendario', 2, 750, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (13, 'Legendario', 3, 900, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (14, 'Legendario', 4, 1050, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (15, 'Legendario', 5, 1200, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (16, 'Mítico', 1, 650, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (17, 'Mítico', 2, 800, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (18, 'Mítico', 3, 975, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'Mítico', 4, 1150, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspiritu (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'Mítico', 5, 1300, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (1, 'Raro', 1, 500, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (2, 'Raro', 2, 625, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (3, 'Raro', 3, 750, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (4, 'Raro', 4, 875, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (5, 'Raro', 5, 1000, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (6, 'Épico', 1, 550, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (7, 'Épico', 2, 700, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (8, 'Épico', 3, 825, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (9, 'Épico', 4, 950, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (10, 'Épico', 5, 1100, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (11, 'Legendario', 1, 600, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (12, 'Legendario', 2, 750, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (13, 'Legendario', 3, 900, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (14, 'Legendario', 4, 1050, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (15, 'Legendario', 5, 1200, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (16, 'Mítico', 1, 650, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (17, 'Mítico', 2, 800, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (18, 'Mítico', 3, 975, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'Mítico', 4, 1150, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'Mítico', 5, 1300, '2026-07-03 00:24:41', NULL);
 
 -- ============================================
 -- TABLA: sprits
