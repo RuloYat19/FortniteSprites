@@ -219,6 +219,8 @@ function MaterialesAdmin() {
         return 'material-galaxia';
       case 'holofoil':
         return 'material-holofoil';
+      case 'cúbico':
+        return 'material-cúbico';
       default:
         return 'material-normal';
     }
