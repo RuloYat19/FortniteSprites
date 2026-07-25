@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { materialesService } from '../../services/api';
+import { cantidadPolvoInvocarService, materialesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
-function MaterialesAdmin() {
+function PolvoInvocarAdmin() {
+  const [cantidades, setCantidades] = useState([]);
   const [materiales, setMateriales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
-    nombre: ''
+    material: '',
+    rareza: ''
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -19,7 +21,9 @@ function MaterialesAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
-    nombre: ''
+    material: '',
+    rareza: '',
+    cantidad: ''
   });
 
   // 🔵 Estado para modales de confirmación
@@ -32,20 +36,28 @@ function MaterialesAdmin() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
 
+  // 🔵 Rarezas disponibles
+  const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
+
   useEffect(() => {
-    cargarMateriales();
+    cargarDatos();
   }, []);
 
-  const cargarMateriales = async () => {
+  const cargarDatos = async () => {
     try {
       setLoading(true);
-      const response = await materialesService.getAll();
-      // Ordenar por numeroOrden ascendente
-      const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
-      setMateriales(dataOrdenada);
+      const [cantidadesRes, materialesRes] = await Promise.all([
+        cantidadPolvoInvocarService.getAll(),
+        materialesService.getAll()
+      ]);
+      
+      // Ordenar por numeroOrden
+      const dataOrdenada = cantidadesRes.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
+      setCantidades(dataOrdenada);
+      setMateriales(materialesRes.data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los materiales');
+      setError('Error al cargar los datos');
       console.error(err);
     } finally {
       setLoading(false);
@@ -71,15 +83,16 @@ function MaterialesAdmin() {
 
   const limpiarFiltros = () => {
     setFiltros({
-      nombre: ''
+      material: '',
+      rareza: ''
     });
   };
 
   // 🔵 Función para obtener el siguiente número de orden disponible
   const obtenerSiguienteNumeroOrden = () => {
-    if (materiales.length === 0) return 1;
+    if (cantidades.length === 0) return 1;
     
-    const numerosExistentes = materiales.map(item => item.numeroOrden).sort((a, b) => a - b);
+    const numerosExistentes = cantidades.map(item => item.numeroOrden).sort((a, b) => a - b);
     
     let numeroEsperado = 1;
     for (let i = 0; i < numerosExistentes.length; i++) {
@@ -98,7 +111,9 @@ function MaterialesAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
-      nombre: ''
+      material: '',
+      rareza: '',
+      cantidad: ''
     });
     setEditando(false);
     setShowModal(true);
@@ -109,7 +124,9 @@ function MaterialesAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
-      nombre: registro.nombre
+      material: registro.material,
+      rareza: registro.rareza,
+      cantidad: registro.cantidad
     });
     setEditando(true);
     setShowModal(true);
@@ -120,7 +137,9 @@ function MaterialesAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
-      nombre: ''
+      material: '',
+      rareza: '',
+      cantidad: ''
     });
     setEditando(false);
   };
@@ -134,15 +153,15 @@ function MaterialesAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    // Validaciones
-    if (!formData.numeroOrden || !formData.nombre.trim()) {
+    if (!formData.numeroOrden || !formData.material || 
+        !formData.rareza || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
-    // 🔵 Validar que el número de orden no exista (solo para creación)
+    // Verificar duplicado de número de orden en creación
     if (!editando) {
-      const numeroExistente = materiales.some(
+      const numeroExistente = cantidades.some(
         item => item.numeroOrden === parseInt(formData.numeroOrden)
       );
       if (numeroExistente) {
@@ -163,22 +182,24 @@ function MaterialesAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
-        nombre: formData.nombre.trim()
+        material: formData.material,
+        rareza: formData.rareza,
+        cantidad: parseInt(formData.cantidad)
       };
 
       if (editando) {
-        await materialesService.update(formData.id, data);
-        mostrarConfirmacion('✅ Actualizado', 'Material actualizado correctamente', 'success');
+        await cantidadPolvoInvocarService.update(formData.id, data);
+        mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
-        await materialesService.create(data);
-        mostrarConfirmacion('✅ Creado', 'Material creado correctamente', 'success');
+        await cantidadPolvoInvocarService.create(data);
+        mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
-      cargarMateriales();
+      cargarDatos();
     } catch (err) {
       console.error('Error al guardar:', err);
-      mostrarConfirmacion('❌ Error', err.response?.data?.detail || 'Error al guardar el material', 'error');
+      mostrarConfirmacion('❌ Error', err.response?.data?.detail || 'Error al guardar el registro', 'error');
     }
   };
 
@@ -193,72 +214,70 @@ function MaterialesAdmin() {
     if (!registroAEliminar) return;
 
     try {
-      await materialesService.delete(registroAEliminar.id);
+      await cantidadPolvoInvocarService.delete(registroAEliminar.id);
       setShowDeleteConfirmModal(false);
       setRegistroAEliminar(null);
-      mostrarConfirmacion('🗑️ Eliminado', 'Material eliminado correctamente', 'success');
-      cargarMateriales();
+      mostrarConfirmacion('🗑️ Eliminado', 'Registro eliminado correctamente', 'success');
+      cargarDatos();
     } catch (err) {
       console.error('Error al eliminar:', err);
-      const mensaje = err.response?.data?.detail || 'Error al eliminar el material';
-      mostrarConfirmacion('❌ Error', mensaje, 'error');
-    }
-  };
-
-  // 🔵 Función para obtener la clase CSS del material
-  const getMaterialClass = (nombre) => {
-    const nombreLower = nombre.toLowerCase();
-    switch(nombreLower) {
-      case 'normal':
-        return 'material-normal';
-      case 'oro':
-        return 'material-oro';
-      case 'gomita':
-        return 'material-gomita';
-      case 'galaxia':
-        return 'material-galaxia';
-      case 'holofoil':
-        return 'material-holofoil';
-      case 'cúbico':
-        return 'material-cúbico';
-      default:
-        return 'material-normal';
+      mostrarConfirmacion('❌ Error', 'Error al eliminar el registro', 'error');
     }
   };
 
   // 🔵 Filtrar datos
-  const datosFiltrados = materiales.filter(item => {
-    if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
+  const datosFiltrados = cantidades.filter(item => {
+    if (filtros.material && item.material !== filtros.material) return false;
+    if (filtros.rareza && item.rareza !== filtros.rareza) return false;
     return true;
   });
 
-  // 🔵 Calcular estadísticas
-  const totalRegistros = materiales.length;
+  const totalRegistros = cantidades.length;
   const totalFiltrados = datosFiltrados.length;
 
-  if (loading) return <div className="loading">Cargando materiales...</div>;
+  if (loading) return <div className="loading">Cargando datos...</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="admin-main" style={{ padding: '30px 35px', flex: 1 }}>
       <header className="admin-header">
+        <img 
+          src="/imagenesSprites/polvoEspiritu.png" 
+          alt="Polvo de Espíritu"
+          className="nav-icon-img"
+        />
         <span className="titulo">
-          📦 Gestión de Materiales
+          Gestión de Polvo al Invocar
         </span>
+        <p className="admin-subtitle">Cantidad de polvo necesaria para invocar sprits según material y rareza</p>
       </header>
 
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
-          <input
-            type="text"
-            name="nombre"
-            placeholder="🔍 Buscar por nombre..."
-            value={filtros.nombre}
+          <select 
+            name="material" 
+            value={filtros.material} 
             onChange={handleFiltroChange}
             className="filtro-select"
-            style={{ minWidth: '200px' }}
-          />
+          >
+            <option value="">Todos los materiales</option>
+            {materiales.map(m => (
+              <option key={m.id} value={m.nombre}>{m.nombre}</option>
+            ))}
+          </select>
+
+          <select 
+            name="rareza" 
+            value={filtros.rareza} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+          >
+            <option value="">Todas las rarezas</option>
+            {rarezas.map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
 
           <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
             Limpiar Filtros
@@ -266,16 +285,16 @@ function MaterialesAdmin() {
         </div>
 
         <button className="btn-agregar-admin" onClick={abrirCrearModal}>
-          ➕ Agregar Material
+          ➕ Agregar registro
         </button>
       </div>
 
-      {/* 🔵 ESTADÍSTICAS RÁPIDAS */}
+      {/* 🔵 ESTADÍSTICAS */}
       <div className="admin-stats">
         <div className="stat-card">
-          <span className="stat-icon">📦</span>
+          <span className="stat-icon">📊</span>
           <div>
-            <span className="stat-label">Total materiales</span>
+            <span className="stat-label">Total registros</span>
             <span className="stat-value">{totalRegistros}</span>
           </div>
         </div>
@@ -295,46 +314,60 @@ function MaterialesAdmin() {
             <tr>
               <th># Orden</th>
               <th>Material</th>
+              <th>Rareza</th>
+              <th>Cantidad de Polvo</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="3" className="no-data">
-                  {materiales.length === 0 ? 'No hay materiales en la base de datos' : 'No hay materiales que coincidan con los filtros'}
+                <td colSpan="5" className="no-data">
+                  {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
             ) : (
-              datosFiltrados.map((item) => {
-                const materialClass = getMaterialClass(item.nombre);
-                return (
-                  <tr key={item.id}>
-                    <td className="td-orden">{item.numeroOrden}</td>
-                    <td>
-                      <span className={`detail-value ${materialClass}`}>
-                        {item.nombre}
-                      </span>
-                    </td>
-                    <td className="td-acciones">
-                      <button 
-                        className="btn-editar"
-                        onClick={() => abrirEditarModal(item)}
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        className="btn-eliminar"
-                        onClick={() => confirmarEliminacion(item)}
-                        title="Eliminar"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
+              datosFiltrados.map((item) => (
+                <tr key={item.id}>
+                  <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span className={`detail-value material-${item.material.toLowerCase()}`}>
+                      {item.material}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
+                      {item.rareza}
+                    </span>
+                  </td>
+                  <td className="td-cantidad">
+                    <span className="cantidad-valor">
+                      {item.cantidad.toLocaleString()}
+                    </span>
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      className="polvo-icon-admin-small"
+                    />
+                  </td>
+                  <td className="td-acciones">
+                    <button 
+                      className="btn-editar"
+                      onClick={() => abrirEditarModal(item)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="btn-eliminar"
+                      onClick={() => confirmarEliminacion(item)}
+                      title="Eliminar"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
@@ -345,7 +378,7 @@ function MaterialesAdmin() {
         <div className="modal-overlay" onClick={cerrarModal}>
           <div className="modal-content modal-admin" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>{editando ? '✏️ Editar Material' : '➕ Nuevo Material'}</h2>
+              <h2>{editando ? '✏️ Editar registro' : '➕ Nuevo registro'}</h2>
               <button className="modal-close" onClick={cerrarModal}>✕</button>
             </div>
             
@@ -370,13 +403,42 @@ function MaterialesAdmin() {
                 </div>
 
                 <div className="form-group">
-                  <label>Nombre del Material *</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    placeholder="Ej: Normal, Oro, Gomita..."
-                    value={formData.nombre}
+                  <label>Material *</label>
+                  <select
+                    name="material"
+                    value={formData.material}
                     onChange={handleFormChange}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {materiales.map(m => (
+                      <option key={m.id} value={m.nombre}>{m.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <select
+                    name="rareza"
+                    value={formData.rareza}
+                    onChange={handleFormChange}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {rarezas.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Cantidad de Polvo *</label>
+                  <input
+                    type="number"
+                    name="cantidad"
+                    placeholder="Ej: 4000"
+                    value={formData.cantidad}
+                    onChange={handleFormChange}
+                    min="0"
                   />
                 </div>
               </div>
@@ -409,7 +471,7 @@ function MaterialesAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el material "${registroAEliminar?.nombre}"?\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nMaterial: ${registroAEliminar?.material}\nRareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
@@ -419,4 +481,4 @@ function MaterialesAdmin() {
   );
 }
 
-export default MaterialesAdmin;
+export default PolvoInvocarAdmin;
