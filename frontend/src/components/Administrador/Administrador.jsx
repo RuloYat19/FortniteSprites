@@ -1,5 +1,3 @@
-// frontend/src/components/Administrador/Administrador.jsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PolvoEspirituAdmin from './PolvoEspirituAdmin';
@@ -19,7 +17,7 @@ function Administrador() {
     switch(seccionActiva) {
       case 'polvo-extraer':
         return <PolvoEspirituAdmin />;
-      case 'polvo-invocar': // 🔵 NUEVO CASO
+      case 'polvo-invocar':
         return <PolvoInvocarAdmin />;
       case 'materiales':
         return <MaterialesAdmin />;
@@ -59,7 +57,7 @@ function Administrador() {
                 <span>Polvo al Extraer</span>
               </li>
 
-              {/* 🔵 Polvo al Invocar - NUEVO */}
+              {/* 🔵 Polvo al Invocar*/}
               <li 
                 className={seccionActiva === 'polvo-invocar' ? 'active' : ''}
                 onClick={() => setSeccionActiva('polvo-invocar')}

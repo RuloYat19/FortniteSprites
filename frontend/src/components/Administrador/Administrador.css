@@ -480,7 +480,8 @@
 .detail-value.material-oro,
 .detail-value.material-gomita,
 .detail-value.material-galaxia,
-.detail-value.material-holofoil {
+.detail-value.material-holofoil,
+.detail-value.material-cúbico {
   display: inline-block;
   padding: 4px 16px;
   border-radius: 20px;
@@ -524,12 +525,20 @@
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
+.detail-value.material-cúbico {
+  background: linear-gradient(90deg, #20092b, #481062) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
 /* 🔵 Hover effect para los badges de material */
 .detail-value.material-normal:hover,
 .detail-value.material-oro:hover,
 .detail-value.material-gomita:hover,
 .detail-value.material-galaxia:hover,
-.detail-value.material-holofoil:hover {
+.detail-value.material-holofoil:hover,
+.detail-value.material-cúbico:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease;
 }
@@ -547,6 +556,10 @@
 }
 
 .detail-value.material-holofoil:hover {
+  box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
+}
+
+.detail-value.material-cúbico:hover {
   box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
 }
 
