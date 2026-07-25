@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoService } from '../../services/api';
+import { cantidadPolvoExtraerService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -46,7 +46,7 @@ function PolvoEspirituAdmin() {
   const cargarCantidades = async () => {
     try {
       setLoading(true);
-      const response = await cantidadPolvoService.getAll();
+      const response = await cantidadPolvoExtraerService.getAll();
       const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
       setCantidades(dataOrdenada);
       setError(null);
@@ -181,10 +181,10 @@ function PolvoEspirituAdmin() {
       };
 
       if (editando) {
-        await cantidadPolvoService.update(formData.id, data);
+        await cantidadPolvoExtraerService.update(formData.id, data);
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
-        await cantidadPolvoService.create(data);
+        await cantidadPolvoExtraerService.create(data);
       }
       
       cerrarModal();
@@ -206,7 +206,7 @@ function PolvoEspirituAdmin() {
     if (!registroAEliminar) return;
 
     try {
-      await cantidadPolvoService.delete(registroAEliminar.id);
+      await cantidadPolvoExtraerService.delete(registroAEliminar.id);
       setShowDeleteConfirmModal(false);
       setRegistroAEliminar(null);
       mostrarConfirmacion('🗑️ Eliminado', 'Registro eliminado correctamente', 'success');
