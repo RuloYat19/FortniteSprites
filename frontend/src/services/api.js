@@ -18,6 +18,7 @@ export const spritsService = {
   toggleDominado: (id) => api.patch(`/sprits/${id}/dominar`),
   toggleInventario: (id) => api.patch(`/sprits/${id}/inventario`),
   delete: (id) => api.delete(`/sprits/${id}`),
+  actualizarPolvos: () => api.post('/sprits/actualizar-polvos'),
 };
 
 export const cantidadPolvoExtraerService = {
