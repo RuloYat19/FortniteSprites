@@ -476,7 +476,8 @@ body {
 .detail-value.material-oro,
 .detail-value.material-gomita,
 .detail-value.material-galaxia,
-.detail-value.material-holofoil{
+.detail-value.material-holofoil,
+.detail-value.material-cúbico{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -517,6 +518,13 @@ body {
   background: linear-gradient(90deg, #d490f4, #60f76d);
   border-color: #4a148c;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-cúbico {
+  background: linear-gradient(90deg, #20092b, #481062) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -689,7 +697,8 @@ body {
 .sprit-card-front .nombre-material-oro,
 .sprit-card-front .nombre-material-gomita,
 .sprit-card-front .nombre-material-galaxia,
-.sprit-card-front .nombre-material-holofoil {
+.sprit-card-front .nombre-material-holofoil,
+.sprit-card-front .nombre-material-cúbico {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -741,6 +750,13 @@ body {
   background: linear-gradient(90deg, #d490f4, #60f76d);
   border-color: #4a148c;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-cúbico {
+  background: linear-gradient(90deg, #20092b, #481062) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
