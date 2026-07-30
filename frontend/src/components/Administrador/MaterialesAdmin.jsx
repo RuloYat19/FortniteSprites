@@ -221,6 +221,10 @@ function MaterialesAdmin() {
         return 'material-holofoil';
       case 'cúbico':
         return 'material-cúbico';
+      case 'patito':
+        return 'material-patito';
+      case 'gema':
+        return 'material-gema';
       default:
         return 'material-normal';
     }
