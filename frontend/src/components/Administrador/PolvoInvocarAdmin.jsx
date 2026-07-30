@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoInvocarService, materialesService } from '../../services/api';
+import { cantidadPolvoInvocarService, materialesService, spritsService } from '../../services/api'; // 🔵 Importar spritsService
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -8,6 +8,9 @@ function PolvoInvocarAdmin() {
   const [materiales, setMateriales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // 🔵 Estado para el botón de actualización
+  const [actualizando, setActualizando] = useState(false);
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
@@ -35,6 +38,9 @@ function PolvoInvocarAdmin() {
   });
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
+  
+  // 🔵 Estado para el modal de confirmación de actualización
+  const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
   // 🔵 Rarezas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
@@ -70,7 +76,43 @@ function PolvoInvocarAdmin() {
     setShowConfirmModal(true);
     setTimeout(() => {
       setShowConfirmModal(false);
-    }, 3000);
+    }, 4000);
+  };
+
+  // 🔵 FUNCIÓN PARA ACTUALIZAR POLVOS EN SPRITS
+  const actualizarPolvosEnSprits = async () => {
+    setActualizando(true);
+    try {
+      const response = await spritsService.actualizarPolvos();
+      
+      const { sprits_actualizados, total_sprits, sprits_con_error, errores } = response.data;
+      
+      let mensaje = `✅ Se actualizaron ${sprits_actualizados} de ${total_sprits} sprits`;
+      if (sprits_con_error > 0) {
+        mensaje += ` (${sprits_con_error} con errores)`;
+      }
+      
+      mostrarConfirmacion(
+        '🔄 Actualización completada',
+        mensaje,
+        sprits_con_error > 0 ? 'warning' : 'success'
+      );
+      
+      if (errores && errores.length > 0) {
+        console.warn('Errores al actualizar:', errores);
+      }
+      
+    } catch (err) {
+      console.error('Error al actualizar polvos:', err);
+      mostrarConfirmacion(
+        '❌ Error',
+        err.response?.data?.detail || 'Hubo un error al actualizar los polvos de los sprits',
+        'error'
+      );
+    } finally {
+      setActualizando(false);
+      setShowActualizarConfirmModal(false);
+    }
   };
 
   // 🔵 Manejar filtros
@@ -284,9 +326,32 @@ function PolvoInvocarAdmin() {
           </button>
         </div>
 
-        <button className="btn-agregar-admin" onClick={abrirCrearModal}>
-          ➕ Agregar registro
-        </button>
+        <div className="filtros-group" style={{ gap: '8px' }}>
+          {/* 🔵 NUEVO BOTÓN - Actualizar Valores en Sprites */}
+          <button 
+            className="btn-actualizar-sprits"
+            onClick={() => setShowActualizarConfirmModal(true)}
+            disabled={actualizando}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '6px',
+              background: '#FF9800',
+              color: '#fff',
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {actualizando ? '⏳ Actualizando...' : '🔄 Actualizar Valores en Sprites'}
+          </button>
+          
+          <button className="btn-agregar-admin" onClick={abrirCrearModal}>
+            ➕ Agregar registro
+          </button>
+        </div>
       </div>
 
       {/* 🔵 ESTADÍSTICAS */}
@@ -475,6 +540,18 @@ function PolvoInvocarAdmin() {
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
+        showCancelButton={true}
+      />
+
+      {/* 🔵 MODAL DE CONFIRMACIÓN PARA ACTUALIZAR SPRITS */}
+      <ConfirmModal
+        isOpen={showActualizarConfirmModal}
+        onClose={() => setShowActualizarConfirmModal(false)}
+        title="⚠️ Confirmar actualización"
+        message={`¿Estás seguro de actualizar los valores de polvo en TODOS los sprits?\n\nEsto recalculará el polvo al invocar de cada sprit según su material y rareza.\n\nEsta acción puede tomar unos segundos.`}
+        type="warning"
+        confirmText="Sí, actualizar"
+        onConfirm={actualizarPolvosEnSprits}
         showCancelButton={true}
       />
     </div>
