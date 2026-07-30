@@ -481,7 +481,9 @@
 .detail-value.material-gomita,
 .detail-value.material-galaxia,
 .detail-value.material-holofoil,
-.detail-value.material-cúbico {
+.detail-value.material-cúbico,
+.detail-value.material-patito,
+.detail-value.material-gema {
   display: inline-block;
   padding: 4px 16px;
   border-radius: 20px;
@@ -529,6 +531,20 @@
   background: linear-gradient(90deg, #20092b, #481062) !important;
   border-color: #4a148c !important;
   color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-patito {
+  background: linear-gradient(90deg, #0a6dc4, #bb04bb) !important;
+  border-color: #e80be1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-gema {
+  background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
+  border-color: #d3d3d3 !important;
+  color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
