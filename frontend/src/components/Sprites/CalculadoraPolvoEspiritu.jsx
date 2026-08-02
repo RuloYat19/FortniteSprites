@@ -1,4 +1,3 @@
-// frontend/src/components/CalculadoraPolvoEspiritu.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -124,6 +123,28 @@ function CalculadoraPolvoEspiritu() {
           const materialB = ordenMaterial[b.material] || 999;
           return materialA - materialB;
         });
+
+      case 'seleccionados':
+        return [...spritsList].sort((a, b) => {
+          const seleccionadoA = spritsSeleccionados[a.id] || false;
+          const seleccionadoB = spritsSeleccionados[b.id] || false;
+          
+          // Primero los seleccionados, luego los no seleccionados
+          if (seleccionadoA !== seleccionadoB) {
+            return seleccionadoA ? -1 : 1;
+          }
+          
+          // Dentro del mismo grupo, ordenar por orden default
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
+          if (nombreA !== nombreB) {
+            return nombreA - nombreB;
+          }
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
+          return materialA - materialB;
+        });
+
       
       case 'default':
       default:
@@ -236,6 +257,7 @@ function CalculadoraPolvoEspiritu() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
+          <option value="seleccionados">Seleccionados</option>
         </select>
 
         {/* 🔵 FILTRO DE NOMBRES - DINÁMICO */}
