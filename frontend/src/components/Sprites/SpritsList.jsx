@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
+import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -10,6 +10,7 @@ function SpritsList() {
   const [loading, setLoading] = useState(true);
 
   const [cantidadesPolvo, setCantidadesPolvo] = useState({});
+  const [cantidadesPolvoInvocar, setCantidadesPolvoInvocar] = useState({});
   const [loadingPolvo, setLoadingPolvo] = useState(false);
   
   const [error, setError] = useState(null);
@@ -156,7 +157,7 @@ function SpritsList() {
           return materialA - materialB;
         });
       
-      case 'no-inventario':
+      {/*case 'no-inventario':
         return [...spritsList].sort((a, b) => {
           if (a.estaEnInventario !== b.estaEnInventario) {
             return a.estaEnInventario ? 1 : -1;
@@ -169,8 +170,73 @@ function SpritsList() {
             return ordenA.nombreA - ordenB.nombreA;
           }
           return ordenA.materialA - ordenB.materialA;
+        });*/}
+
+      case 'no-dominado':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaDominado !== b.estaDominado) {
+            return a.estaDominado ? 1 : -1;
+          }
+          
+          if (!a.estaDominado && !b.estaDominado) {
+            if (a.estaEnInventario !== b.estaEnInventario) {
+              return a.estaEnInventario ? -1 : 1;
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
         });
-      
+
+      case 'invocar-mayor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoB - polvoA; // Mayor a menor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+
+      case 'invocar-menor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoA - polvoB; // Menor a mayor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+        
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
@@ -200,7 +266,7 @@ function SpritsList() {
     }
     
     try {
-      const response = await cantidadPolvoService.getByCombinacion(rareza, nivelEspiritu);
+      const response = await cantidadPolvoExtraerService.getByCombinacion(rareza, nivelEspiritu);
       const cantidad = response.data?.cantidad || 0;
       
       setCantidadesPolvo(prev => ({
@@ -235,6 +301,55 @@ function SpritsList() {
     }
   };
 
+  const obtenerPolvoAlInvocar = async (material, rareza) => {
+    if (!material || !rareza) return 0;
+    
+    const clave = `${material}-${rareza}`;
+    
+    // Verificar si ya está en caché
+    if (cantidadesPolvoInvocar[clave] !== undefined) {
+      return cantidadesPolvoInvocar[clave];
+    }
+    
+    try {
+      const response = await cantidadPolvoInvocarService.getByCombinacion(material, rareza);
+      const cantidad = response.data?.cantidad || 0;
+      
+      // Guardar en caché
+      setCantidadesPolvoInvocar(prev => ({
+        ...prev,
+        [clave]: cantidad
+      }));
+      
+      return cantidad;
+    } catch (error) {
+      console.error(`Error al obtener polvo al invocar para ${material} - ${rareza}:`, error);
+      return 0;
+    }
+  };
+
+  const actualizarPolvoAlInvocar = async (spritId, material, rareza) => {
+    if (!material || !rareza) return;
+    
+    const polvo = await obtenerPolvoAlInvocar(material, rareza);
+    
+    // Actualizar estado local
+    setSprits(prevSprits => 
+      prevSprits.map(sprit => 
+        sprit.id === spritId 
+          ? { ...sprit, polvoAlInvocar: polvo }
+          : sprit
+      )
+    );
+    
+    // Actualizar en el backend
+    try {
+      await spritsService.update(spritId, { polvoAlInvocar: polvo });
+    } catch (error) {
+      console.error('Error al actualizar polvoAlInvocar en el backend:', error);
+    }
+  };
+
   const calcularProgreso = (condicion) => {
     const total = sprits.length;
     const completados = sprits.filter(condicion).length;
@@ -265,21 +380,73 @@ function SpritsList() {
     cargarPolvoEdicion();
   }, [showEditModal, editSprit.rareza, editSprit.nivelEspiritu]);
 
-  // Para creación de Sprite
   useEffect(() => {
-    const cargarPolvoCreacion = async () => {
+    const cargarPolvos = async () => {
       if (newSprit.rareza && newSprit.nivelEspiritu && !editando) {
-        const polvo = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
-        if (polvo > 0) {
+        // Polvo al Extraer
+        const polvoExtraer = await obtenerPolvoAlExtraer(
+          newSprit.rareza, 
+          parseInt(newSprit.nivelEspiritu)
+        );
+        if (polvoExtraer > 0) {
           setNewSprit(prev => ({
             ...prev,
-            polvoAlExtraer: polvo.toString()
+            polvoAlExtraer: polvoExtraer.toString()
+          }));
+        }
+      }
+      
+      // 🔵 NUEVO: Polvo al Invocar para creación
+      if (newSprit.material && newSprit.rareza && !editando) {
+        const polvoInvocar = await obtenerPolvoAlInvocar(
+          newSprit.material,
+          newSprit.rareza
+        );
+        if (polvoInvocar > 0) {
+          setNewSprit(prev => ({
+            ...prev,
+            polvoAlInvocar: polvoInvocar.toString()
           }));
         }
       }
     };
-    cargarPolvoCreacion();
-  }, [newSprit.rareza, newSprit.nivelEspiritu, editando]);
+    cargarPolvos();
+  }, [newSprit.rareza, newSprit.nivelEspiritu, newSprit.material, editando]);
+
+  useEffect(() => {
+    const cargarPolvos = async () => {
+      if (showEditModal) {
+        // Polvo al Extraer (si tiene rareza y nivel)
+        if (editSprit.rareza && editSprit.nivelEspiritu) {
+          const polvoExtraer = await obtenerPolvoAlExtraer(
+            editSprit.rareza, 
+            parseInt(editSprit.nivelEspiritu)
+          );
+          if (polvoExtraer > 0) {
+            setEditSprit(prev => ({
+              ...prev,
+              polvoAlExtraer: polvoExtraer.toString()
+            }));
+          }
+        }
+        
+        // 🔵 NUEVO: Polvo al Invocar (si tiene material y rareza)
+        if (editSprit.material && editSprit.rareza) {
+          const polvoInvocar = await obtenerPolvoAlInvocar(
+            editSprit.material,
+            editSprit.rareza
+          );
+          if (polvoInvocar > 0) {
+            setEditSprit(prev => ({
+              ...prev,
+              polvoAlInvocar: polvoInvocar.toString()
+            }));
+          }
+        }
+      }
+    };
+    cargarPolvos();
+  }, [showEditModal, editSprit.rareza, editSprit.nivelEspiritu, editSprit.material]);
 
   const cargarSprits = async () => {
     try {
@@ -509,11 +676,21 @@ function SpritsList() {
     setEditando(true);
     try {
       let polvoAlExtraer = editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null;
+      let polvoAlInvocar = editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null;
       
+      // 🔵 Calcular polvo al extraer si es necesario
       if (editSprit.rareza && editSprit.nivelEspiritu) {
         const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
+      if (editSprit.material && editSprit.rareza) {
+        const polvoCalculado = await obtenerPolvoAlInvocar(editSprit.material, editSprit.rareza);
+        if (polvoCalculado > 0) {
+          polvoAlInvocar = polvoCalculado;
         }
       }
       
@@ -528,7 +705,7 @@ function SpritsList() {
         nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
+        polvoAlInvocar: polvoAlInvocar  // 🔵 Incluir polvo al invocar
       };
 
       await spritsService.update(editSprit.id, data);
@@ -586,11 +763,21 @@ function SpritsList() {
     setAgregando(true);
     try {
       let polvoAlExtraer = newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null;
+      let polvoAlInvocar = newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null;
       
+      // Calcular polvo al extraer si es necesario
       if (newSprit.rareza && newSprit.nivelEspiritu) {
         const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
+      if (newSprit.material && newSprit.rareza) {
+        const polvoCalculado = await obtenerPolvoAlInvocar(newSprit.material, newSprit.rareza);
+        if (polvoCalculado > 0) {
+          polvoAlInvocar = polvoCalculado;
         }
       }
       
@@ -603,7 +790,7 @@ function SpritsList() {
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null,
+        polvoAlInvocar: polvoAlInvocar,  // 🔵 Incluir polvo al invocar
         yaFueDominado: false,
         estaDominado: false,
         estaEnInventario: false,
@@ -671,13 +858,17 @@ function SpritsList() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
-          <option value="no-inventario">Faltan en Inventario</option>
+          {/*<option value="no-inventario">Faltan en Inventario</option>*/}
+          <option value="no-dominado">Faltan por Dominar</option>
+          <option value="invocar-mayor">Mayor a Menor en Invocar</option>
+          <option value="invocar-menor">Menor a Mayor en Invocar</option>
         </select>
 
         <select 
           name="nombre" 
           value={filtros.nombre} 
           onChange={handleFiltroChange}
+          className="filtro-nombres"
         >
           <option value="">Todos los nombres</option>
           {nombresDisponibles.map((nombre) => (
@@ -1045,15 +1236,32 @@ function SpritsList() {
                 </div>
 
                 <div className="form-group">
-                  <label>Polvo al Invocar</label>
+                <label>Polvo al Invocar</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     type="number"
                     name="polvoAlInvocar"
-                    placeholder="Ej: 15000"
-                    value={newSprit.polvoAlInvocar}
-                    onChange={handleAddChange}
+                    placeholder="Se calcula automáticamente"
+                    value={newSprit.polvoAlInvocar || ''}
+                    readOnly
+                    style={{ 
+                      flex: 1, 
+                      cursor: 'not-allowed',
+                      opacity: 0.8,
+                      backgroundColor: '#1a1a2e',
+                      borderColor: '#9c27b0'
+                    }}
+                  />
+                  <img 
+                    src="./imagenesSprites/polvoEspiritu.png" 
+                    alt="Polvo"
+                    style={{ width: '24px', height: '24px' }}
                   />
                 </div>
+                <small style={{ color: '#888' }}>
+                  💡 Se calcula automáticamente según Material y Rareza
+                </small>
+              </div>
               </div>
             </div>
 
@@ -1162,15 +1370,32 @@ function SpritsList() {
                 </div>
 
                 <div className="form-group">
-                  <label>Polvo al Invocar</label>
+                <label>Polvo al Invocar</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     type="number"
                     name="polvoAlInvocar"
-                    placeholder="Ej: 15000"
-                    value={editSprit.polvoAlInvocar}
-                    onChange={handleEditChange}
+                    placeholder="Se calcula automáticamente"
+                    value={editSprit.polvoAlInvocar || ''}
+                    readOnly
+                    style={{ 
+                      flex: 1, 
+                      cursor: 'not-allowed',
+                      opacity: 0.8,
+                      backgroundColor: '#1a1a2e',
+                      borderColor: '#9c27b0'
+                    }}
+                  />
+                  <img 
+                    src="./imagenesSprites/polvoEspiritu.png" 
+                    alt="Polvo"
+                    style={{ width: '24px', height: '24px' }}
                   />
                 </div>
+                <small style={{ color: '#888' }}>
+                  💡 Se calcula automáticamente según Material y Rareza
+                </small>
+              </div>
               </div>
             </div>
 

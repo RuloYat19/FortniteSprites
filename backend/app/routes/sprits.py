@@ -109,3 +109,80 @@ def toggle_inventario(sprit_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_sprit)
     return db_sprit
+
+@router.post("/actualizar-polvos", response_model=dict)
+def actualizar_polvos_sprits(
+    db: Session = Depends(get_db)
+):
+    """
+    Actualiza los valores de polvo (extraer e invocar) de todos los sprits
+    según las tablas de configuración.
+    """
+    try:
+        # Obtener todas las configuraciones de polvo al extraer
+        configs_extraer = db.query(models.CantidadPolvoEspirituExtraer).all()
+        mapa_extraer = {}
+        for config in configs_extraer:
+            clave = f"{config.rareza}-{config.nivelEspiritu}"
+            mapa_extraer[clave] = config.cantidad
+        
+        # Obtener todas las configuraciones de polvo al invocar
+        configs_invocar = db.query(models.CantidadPolvoEspirituInvocar).all()
+        mapa_invocar = {}
+        for config in configs_invocar:
+            clave = f"{config.material}-{config.rareza}"
+            mapa_invocar[clave] = config.cantidad
+        
+        # Obtener todos los sprits
+        sprits = db.query(models.Sprit).all()
+        
+        sprits_actualizados = 0
+        sprits_con_error = 0
+        errores = []
+        
+        for sprit in sprits:
+            try:
+                actualizado = False
+                
+                # Calcular polvo al extraer
+                if sprit.rareza and sprit.nivelEspiritu:
+                    clave_extraer = f"{sprit.rareza}-{sprit.nivelEspiritu}"
+                    if clave_extraer in mapa_extraer:
+                        nuevo_polvo = mapa_extraer[clave_extraer]
+                        if sprit.polvoAlExtraer != nuevo_polvo:
+                            sprit.polvoAlExtraer = nuevo_polvo
+                            actualizado = True
+                
+                # Calcular polvo al invocar
+                if sprit.material and sprit.rareza:
+                    clave_invocar = f"{sprit.material}-{sprit.rareza}"
+                    if clave_invocar in mapa_invocar:
+                        nuevo_polvo = mapa_invocar[clave_invocar]
+                        if sprit.polvoAlInvocar != nuevo_polvo:
+                            sprit.polvoAlInvocar = nuevo_polvo
+                            actualizado = True
+                
+                if actualizado:
+                    sprits_actualizados += 1
+                    
+            except Exception as e:
+                sprits_con_error += 1
+                errores.append(f"Sprit ID {sprit.id} ({sprit.nombre}): {str(e)}")
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "mensaje": f"Actualización completada",
+            "sprits_actualizados": sprits_actualizados,
+            "total_sprits": len(sprits),
+            "sprits_con_error": sprits_con_error,
+            "errores": errores if errores else None
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al actualizar polvos: {str(e)}"
+        )

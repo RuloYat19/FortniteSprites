@@ -8,9 +8,9 @@ GO
 USE FORTNITEDB;
 GO
 
--- ============================================
+-- ================================================
 -- TABLA: Sprits
--- ============================================
+-- ================================================
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sprits')
 BEGIN
@@ -44,12 +44,12 @@ BEGIN
 END
 GO
 
--- ============================================
--- TABLA: Cantidad de Polvo de Espíritu
--- ============================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspiritu')
+-- ================================================
+-- TABLA: Cantidad de Polvo de Espíritu al Extraer
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspirituExtraer')
 BEGIN
-    CREATE TABLE cantidadPolvoEspiritu (
+    CREATE TABLE cantidadPolvoEspirituExtraer (
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         rareza VARCHAR(50) NOT NULL,
@@ -60,22 +60,49 @@ BEGIN
     );
     
     -- Índices
-    CREATE INDEX idx_cantidadPolvoEspiritu_material ON cantidadPolvoEspiritu(material);
-    CREATE INDEX idx_cantidadPolvoEspiritu_rareza ON cantidadPolvoEspiritu(rareza);
-    CREATE INDEX idx_cantidadPolvoEspiritu_nivelEspiritu ON cantidadPolvoEspiritu(nivelEspiritu);
-    CREATE INDEX idx_cantidadPolvoEspiritu_cantidad ON cantidadPolvoEspiritu(cantidad);
+    CREATE INDEX idx_cantidadPolvoEspirituExtraer_rareza ON cantidadPolvoEspirituExtraer(rareza);
+    CREATE INDEX idx_cantidadPolvoEspirituExtraer_nivelEspiritu ON cantidadPolvoEspirituExtraer(nivelEspiritu);
+    CREATE INDEX idx_cantidadPolvoEspirituExtraer_cantidad ON cantidadPolvoEspirituExtraer(cantidad);
     
-    PRINT '✅ Tabla cantidadPolvoEspiritu creada';
+    PRINT '✅ Tabla cantidadPolvoEspirituExtraer creada';
 END
 ELSE
 BEGIN
-    PRINT '⚠️ Tabla cantidadPolvoEspiritu ya existe';
+    PRINT '⚠️ Tabla cantidadPolvoEspirituExtraer ya existe';
 END
 GO
 
--- ============================================
+-- ================================================
+-- TABLA: Cantidad de Polvo de Espíritu al Invocar
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cantidadPolvoEspirituInvocar')
+BEGIN
+    CREATE TABLE cantidadPolvoEspirituInvocar (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        cantidad INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    -- Índices
+    CREATE INDEX idx_cantidadPolvoEspirituInvocar_material ON cantidadPolvoEspirituInvocar(material);
+    CREATE INDEX idx_cantidadPolvoEspirituInvocar_rareza ON cantidadPolvoEspirituInvocar(rareza);
+    CREATE INDEX idx_cantidadPolvoEspirituInvocar_cantidad ON cantidadPolvoEspirituInvocar(cantidad);
+    
+    PRINT '✅ Tabla cantidadPolvoEspirituInvocar creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla cantidadPolvoEspirituInvocar ya existe';
+END
+GO
+
+-- ================================================
 -- TABLA: Material
--- ============================================
+-- ================================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'material')
 BEGIN
     CREATE TABLE material (
@@ -97,9 +124,9 @@ BEGIN
 END
 GO
 
--- ============================================
+-- ================================================
 -- TABLA: Nombres de Sprites
--- ============================================
+-- ================================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombresSprites')
 BEGIN
     CREATE TABLE nombresSprites (
@@ -121,9 +148,9 @@ BEGIN
 END
 GO
 
--- ============================================
+-- ================================================
 -- TABLA: Orden de Sprites Default
--- ============================================
+-- ================================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenDefault')
 BEGIN
     CREATE TABLE ordenDefault (
@@ -145,9 +172,9 @@ BEGIN
 END
 GO
 
--- ============================================
+-- ================================================
 -- TABLA: Orden de Sprites por Rarezas
--- ============================================
+-- ================================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRareza')
 BEGIN
     CREATE TABLE ordenRareza (

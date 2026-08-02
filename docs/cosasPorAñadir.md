@@ -35,4 +35,3 @@
 ### Cosas que editar
 
 ### Cosas Nuevas para Añadir
-- Generar un backup de los espíritus que se tengan en la base de datos

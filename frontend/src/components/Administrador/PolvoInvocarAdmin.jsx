@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoExtraerService, spritsService } from '../../services/api'; // 🔵 Importar spritsService
+import { cantidadPolvoInvocarService, materialesService, spritsService } from '../../services/api'; // 🔵 Importar spritsService
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
-function PolvoEspirituAdmin() {
+function PolvoInvocarAdmin() {
   const [cantidades, setCantidades] = useState([]);
+  const [materiales, setMateriales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -13,8 +14,8 @@ function PolvoEspirituAdmin() {
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
-    rareza: '',
-    nivelEspiritu: ''
+    material: '',
+    rareza: ''
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -23,8 +24,8 @@ function PolvoEspirituAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
+    material: '',
     rareza: '',
-    nivelEspiritu: '',
     cantidad: ''
   });
 
@@ -41,20 +42,25 @@ function PolvoEspirituAdmin() {
   // 🔵 Estado para el modal de confirmación de actualización
   const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
-  // 🔵 Niveles y Rarezas disponibles
+  // 🔵 Rarezas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
-  const niveles = [1, 2, 3, 4, 5];
 
   useEffect(() => {
-    cargarCantidades();
+    cargarDatos();
   }, []);
 
-  const cargarCantidades = async () => {
+  const cargarDatos = async () => {
     try {
       setLoading(true);
-      const response = await cantidadPolvoExtraerService.getAll();
-      const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
+      const [cantidadesRes, materialesRes] = await Promise.all([
+        cantidadPolvoInvocarService.getAll(),
+        materialesService.getAll()
+      ]);
+      
+      // Ordenar por numeroOrden
+      const dataOrdenada = cantidadesRes.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
       setCantidades(dataOrdenada);
+      setMateriales(materialesRes.data);
       setError(null);
     } catch (err) {
       setError('Error al cargar los datos');
@@ -119,8 +125,8 @@ function PolvoEspirituAdmin() {
 
   const limpiarFiltros = () => {
     setFiltros({
-      rareza: '',
-      nivelEspiritu: ''
+      material: '',
+      rareza: ''
     });
   };
 
@@ -147,8 +153,8 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
+      material: '',
       rareza: '',
-      nivelEspiritu: '',
       cantidad: ''
     });
     setEditando(false);
@@ -160,8 +166,8 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
+      material: registro.material,
       rareza: registro.rareza,
-      nivelEspiritu: registro.nivelEspiritu,
       cantidad: registro.cantidad
     });
     setEditando(true);
@@ -173,8 +179,8 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
+      material: '',
       rareza: '',
-      nivelEspiritu: '',
       cantidad: ''
     });
     setEditando(false);
@@ -189,12 +195,13 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.rareza || 
-        !formData.nivelEspiritu || !formData.cantidad) {
+    if (!formData.numeroOrden || !formData.material || 
+        !formData.rareza || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
+    // Verificar duplicado de número de orden en creación
     if (!editando) {
       const numeroExistente = cantidades.some(
         item => item.numeroOrden === parseInt(formData.numeroOrden)
@@ -217,21 +224,21 @@ function PolvoEspirituAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        material: formData.material,
         rareza: formData.rareza,
-        nivelEspiritu: parseInt(formData.nivelEspiritu),
         cantidad: parseInt(formData.cantidad)
       };
 
       if (editando) {
-        await cantidadPolvoExtraerService.update(formData.id, data);
+        await cantidadPolvoInvocarService.update(formData.id, data);
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
-        await cantidadPolvoExtraerService.create(data);
+        await cantidadPolvoInvocarService.create(data);
         mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
-      cargarCantidades();
+      cargarDatos();
     } catch (err) {
       console.error('Error al guardar:', err);
       mostrarConfirmacion('❌ Error', err.response?.data?.detail || 'Error al guardar el registro', 'error');
@@ -249,11 +256,11 @@ function PolvoEspirituAdmin() {
     if (!registroAEliminar) return;
 
     try {
-      await cantidadPolvoExtraerService.delete(registroAEliminar.id);
+      await cantidadPolvoInvocarService.delete(registroAEliminar.id);
       setShowDeleteConfirmModal(false);
       setRegistroAEliminar(null);
       mostrarConfirmacion('🗑️ Eliminado', 'Registro eliminado correctamente', 'success');
-      cargarCantidades();
+      cargarDatos();
     } catch (err) {
       console.error('Error al eliminar:', err);
       mostrarConfirmacion('❌ Error', 'Error al eliminar el registro', 'error');
@@ -262,8 +269,8 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Filtrar datos
   const datosFiltrados = cantidades.filter(item => {
+    if (filtros.material && item.material !== filtros.material) return false;
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
-    if (filtros.nivelEspiritu && item.nivelEspiritu !== parseInt(filtros.nivelEspiritu)) return false;
     return true;
   });
 
@@ -282,13 +289,26 @@ function PolvoEspirituAdmin() {
           className="nav-icon-img"
         />
         <span className="titulo">
-          Gestión de Polvo al Extraer
+          Gestión de Polvo al Invocar
         </span>
+        <p className="admin-subtitle">Cantidad de polvo necesaria para invocar sprits según material y rareza</p>
       </header>
 
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
+          <select 
+            name="material" 
+            value={filtros.material} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+          >
+            <option value="">Todos los materiales</option>
+            {materiales.map(m => (
+              <option key={m.id} value={m.nombre}>{m.nombre}</option>
+            ))}
+          </select>
+
           <select 
             name="rareza" 
             value={filtros.rareza} 
@@ -298,18 +318,6 @@ function PolvoEspirituAdmin() {
             <option value="">Todas las rarezas</option>
             {rarezas.map(r => (
               <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-
-          <select 
-            name="nivelEspiritu" 
-            value={filtros.nivelEspiritu} 
-            onChange={handleFiltroChange}
-            className="filtro-select"
-          >
-            <option value="">Todos los niveles</option>
-            {niveles.map(n => (
-              <option key={n} value={n}>Nivel {n}</option>
             ))}
           </select>
 
@@ -370,9 +378,9 @@ function PolvoEspirituAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
+              <th>Material</th>
               <th>Rareza</th>
-              <th>Nivel</th>
-              <th>Cantidad</th>
+              <th>Cantidad de Polvo</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -388,11 +396,15 @@ function PolvoEspirituAdmin() {
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
                   <td>
+                    <span className={`detail-value material-${item.material.toLowerCase()}`}>
+                      {item.material}
+                    </span>
+                  </td>
+                  <td>
                     <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
                       {item.rareza}
                     </span>
                   </td>
-                  <td className="td-nivel">✨ Nivel {item.nivelEspiritu}</td>
                   <td className="td-cantidad">
                     <span className="cantidad-valor">
                       {item.cantidad.toLocaleString()}
@@ -456,6 +468,20 @@ function PolvoEspirituAdmin() {
                 </div>
 
                 <div className="form-group">
+                  <label>Material *</label>
+                  <select
+                    name="material"
+                    value={formData.material}
+                    onChange={handleFormChange}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {materiales.map(m => (
+                      <option key={m.id} value={m.nombre}>{m.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
                   <label>Rareza *</label>
                   <select
                     name="rareza"
@@ -470,25 +496,11 @@ function PolvoEspirituAdmin() {
                 </div>
 
                 <div className="form-group">
-                  <label>Nivel de Espíritu *</label>
-                  <select
-                    name="nivelEspiritu"
-                    value={formData.nivelEspiritu}
-                    onChange={handleFormChange}
-                  >
-                    <option value="">Seleccionar nivel</option>
-                    {niveles.map(n => (
-                      <option key={n} value={n}>Nivel {n}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
                   <label>Cantidad de Polvo *</label>
                   <input
                     type="number"
                     name="cantidad"
-                    placeholder="Ej: 500"
+                    placeholder="Ej: 4000"
                     value={formData.cantidad}
                     onChange={handleFormChange}
                     min="0"
@@ -524,7 +536,7 @@ function PolvoEspirituAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro Rareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nMaterial: ${registroAEliminar?.material}\nRareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
@@ -536,7 +548,7 @@ function PolvoEspirituAdmin() {
         isOpen={showActualizarConfirmModal}
         onClose={() => setShowActualizarConfirmModal(false)}
         title="⚠️ Confirmar actualización"
-        message={`¿Estás seguro de actualizar los valores de polvo en TODOS los sprits?\n\nEsto recalculará el polvo al extraer de cada sprit según la rareza y nivel.\n\nEsta acción puede tomar unos segundos.`}
+        message={`¿Estás seguro de actualizar los valores de polvo en TODOS los sprits?\n\nEsto recalculará el polvo al invocar de cada sprit según su material y rareza.\n\nEsta acción puede tomar unos segundos.`}
         type="warning"
         confirmText="Sí, actualizar"
         onConfirm={actualizarPolvosEnSprits}
@@ -546,4 +558,4 @@ function PolvoEspirituAdmin() {
   );
 }
 
-export default PolvoEspirituAdmin;
+export default PolvoInvocarAdmin;

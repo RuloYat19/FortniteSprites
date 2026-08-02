@@ -18,18 +18,33 @@ export const spritsService = {
   toggleDominado: (id) => api.patch(`/sprits/${id}/dominar`),
   toggleInventario: (id) => api.patch(`/sprits/${id}/inventario`),
   delete: (id) => api.delete(`/sprits/${id}`),
+  actualizarPolvos: () => api.post('/sprits/actualizar-polvos'),
 };
 
-export const cantidadPolvoService = {
-  getAll: () => axios.get(`${API_URL}/cantidad-polvo`),
-  getById: (id) => axios.get(`${API_URL}/cantidad-polvo/${id}`),
+export const cantidadPolvoExtraerService = {
+  getAll: () => axios.get(`${API_URL}/cantidad-polvo-extraer`),
+  getById: (id) => axios.get(`${API_URL}/cantidad-polvo-extraer/${id}`),
   getByCombinacion: (rareza, nivelEspiritu) => 
-    axios.get(`${API_URL}/cantidad-polvo/buscar/`, { 
+    axios.get(`${API_URL}/cantidad-polvo-extraer/buscar/`, { 
       params: { rareza, nivel_espiritu: nivelEspiritu } 
     }),
-  create: (data) => axios.post(`${API_URL}/cantidad-polvo`, data),
-  update: (id, data) => axios.put(`${API_URL}/cantidad-polvo/${id}`, data),
-  delete: (id) => axios.delete(`${API_URL}/cantidad-polvo/${id}`),
+  create: (data) => axios.post(`${API_URL}/cantidad-polvo-extraer`, data),
+  update: (id, data) => axios.put(`${API_URL}/cantidad-polvo-extraer/${id}`, data),
+  delete: (id) => axios.delete(`${API_URL}/cantidad-polvo-extraer/${id}`),
+};
+
+export const cantidadPolvoInvocarService = {
+  getAll: () => axios.get(`${API_URL}/cantidad-polvo-invocar`),
+  getById: (id) => axios.get(`${API_URL}/cantidad-polvo-invocar/${id}`),
+  getByCombinacion: (material, rareza) => 
+    axios.get(`${API_URL}/cantidad-polvo-invocar/buscar/`, { 
+      params: { material, rareza } 
+    }),
+  create: (data) => axios.post(`${API_URL}/cantidad-polvo-invocar`, data),
+  update: (id, data) => axios.put(`${API_URL}/cantidad-polvo-invocar/${id}`, data),
+  delete: (id) => axios.delete(`${API_URL}/cantidad-polvo-invocar/${id}`),
+  getByMaterial: (material) => axios.get(`${API_URL}/cantidad-polvo-invocar/material/${material}`),
+  getByRareza: (rareza) => axios.get(`${API_URL}/cantidad-polvo-invocar/rareza/${rareza}`),
 };
 
 export const materialesService = {
@@ -73,6 +88,28 @@ export const ordenRarezaService = {
   createBatch: (data) => axios.post(`${API_URL}/orden-rareza/batch`, data),
   update: (id, data) => axios.put(`${API_URL}/orden-rareza/${id}`, data),
   delete: (id) => axios.delete(`${API_URL}/orden-rareza/${id}`),
+};
+
+export const backupService = {
+  generarBackup: (incluirId = false) => {
+    const params = new URLSearchParams();
+    if (incluirId) params.append('incluir_id', 'true');
+    const url = `${API_URL}/backup/generar${params.toString() ? '?' + params.toString() : ''}`;
+    return axios.get(url, {
+      responseType: 'blob',
+    });
+  },
+  
+  generarBackupTabla: (tablaNombre, incluirId = false) => {
+    const params = new URLSearchParams();
+    if (incluirId) params.append('incluir_id', 'true');
+    const url = `${API_URL}/backup/tabla/${tablaNombre}${params.toString() ? '?' + params.toString() : ''}`;
+    return axios.get(url, {
+      responseType: 'blob',
+    });
+  },
+  
+  getInfo: () => axios.get(`${API_URL}/backup/info`),
 };
 
 export default api;

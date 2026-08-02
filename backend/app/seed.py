@@ -1,5 +1,5 @@
 from app.database import SessionLocal, engine, Base
-from app.models import Sprit, CantidadPolvoEspiritu, Material, NombreSprit, OrdenDefault, OrdenRareza
+from app.models import Sprit, CantidadPolvoEspirituExtraer, Material, NombreSprit, OrdenDefault, OrdenRareza
 
 # Datos de Sprits
 sprits_data = [
