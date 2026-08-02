@@ -1230,9 +1230,6 @@ function SpritsList() {
                       }}
                     />
                   </div>
-                  <small style={{ color: '#666' }}>
-                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
-                  </small>
                 </div>
 
                 <div className="form-group">
@@ -1258,9 +1255,6 @@ function SpritsList() {
                     style={{ width: '24px', height: '24px' }}
                   />
                 </div>
-                <small style={{ color: '#888' }}>
-                  💡 Se calcula automáticamente según Material y Rareza
-                </small>
               </div>
               </div>
             </div>
@@ -1364,9 +1358,6 @@ function SpritsList() {
                       }}
                     />
                   </div>
-                  <small style={{ color: '#666' }}>
-                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
-                  </small>
                 </div>
 
                 <div className="form-group">
@@ -1392,9 +1383,6 @@ function SpritsList() {
                     style={{ width: '24px', height: '24px' }}
                   />
                 </div>
-                <small style={{ color: '#888' }}>
-                  💡 Se calcula automáticamente según Material y Rareza
-                </small>
               </div>
               </div>
             </div>
