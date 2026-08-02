@@ -134,3 +134,13 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 ``` bash
 docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/002_backup_completo.sql
 ```
+
+## Para ver los logs del Backend
+``` bash
+sudo docker compose logs backend --tail 50
+```
+
+## Para reiniciar el Backend
+``` bash
+sudo docker compose restart backend
+```
