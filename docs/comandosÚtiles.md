@@ -144,3 +144,18 @@ sudo docker compose logs backend --tail 50
 ``` bash
 sudo docker compose restart backend
 ```
+
+## Para ver que se está ejecutando en determinado puerto
+``` bash
+sudo lsof -i :1433
+sudo lsof -i :1434
+```
+
+## Detener SQL Server en WSL
+``` bash
+# Detener SQL Server en WSL
+sudo systemctl stop mssql-server
+
+# Verificar que se detuvo
+sudo systemctl status mssql-server
+```
