@@ -1,6 +1,6 @@
 -- ============================================
 -- BACKUP DE BASE DE DATOS
--- Fecha: 2026-07-30 14:49:13
+-- Fecha: 2026-08-03 18:42:58
 -- ============================================
 
 USE FORTNITEDB;
@@ -50,27 +50,31 @@ INSERT INTO nombresSprites (numeroOrden, nombre, created_at, updated_at) VALUES 
 -- ============================================
 -- TABLA: ordenDefault
 -- ============================================
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (1, 'Espíritu de Agua', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Espíritu de Tierra', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Espíritu de Fuego', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (4, 'Espíritu Pato', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (5, 'Espíritu Fantasmal', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (6, 'Espíritu Demoníaco', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (7, 'Espíritu Rey', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (8, 'Espíritu Dormilón', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (9, 'Espíritu Punk', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (10, 'Espíritu del Punto Cero', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (11, 'Cacahuate Tostado', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (12, 'Espíritu de Pez', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (13, 'Espíritu Goleador', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (14, 'Espíritu de Aura', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (15, 'Espíritu Jefe', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (16, 'Espíritu Parca', '2026-07-10 08:03:33', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (17, 'Espíritu de Batman', '2026-07-16 21:47:48', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (18, 'Espíritu de Aire', '2026-07-16 21:47:52', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (19, 'Espíritu de los Siete', '2026-07-16 21:47:59', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (20, 'Espíritu de Vini Jr', '2026-07-30 14:30:30', NULL);
-INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (21, 'Espíritu de Pollo', '2026-07-30 14:30:39', NULL);
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Espíritu de Agua', '2026-07-10 08:03:33', '2026-07-31 05:21:42');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (4, 'Espíritu de Tierra', '2026-07-10 08:03:33', '2026-07-31 05:21:37');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (5, 'Espíritu de Fuego', '2026-07-10 08:03:33', '2026-07-31 05:21:32');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (6, 'Espíritu Pato', '2026-07-10 08:03:33', '2026-07-31 05:21:27');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (7, 'Espíritu Fantasmal', '2026-07-10 08:03:33', '2026-07-31 05:21:22');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (9, 'Espíritu Demoníaco', '2026-07-10 08:03:33', '2026-07-31 05:23:29');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (11, 'Espíritu Rey', '2026-07-10 08:03:33', '2026-07-31 05:24:04');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (8, 'Espíritu Dormilón', '2026-07-10 08:03:33', '2026-07-31 05:23:35');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (10, 'Espíritu Punk', '2026-07-10 08:03:33', '2026-07-31 05:24:09');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (14, 'Espíritu del Punto Cero', '2026-07-10 08:03:33', '2026-07-31 05:26:31');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (12, 'Cacahuate Tostado', '2026-07-10 08:03:33', '2026-07-31 05:25:00');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (15, 'Espíritu de Pez', '2026-07-10 08:03:33', '2026-07-31 05:26:24');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (16, 'Espíritu Goleador', '2026-07-10 08:03:33', '2026-07-31 05:26:17');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (17, 'Espíritu de Aura', '2026-07-10 08:03:33', '2026-07-31 05:26:12');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (18, 'Espíritu Jefe', '2026-07-10 08:03:33', '2026-07-31 05:26:05');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (19, 'Espíritu Parca', '2026-07-10 08:03:33', '2026-07-31 05:25:59');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Espíritu de Batman', '2026-07-16 21:47:48', '2026-07-31 05:21:46');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (20, 'Espíritu de Aire', '2026-07-16 21:47:52', '2026-07-31 05:25:54');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (21, 'Espíritu de los Siete', '2026-07-16 21:47:59', '2026-07-31 05:25:48');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (13, 'Espíritu de Vini Jr', '2026-07-30 14:30:30', '2026-07-31 05:25:06');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (23, 'Espíritu de Pollo', '2026-07-30 14:30:39', '2026-07-31 05:31:54');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (1, 'Espíritu de John Wick', '2026-07-31 05:19:25', '2026-07-31 05:21:50');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (22, 'Espíritu de Ironmouse', '2026-07-31 05:27:20', '2026-07-31 05:31:59');
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (24, 'Espíritu de Llama', '2026-07-31 05:27:27', NULL);
+INSERT INTO ordenDefault (numeroOrden, nombre, created_at, updated_at) VALUES (25, 'Espíritu de Bananín', '2026-07-31 05:27:37', NULL);
 
 -- ============================================
 -- TABLA: ordenRareza
@@ -79,23 +83,27 @@ INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (1,
 INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Espíritu de Tierra', '2026-07-10 08:21:23', NULL);
 INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Espíritu de Fuego', '2026-07-10 08:21:23', NULL);
 INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (4, 'Espíritu de Pez', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (5, 'Espíritu Pato', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (6, 'Espíritu Fantasmal', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (7, 'Espíritu Demoníaco', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (8, 'Espíritu Rey', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (9, 'Espíritu Goleador', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (10, 'Espíritu de Aura', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (11, 'Espíritu Dormilón', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (12, 'Espíritu Punk', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (13, 'Espíritu Jefe', '2026-07-10 08:21:23', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (15, 'Espíritu Parca', '2026-07-10 08:21:23', '2026-07-11 00:43:42');
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (14, 'Espíritu del Punto Cero', '2026-07-10 08:21:23', '2026-07-11 00:43:48');
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (16, 'Cacahuate Tostado', '2026-07-10 08:21:23', '2026-07-11 00:43:56');
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (17, 'Espíritu de Batman', '2026-07-16 21:48:04', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (18, 'Espíritu de Aire', '2026-07-16 21:48:08', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (19, 'Espíritu de los Siete', '2026-07-16 21:48:11', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (20, 'Espíritu de Vini Jr', '2026-07-30 14:31:01', NULL);
-INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (21, 'Espíritu de Pollo', '2026-07-30 14:31:12', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (5, 'Espíritu de Aire', '2026-07-31 05:38:01', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (6, 'Espíritu Pato', '2026-07-31 05:39:25', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (7, 'Espíritu Fantasmal', '2026-07-31 05:39:41', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (8, 'Espíritu Demoníaco', '2026-07-31 05:40:03', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (9, 'Espíritu Rey', '2026-07-31 05:40:15', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (10, 'Espíritu Goleador', '2026-07-31 05:40:28', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (11, 'Espíritu de Aura', '2026-07-31 05:40:40', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (12, 'Espíritu Dormilón', '2026-07-31 05:42:32', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (13, 'Espíritu Punk', '2026-07-31 05:42:42', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (14, 'Espíritu Jefe', '2026-07-31 05:42:57', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (15, 'Espíritu de los Siete', '2026-07-31 05:43:09', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (16, 'Espíritu de Llama', '2026-07-31 05:43:17', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (17, 'Espíritu de Bananín', '2026-07-31 05:43:23', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (18, 'Espíritu de John Wick', '2026-07-31 05:43:34', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (19, 'Espíritu de Batman', '2026-07-31 05:43:41', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (20, 'Cacahuate Tostado', '2026-07-31 05:44:23', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (21, 'Espíritu de Vini Jr', '2026-07-31 05:44:29', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (22, 'Espíritu del Punto Cero', '2026-07-31 05:44:33', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (23, 'Espíritu Parca', '2026-07-31 05:44:48', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (24, 'Espíritu de Ironmouse', '2026-07-31 05:45:01', NULL);
+INSERT INTO ordenRareza (numeroOrden, nombre, created_at, updated_at) VALUES (25, 'Espíritu de Pollo', '2026-07-31 05:45:08', NULL);
 
 -- ============================================
 -- TABLA: cantidadPolvoEspirituExtraer
@@ -160,7 +168,7 @@ INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, material, rareza, cantida
 -- ============================================
 -- TABLA: sprits
 -- ============================================
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Agua', 'Raro', 'Normal', './imagenesSprites/aguaNormal.png', 1, 1, 1, 0, 5, 1000, 1800, '2026-07-01 09:36:01', '2026-07-27 05:33:44');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Agua', 'Raro', 'Normal', './imagenesSprites/aguaNormal.png', 1, 1, 1, 0, 5, 1000, 1800, '2026-07-01 09:36:01', '2026-08-02 23:33:29');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Tierra', 'Raro', 'Normal', './imagenesSprites/tierraNormal.png', 1, 1, 1, 0, 5, 1000, 1800, '2026-07-01 09:36:01', '2026-07-27 05:33:44');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Fuego', 'Raro', 'Normal', './imagenesSprites/fuegoNormal.png', 1, 1, 1, 0, 5, 1000, 1800, '2026-07-01 09:36:01', '2026-07-27 05:33:44');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Pato', 'Épico', 'Normal', './imagenesSprites/patoNormal.png', 1, 1, 1, 0, 5, 1100, 2700, '2026-07-01 09:36:01', '2026-07-27 05:33:44');
@@ -245,29 +253,29 @@ INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Pollo', 'Mítico', 'Normal', './imagenesSprites/pollo.png', 1, 1, 1, 0, 5, 1300, 6750, '2026-07-17 00:35:51', '2026-07-27 05:33:44');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Pez', 'Raro', 'Cúbico', './imagenesSprites/pezCubico.png', 1, 1, 1, 0, 5, 1000, 2700, '2026-07-23 21:47:04', '2026-07-30 06:10:03');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Batman', 'Mítico', 'Cúbico', './imagenesSprites/batmanCubico.png', 1, 1, 1, 0, 5, 1300, 10000, '2026-07-23 21:54:02', '2026-07-28 03:01:07');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Tierra', 'Raro', 'Cúbico', './imagenesSprites/tierraCubico.png', 1, 0, 1, 0, 1, 500, 2700, '2026-07-23 22:01:03', '2026-07-28 03:01:02');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Tierra', 'Raro', 'Cúbico', './imagenesSprites/tierraCubico.png', 1, 1, 1, 0, 5, 1000, 2700, '2026-07-23 22:01:03', '2026-07-31 06:16:38');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Fuego', 'Raro', 'Cúbico', './imagenesSprites/fuegoCubico.png', 1, 1, 1, 0, 5, 1000, 2700, '2026-07-23 22:06:25', '2026-07-30 06:24:45');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Dormilón', 'Legendario', 'Cúbico', './imagenesSprites/dormilonCubico.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-23 22:33:46', '2026-07-28 08:53:34');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Punk', 'Legendario', 'Cúbico', './imagenesSprites/punkCubico.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-23 22:39:31', '2026-07-29 08:52:05');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Parca', 'Mítico', 'Cúbico', './imagenesSprites/parcaCubico.png', 1, 1, 1, 0, 5, 1300, 10000, '2026-07-23 22:46:49', '2026-07-28 03:01:07');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Jefe', 'Legendario', 'Cúbico', './imagenesSprites/jefeCubico.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-23 22:47:13', '2026-07-28 08:47:08');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Normal', './imagenesSprites/llamaNormal.png', 0, 0, 0, 0, 1, 600, 4500, '2026-07-30 14:35:49', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Oro', './imagenesSprites/llamaOro.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:36:11', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Gomita', './imagenesSprites/llamaGomita.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:36:44', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Galaxia', './imagenesSprites/llamaGalaxia.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:39:08', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Gema', './imagenesSprites/llamaGema.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:39:28', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Normal', './imagenesSprites/bananinNormal.png', 0, 0, 0, 0, 1, 600, 4500, '2026-07-30 14:40:03', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Oro', './imagenesSprites/bananinOro.png', 0, 0, 0, 0, 0, 600, 6750, '2026-07-30 14:40:36', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Gomita', './imagenesSprites/bananinGomita.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:40:56', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Galaxia', './imagenesSprites/bananinGalaxia.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:41:17', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Holofoil', './imagenesSprites/bananinHolofoil.png', 0, 0, 0, 0, 1, 600, 6750, '2026-07-30 14:41:40', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de John Wick', 'Mítico', 'Normal', './imagenesSprites/johnWick.png', 0, 0, 0, 0, 1, 650, 6750, '2026-07-30 14:42:06', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Ironmouse', 'Mítico', 'Normal', './imagenesSprites/ironmouse.png', 0, 0, 0, 0, -2, 650, 6750, '2026-07-30 14:42:41', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Holofoil', './imagenesSprites/puntoCeroHolofoil.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:43:35', '2026-07-30 14:45:07');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Cúbico', './imagenesSprites/puntoCeroCubico.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:44:01', '2026-07-30 14:45:15');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Parca', 'Mítico', 'Holofoil', './imagenesSprites/parcaHolofoil.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:46:02', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Parca', 'Mítico', 'Gema', './imagenesSprites/parcaGema.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:46:26', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Tierra', 'Raro', 'Patito', './imagenesSprites/tierraPatito.png', 0, 0, 0, 0, 0, 500, 2700, '2026-07-30 14:47:23', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Agua', 'Raro', 'Patito', './imagenesSprites/aguaPatito.png', 0, 0, 0, 0, 1, 500, 2700, '2026-07-30 14:47:48', '2026-07-30 14:49:04');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Fuego', 'Raro', 'Patito', './imagenesSprites/fuegoPatito.png', 0, 0, 0, 0, 1, 500, 2700, '2026-07-30 14:48:19', NULL);
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Patito', './imagenesSprites/puntoCeroPatito.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:48:44', NULL);
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Normal', './imagenesSprites/llamaNormal.png', 1, 1, 1, 0, 5, 1200, 4500, '2026-07-30 14:35:49', '2026-07-31 06:16:37');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Oro', './imagenesSprites/llamaOro.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:36:11', '2026-08-02 22:04:50');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Gomita', './imagenesSprites/llamaGomita.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:36:44', '2026-08-02 21:32:19');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Galaxia', './imagenesSprites/llamaGalaxia.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:39:08', '2026-08-02 21:51:09');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Llama', 'Legendario', 'Gema', './imagenesSprites/llamaGema.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:39:28', '2026-08-02 21:32:20');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Normal', './imagenesSprites/bananinNormal.png', 1, 1, 1, 0, 5, 1200, 4500, '2026-07-30 14:40:03', '2026-08-02 21:15:55');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Oro', './imagenesSprites/bananinOro.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:40:36', '2026-08-02 21:15:56');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Gomita', './imagenesSprites/bananinGomita.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:40:56', '2026-08-02 06:32:32');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Galaxia', './imagenesSprites/bananinGalaxia.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:41:17', '2026-07-31 14:23:06');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Bananín', 'Legendario', 'Holofoil', './imagenesSprites/bananinHolofoil.png', 1, 1, 1, 0, 5, 1200, 6750, '2026-07-30 14:41:40', '2026-07-31 14:08:16');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de John Wick', 'Mítico', 'Normal', './imagenesSprites/johnWick.png', 1, 1, 1, 0, 5, 1300, 6750, '2026-07-30 14:42:06', '2026-08-02 06:49:11');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Ironmouse', 'Mítico', 'Normal', './imagenesSprites/ironmouse.png', 0, 0, 0, 0, 1, 650, 6750, '2026-07-30 14:42:41', '2026-07-31 05:46:20');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Holofoil', './imagenesSprites/puntoCeroHolofoil.png', 1, 1, 1, 0, 5, 1300, 10000, '2026-07-30 14:43:35', '2026-08-02 21:15:57');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Cúbico', './imagenesSprites/puntoCeroCubico.png', 1, 1, 1, 0, 5, 1300, 10000, '2026-07-30 14:44:01', '2026-08-02 13:52:23');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Parca', 'Mítico', 'Holofoil', './imagenesSprites/parcaHolofoil.png', 1, 1, 1, 0, 5, 1300, 10000, '2026-07-30 14:46:02', '2026-08-02 13:45:53');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Parca', 'Mítico', 'Gema', './imagenesSprites/parcaGema.png', 0, 0, 0, 0, 1, 650, 10000, '2026-07-30 14:46:26', '2026-07-31 05:46:26');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Tierra', 'Raro', 'Patito', './imagenesSprites/tierraPatito.png', 0, 0, 1, 0, 0, 500, 2700, '2026-07-30 14:47:23', '2026-07-30 18:03:41');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Agua', 'Raro', 'Patito', './imagenesSprites/aguaPatito.png', 0, 0, 1, 0, 1, 500, 2700, '2026-07-30 14:47:48', '2026-07-30 14:55:54');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Fuego', 'Raro', 'Patito', './imagenesSprites/fuegoPatito.png', 1, 1, 1, 0, 5, 1000, 2700, '2026-07-30 14:48:19', '2026-08-02 21:51:08');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Patito', './imagenesSprites/puntoCeroPatito.png', 0, 0, 1, 0, 1, 650, 10000, '2026-07-30 14:48:44', '2026-07-30 18:03:42');
