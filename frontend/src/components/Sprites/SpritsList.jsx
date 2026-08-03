@@ -157,7 +157,7 @@ function SpritsList() {
           return materialA - materialB;
         });
       
-      case 'no-inventario':
+      {/*case 'no-inventario':
         return [...spritsList].sort((a, b) => {
           if (a.estaEnInventario !== b.estaEnInventario) {
             return a.estaEnInventario ? 1 : -1;
@@ -170,7 +170,7 @@ function SpritsList() {
             return ordenA.nombreA - ordenB.nombreA;
           }
           return ordenA.materialA - ordenB.materialA;
-        });
+        });*/}
 
       case 'no-dominado':
         return [...spritsList].sort((a, b) => {
@@ -187,6 +187,50 @@ function SpritsList() {
           const ordenA = obtenerOrdenDefault(a);
           const ordenB = obtenerOrdenDefault(b);
           
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+
+      case 'invocar-mayor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoB - polvoA; // Mayor a menor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+
+      case 'invocar-menor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoA - polvoB; // Menor a mayor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
           if (ordenA.nombreA !== ordenB.nombreA) {
             return ordenA.nombreA - ordenB.nombreA;
           }
@@ -814,8 +858,10 @@ function SpritsList() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
-          <option value="no-inventario">Faltan en Inventario</option>
+          {/*<option value="no-inventario">Faltan en Inventario</option>*/}
           <option value="no-dominado">Faltan por Dominar</option>
+          <option value="invocar-mayor">Mayor a Menor en Invocar</option>
+          <option value="invocar-menor">Menor a Mayor en Invocar</option>
         </select>
 
         <select 
@@ -1184,9 +1230,6 @@ function SpritsList() {
                       }}
                     />
                   </div>
-                  <small style={{ color: '#666' }}>
-                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
-                  </small>
                 </div>
 
                 <div className="form-group">
@@ -1212,9 +1255,6 @@ function SpritsList() {
                     style={{ width: '24px', height: '24px' }}
                   />
                 </div>
-                <small style={{ color: '#888' }}>
-                  💡 Se calcula automáticamente según Material y Rareza
-                </small>
               </div>
               </div>
             </div>
@@ -1318,9 +1358,6 @@ function SpritsList() {
                       }}
                     />
                   </div>
-                  <small style={{ color: '#666' }}>
-                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
-                  </small>
                 </div>
 
                 <div className="form-group">
@@ -1346,9 +1383,6 @@ function SpritsList() {
                     style={{ width: '24px', height: '24px' }}
                   />
                 </div>
-                <small style={{ color: '#888' }}>
-                  💡 Se calcula automáticamente según Material y Rareza
-                </small>
               </div>
               </div>
             </div>
