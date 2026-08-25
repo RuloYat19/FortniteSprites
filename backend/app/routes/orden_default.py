@@ -14,19 +14,20 @@ def get_all_orden_default(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    nombre: Optional[str] = None
+    nombre: Optional[str] = None,
+    temporada: Optional[str] = Query(None, description="Filtrar por temporada (ej: C7T3)")
 ):
     """
     Obtener todos los órdenes default con filtros opcionales
     """
     query = db.query(models.OrdenDefault)
     
-    # Aplicar filtros
     if nombre:
         query = query.filter(models.OrdenDefault.nombre.ilike(f"%{nombre}%"))
+    if temporada:
+        query = query.filter(models.OrdenDefault.temporada == temporada)
     
-    # Ordenar por número de orden
-    query = query.order_by(models.OrdenDefault.numeroOrden)
+    query = query.order_by(models.OrdenDefault.temporada, models.OrdenDefault.numeroOrden)
     
     return query.offset(skip).limit(limit).all()
 
@@ -88,6 +89,29 @@ def verificar_nombre_existe(
     return existe
 
 # ============================================
+# GET - Obtener por temporada
+# ============================================
+@router.get("/temporada/{temporada}", response_model=List[schemas.OrdenDefaultResponse])
+def get_orden_default_by_temporada(
+    temporada: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todos los órdenes default de una temporada específica.
+    """
+    ordenes = db.query(models.OrdenDefault).filter(
+        models.OrdenDefault.temporada == temporada
+    ).order_by(models.OrdenDefault.numeroOrden).all()
+    
+    if not ordenes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron órdenes default para la temporada {temporada}"
+        )
+    
+    return ordenes
+
+# ============================================
 # POST - Crear un nuevo orden default
 # ============================================
 @router.post(
@@ -101,7 +125,8 @@ def create_orden(
 ):
     """
     Crear un nuevo orden default.
-    Verifica que no exista un nombre duplicado o número de orden duplicado.
+    Verifica que no exista un nombre duplicado.
+    Verifica que no exista la combinación (numeroOrden, temporada) duplicada.
     """
     # Verificar si ya existe un nombre igual
     existing = db.query(models.OrdenDefault).filter(
@@ -114,16 +139,30 @@ def create_orden(
             detail=f"Ya existe un orden default con el nombre: '{orden.nombre}'"
         )
     
-    # Verificar si el número de orden ya está en uso
-    existing_orden = db.query(models.OrdenDefault).filter(
-        models.OrdenDefault.numeroOrden == orden.numeroOrden
-    ).first()
-    
-    if existing_orden:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe un orden default con el número de orden {orden.numeroOrden}"
-        )
+    # 🔵 Verificar que no exista la combinación (numeroOrden, temporada)
+    # Solo si se proporciona temporada
+    if orden.temporada:
+        existing_orden = db.query(models.OrdenDefault).filter(
+            models.OrdenDefault.numeroOrden == orden.numeroOrden,
+            models.OrdenDefault.temporada == orden.temporada
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un orden default con el número de orden {orden.numeroOrden} para la temporada {orden.temporada}"
+            )
+    else:
+        # Si no se proporciona temporada, verificar solo por numeroOrden (compatibilidad con datos antiguos)
+        existing_orden = db.query(models.OrdenDefault).filter(
+            models.OrdenDefault.numeroOrden == orden.numeroOrden
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un orden default con el número de orden {orden.numeroOrden}"
+            )
     
     db_orden = models.OrdenDefault(**orden.model_dump())
     db.add(db_orden)
@@ -153,7 +192,7 @@ def create_ordenes_batch(
     
     for orden_data in ordenes:
         try:
-            # Verificar si ya existe
+            # Verificar si ya existe un nombre igual
             existing = db.query(models.OrdenDefault).filter(
                 models.OrdenDefault.nombre == orden_data.nombre
             ).first()
@@ -162,13 +201,19 @@ def create_ordenes_batch(
                 errores.append(f"'{orden_data.nombre}' ya existe")
                 continue
             
-            # Verificar número de orden duplicado
-            existing_orden = db.query(models.OrdenDefault).filter(
-                models.OrdenDefault.numeroOrden == orden_data.numeroOrden
-            ).first()
+            # 🔵 Verificar combinación (numeroOrden, temporada)
+            if orden_data.temporada:
+                existing_orden = db.query(models.OrdenDefault).filter(
+                    models.OrdenDefault.numeroOrden == orden_data.numeroOrden,
+                    models.OrdenDefault.temporada == orden_data.temporada
+                ).first()
+            else:
+                existing_orden = db.query(models.OrdenDefault).filter(
+                    models.OrdenDefault.numeroOrden == orden_data.numeroOrden
+                ).first()
             
             if existing_orden:
-                errores.append(f"Número de orden {orden_data.numeroOrden} ya está en uso")
+                errores.append(f"Número de orden {orden_data.numeroOrden} ya está en uso para la temporada {orden_data.temporada or 'sin temporada'}")
                 continue
             
             db_orden = models.OrdenDefault(**orden_data.model_dump())
@@ -180,7 +225,6 @@ def create_ordenes_batch(
     
     if creados:
         db.commit()
-        # Refrescar los creados
         ordenes_creados = db.query(models.OrdenDefault).filter(
             models.OrdenDefault.nombre.in_(creados)
         ).all()
@@ -226,17 +270,28 @@ def update_orden(
                 detail=f"Ya existe un orden default con el nombre: '{orden_update.nombre}'"
             )
     
-    # Verificar duplicado de número de orden (excluyendo el mismo registro)
+    # 🔵 Verificar duplicado de combinación (numeroOrden, temporada)
     if orden_update.numeroOrden:
-        existing_orden = db.query(models.OrdenDefault).filter(
-            models.OrdenDefault.numeroOrden == orden_update.numeroOrden,
-            models.OrdenDefault.id != orden_id
-        ).first()
+        # Obtener la temporada actual del registro
+        temporada_actual = db_orden.temporada
+        nueva_temporada = orden_update.temporada if orden_update.temporada is not None else temporada_actual
+        
+        if nueva_temporada:
+            existing_orden = db.query(models.OrdenDefault).filter(
+                models.OrdenDefault.numeroOrden == orden_update.numeroOrden,
+                models.OrdenDefault.temporada == nueva_temporada,
+                models.OrdenDefault.id != orden_id
+            ).first()
+        else:
+            existing_orden = db.query(models.OrdenDefault).filter(
+                models.OrdenDefault.numeroOrden == orden_update.numeroOrden,
+                models.OrdenDefault.id != orden_id
+            ).first()
         
         if existing_orden:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un orden default con el número de orden {orden_update.numeroOrden}"
+                detail=f"Ya existe un orden default con el número de orden {orden_update.numeroOrden} para la temporada {nueva_temporada or 'sin temporada'}"
             )
     
     # Actualizar campos
@@ -267,9 +322,6 @@ def delete_orden(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Orden default no encontrado"
         )
-    
-    # Verificar si hay sprits que usan este nombre en el orden default
-    # (Esto es opcional, depende de tu lógica de negocio)
     
     db.delete(db_orden)
     db.commit()
