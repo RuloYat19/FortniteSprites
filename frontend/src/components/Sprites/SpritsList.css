@@ -441,7 +441,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 2.5px 4px;
   background: rgba(15, 52, 96, 0.3);
   border-radius: 6px;
 }
@@ -450,12 +450,13 @@ body {
   color: #aaa;
   font-size: 0.83rem;
   flex: 1;
+  text-align: left;
 }
 
 .sprits-container .detail-item .detail-value {
   color: #fff;
-  font-weight: 500;
   font-size: 0.8rem;
+  text-align: center;
 }
 
 /* 🔵 Responsive para los iconos de polvo */

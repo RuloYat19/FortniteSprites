@@ -42,8 +42,11 @@ function SpritsList() {
     nombreArchivoImagen: '',
     nivelEspiritu: '',
     polvoAlExtraer: '',
-    polvoAlInvocar: ''
-  });
+    polvoAlInvocar: '',
+    metodoSubidaNivel: '',
+    temporada: '',
+    estaEnElJuego: true
+    });
   const [editando, setEditando] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -54,7 +57,10 @@ function SpritsList() {
     nombreArchivoImagen: '',
     nivelEspiritu: '',
     polvoAlExtraer: '',
-    polvoAlInvocar: ''
+    polvoAlInvocar: '',
+    metodoSubidaNivel: '',
+    temporada: '',
+    estaEnElJuego: true
   });
   const [agregando, setAgregando] = useState(false);
 
@@ -640,7 +646,11 @@ function SpritsList() {
       nombreArchivoImagen: sprit.nombreArchivoImagen || '',
       nivelEspiritu: sprit.nivelEspiritu || '',
       polvoAlExtraer: sprit.polvoAlExtraer || '',
-      polvoAlInvocar: sprit.polvoAlInvocar || ''
+      polvoAlInvocar: sprit.polvoAlInvocar || '',
+      // 🔵 NUEVOS CAMPOS
+      metodoSubidaNivel: sprit.metodoSubidaNivel || '',
+      temporada: sprit.temporada || '',
+      estaEnElJuego: sprit.estaEnElJuego !== undefined ? sprit.estaEnElJuego : true
     });
     setShowEditModal(true);
   };
@@ -678,7 +688,7 @@ function SpritsList() {
       let polvoAlExtraer = editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null;
       let polvoAlInvocar = editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null;
       
-      // 🔵 Calcular polvo al extraer si es necesario
+      // Calcular polvo al extraer si es necesario
       if (editSprit.rareza && editSprit.nivelEspiritu) {
         const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
@@ -686,7 +696,7 @@ function SpritsList() {
         }
       }
       
-      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
+      // Calcular polvo al invocar si es necesario
       if (editSprit.material && editSprit.rareza) {
         const polvoCalculado = await obtenerPolvoAlInvocar(editSprit.material, editSprit.rareza);
         if (polvoCalculado > 0) {
@@ -705,7 +715,11 @@ function SpritsList() {
         nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: polvoAlInvocar  // 🔵 Incluir polvo al invocar
+        polvoAlInvocar: polvoAlInvocar,
+        // 🔵 NUEVOS CAMPOS
+        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
+        temporada: editSprit.temporada || null,
+        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
       };
 
       await spritsService.update(editSprit.id, data);
@@ -728,7 +742,7 @@ function SpritsList() {
       nombreArchivoImagen: '',
       nivelEspiritu: '',
       polvoAlExtraer: '',
-      polvoAlInvocar: ''
+      polvoAlInvocar: '',
     });
     setShowAddModal(true);
   };
@@ -794,7 +808,10 @@ function SpritsList() {
         yaFueDominado: false,
         estaDominado: false,
         estaEnInventario: false,
-        estaDesbloqueado: false
+        estaDesbloqueado: false,
+        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
+        temporada: editSprit.temporada || null,
+        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
       };
 
       await spritsService.create(data);
@@ -1108,8 +1125,21 @@ function SpritsList() {
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
                   
+                  {sprit.temporada && (
+                    <div className="detail-item">
+                      <span className="detail-label">📅 Temporada:</span>
+                      <span className="detail-value">{sprit.temporada}</span>
+                    </div>
+                  )}
+
+                  <div className="detail-item">
+                    <span className="detail-value">
+                      {sprit.metodoSubidaNivel || 'No especificado'}
+                    </span>
+                  </div>
                 </div>
 
+                  
                 <div className="back-actions">
                   <span 
                     className="action-icon"
@@ -1255,6 +1285,34 @@ function SpritsList() {
                     style={{ width: '24px', height: '24px' }}
                   />
                 </div>
+
+                <div className="form-group">
+                  <label>Método de Subida de Nivel</label>
+                  <input
+                    type="text"
+                    name="metodoSubidaNivel"
+                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
+                    value={newSprit.metodoSubidaNivel || ''}
+                    onChange={handleAddChange}
+                  />
+                  <small style={{ color: '#666' }}>
+                    💡 Cómo se sube de nivel a este sprit en el juego
+                  </small>
+                </div>
+
+                <div className="form-group">
+                  <label>Temporada</label>
+                  <input
+                    type="text"
+                    name="temporada"
+                    placeholder="Ej: C7T4"
+                    value={newSprit.temporada || ''}
+                    onChange={handleAddChange}
+                  />
+                  <small style={{ color: '#666' }}>
+                    💡 Temporada a la que pertenece el sprit
+                  </small>
+                </div>
               </div>
               </div>
             </div>
@@ -1382,6 +1440,34 @@ function SpritsList() {
                     alt="Polvo"
                     style={{ width: '24px', height: '24px' }}
                   />
+                </div>
+
+                <div className="form-group">
+                  <label>Método de Subida de Nivel</label>
+                  <input
+                    type="text"
+                    name="metodoSubidaNivel"
+                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
+                    value={editSprit.metodoSubidaNivel || ''}
+                    onChange={handleEditChange}
+                  />
+                  <small style={{ color: '#666' }}>
+                    💡 Cómo se sube de nivel a este sprit en el juego
+                  </small>
+                </div>
+
+                <div className="form-group">
+                  <label>Temporada</label>
+                  <input
+                    type="text"
+                    name="temporada"
+                    placeholder="Ej: C7T4"
+                    value={editSprit.temporada || ''}
+                    onChange={handleEditChange}
+                  />
+                  <small style={{ color: '#666' }}>
+                    💡 Temporada a la que pertenece el sprit
+                  </small>
                 </div>
               </div>
               </div>
