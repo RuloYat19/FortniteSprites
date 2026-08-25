@@ -159,3 +159,14 @@ sudo systemctl stop mssql-server
 # Verificar que se detuvo
 sudo systemctl status mssql-server
 ```
+
+## Para eliminar archivos ":Zone.Identifier"
+``` bash
+find . -name "*:Zone.Identifier" -type f -delete
+```
+
+## Para iniciar sesión en GitHub
+``` bash
+git config --global user.name "Raúl Emanuel Yat Cancinos"
+git config --global user.email "3535811510101@ingenieria.usac.edu.gt"
+```
