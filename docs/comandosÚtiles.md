@@ -135,6 +135,11 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/002_backup_completo.sql
 ```
 
+## Para ejecutar el archivo auxiliar SQL para aplicar algún cambio a base de datos
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/003_auxiliar.sql
+```
+
 ## Para ver los logs del Backend
 ``` bash
 sudo docker compose logs backend --tail 50
@@ -143,4 +148,30 @@ sudo docker compose logs backend --tail 50
 ## Para reiniciar el Backend
 ``` bash
 sudo docker compose restart backend
+```
+
+## Para ver que se está ejecutando en determinado puerto
+``` bash
+sudo lsof -i :1433
+sudo lsof -i :1434
+```
+
+## Detener SQL Server en WSL
+``` bash
+# Detener SQL Server en WSL
+sudo systemctl stop mssql-server
+
+# Verificar que se detuvo
+sudo systemctl status mssql-server
+```
+
+## Para eliminar archivos ":Zone.Identifier"
+``` bash
+find . -name "*:Zone.Identifier" -type f -delete
+```
+
+## Para iniciar sesión en GitHub
+``` bash
+git config --global user.name "Raúl Emanuel Yat Cancinos"
+git config --global user.email "3535811510101@ingenieria.usac.edu.gt"
 ```
