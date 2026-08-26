@@ -90,6 +90,9 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 # Tabla de Orden Default
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ordenRareza' ORDER BY ORDINAL_POSITION"
 
+# Tabla de Método de Subida de Nivel para los Espíritus
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'metodoSubidaNivel' ORDER BY ORDINAL_POSITION"
+
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed
 ```
@@ -128,6 +131,9 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 
 # Tabla de Orden Rareza
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenRareza;"
+
+# Tabla de Método de Subida de Nivel para los Espíritus
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE metodoSubidaNivel;"
 ```
 
 ## Para ejecutar el backup completo

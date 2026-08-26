@@ -79,7 +79,8 @@ def generar_backup(
             {"modelo": models.OrdenDefault, "nombre": "ordenDefault"},
             {"modelo": models.OrdenRareza, "nombre": "ordenRareza"},
             {"modelo": models.CantidadPolvoEspirituExtraer, "nombre": "cantidadPolvoEspirituExtraer"},
-            {"modelo": models.CantidadPolvoEspirituInvocar, "nombre": "cantidadPolvoEspirituInvocar"},  # 🔵 NUEVA TABLA
+            {"modelo": models.CantidadPolvoEspirituInvocar, "nombre": "cantidadPolvoEspirituInvocar"},
+            {"modelo": models.MetodoSubidaNivel, "nombre": "metodoSubidaNivel"},
             {"modelo": models.Sprit, "nombre": "sprits"},
         ]
         
@@ -168,11 +169,12 @@ def generar_backup_tabla(
     tabla_map = {
         "sprits": models.Sprit,
         "cantidadPolvoEspirituExtraer": models.CantidadPolvoEspirituExtraer,
-        "cantidadPolvoEspirituInvocar": models.CantidadPolvoEspirituInvocar,  # 🔵 NUEVA TABLA
+        "cantidadPolvoEspirituInvocar": models.CantidadPolvoEspirituInvocar,
         "material": models.Material,
         "nombresSprites": models.NombreSprit,
         "ordenDefault": models.OrdenDefault,
-        "ordenRareza": models.OrdenRareza
+        "ordenRareza": models.OrdenRareza,
+        "metodoSubidaNivel": models.MetodoSubidaNivel,
     }
     
     if tabla_nombre not in tabla_map:
@@ -259,6 +261,7 @@ def get_backup_info(db: Session = Depends(get_db)):
         {"nombre": "nombresSprites", "descripcion": "Nombres de Sprites", "registros": db.query(models.NombreSprit).count()},
         {"nombre": "ordenDefault", "descripcion": "Orden Default", "registros": db.query(models.OrdenDefault).count()},
         {"nombre": "ordenRareza", "descripcion": "Orden por Rareza", "registros": db.query(models.OrdenRareza).count()},
+        {"nombre": "metodoSubidaNivel", "descripcion": "Métodos de Subida de Nivel", "registros": db.query(models.MetodoSubidaNivel).count()},
     ]
     
     return {
