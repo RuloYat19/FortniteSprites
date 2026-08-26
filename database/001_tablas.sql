@@ -207,8 +207,33 @@ END
 GO
 
 -- ================================================
+-- TABLA: Método de Subida de Nivel para los Espíritus
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRareza')
+BEGIN
+    CREATE TABLE metodoSubidaNivel (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        temporada VARCHAR(20) NULL,
+        nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    CREATE INDEX idx_metodoSubidaNivel_nombre ON metodoSubidaNivel(nombre);
+    CREATE INDEX idx_metodoSubidaNivel_temporada ON metodoSubidaNivel(temporada);
+    
+    PRINT '✅ Tabla metodoSubidaNivel creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla metodoSubidaNivel ya existe';
+END
+GO
+
+-- ================================================
 -- VERIFICAR TABLAS CREADAS
 -- ================================================
 SELECT name FROM sys.tables 
-WHERE name IN ('sprits', 'cantidadPolvoEspirituExtraer', 'cantidadPolvoEspirituInvocar', 'material', 'nombresSprites', 'ordenDefault', 'ordenRareza');
+WHERE name IN ('sprits', 'cantidadPolvoEspirituExtraer', 'cantidadPolvoEspirituInvocar', 'material', 'nombresSprites', 'ordenDefault', 'ordenRareza', 'metodoSubidaNivel');
 GO
