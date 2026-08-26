@@ -86,3 +86,13 @@ class OrdenRareza(Base):
     nombre = Column(String(50), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
+
+class MetodoSubidaNivel(Base):
+    __tablename__ = "metodoSubidaNivel"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)  # Ej: "C7T3"
+    nombre = Column(String(100), nullable=False, unique=True)  # Ej: "Abriendo contenedores"
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())

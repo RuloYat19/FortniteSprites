@@ -36,6 +36,7 @@ app.include_router(nombres_sprites.router)
 app.include_router(orden_default.router)
 app.include_router(orden_rareza.router)
 app.include_router(backup.router)
+app.include_router(metodo_subida_nivel.router)
 
 @app.get("/")
 def root():

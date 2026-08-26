@@ -189,3 +189,27 @@ class OrdenRarezaResponse(OrdenRarezaBase):
     
     class Config:
         from_attributes = True
+
+# ============================================
+# SCHEMAS PARA METODO SUBIDA NIVEL
+# ============================================
+class MetodoSubidaNivelBase(BaseModel):
+    numeroOrden: int
+    temporada: Optional[str] = None
+    nombre: str
+
+class MetodoSubidaNivelCreate(MetodoSubidaNivelBase):
+    pass
+
+class MetodoSubidaNivelUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
+    nombre: Optional[str] = None
+
+class MetodoSubidaNivelResponse(MetodoSubidaNivelBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
