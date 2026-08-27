@@ -15,7 +15,8 @@ function PolvoInvocarAdmin() {
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
     material: '',
-    rareza: ''
+    rareza: '',
+    temporada: '',
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -24,9 +25,10 @@ function PolvoInvocarAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
+    temporada: '',
     material: '',
     rareza: '',
-    cantidad: ''
+    cantidad: '',
   });
 
   // 🔵 Estado para modales de confirmación
@@ -44,6 +46,9 @@ function PolvoInvocarAdmin() {
 
   // 🔵 Rarezas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
+
+  // Temporadas disponibles
+  const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarDatos();
@@ -298,6 +303,19 @@ function PolvoInvocarAdmin() {
       <div className="admin-filtros">
         <div className="filtros-group">
           <select 
+            name="temporada" 
+            value={filtros.temporada} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            style={{ borderColor: '#ff6f00', color: '#ffb74d' }}
+          >
+            <option value="">Todas las temporadas</option>
+            {temporadas.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
+          <select 
             name="material" 
             value={filtros.material} 
             onChange={handleFiltroChange}
@@ -378,6 +396,7 @@ function PolvoInvocarAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
+              <th>Temporada</th>
               <th>Material</th>
               <th>Rareza</th>
               <th>Cantidad de Polvo</th>
@@ -449,6 +468,29 @@ function PolvoInvocarAdmin() {
             
             <div className="modal-body">
               <div className="admin-form">
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={formData.temporada}
+                    onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {temporadas.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="form-group">
                   <label>Número de Orden *</label>
                   <input
