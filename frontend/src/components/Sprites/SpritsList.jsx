@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
+import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService, metodoSubidaNivelService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -18,7 +18,8 @@ function SpritsList() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'
+    orden: 'default',
+    temporada: '',
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -73,6 +74,16 @@ function SpritsList() {
 
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
+
+  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);
+  const [opcionesNombres, setOpcionesNombres] = useState([]);
+  const [opcionesMateriales, setOpcionesMateriales] = useState([]);
+  const [opcionesPolvoExtraer, setOpcionesPolvoExtraer] = useState({});
+  const [opcionesPolvoInvocar, setOpcionesPolvoInvocar] = useState({});
+  const [opcionesRarezas, setOpcionesRarezas] = useState(['Raro', 'Épico', 'Legendario', 'Mítico']);
+  const [opcionesMetodosSubida, setOpcionesMetodosSubida] = useState([]);
+  const [cargandoMetodos, setCargandoMetodos] = useState(false);
+  const [cargandoOpciones, setCargandoOpciones] = useState(false);
 
   // 🔵 Cargar órdenes desde el backend
   const cargarOrdenes = async () => {
@@ -363,11 +374,12 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
-  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes y filtros
+  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes, filtros y métodos
   useEffect(() => {
     cargarSprits();
     cargarOrdenes();
-    cargarFiltros(); // 🔵 NUEVO: Cargar nombres y materiales para filtros
+    cargarFiltros();
+    cargarMetodosSubida();
   }, []);
 
   // Para editar el Sprite
@@ -634,8 +646,8 @@ function SpritsList() {
   const abrirEditModal = (sprit, e) => {
     e.stopPropagation();
     
-    if (sprit.rareza && sprit.nivelEspiritu) {
-      actualizarPolvoAlExtraer(sprit.id, sprit.rareza, sprit.nivelEspiritu);
+    if (sprit.temporada) {
+      cargarOpcionesPorTemporada(sprit.temporada);
     }
     
     setEditSprit({
@@ -647,7 +659,6 @@ function SpritsList() {
       nivelEspiritu: sprit.nivelEspiritu || '',
       polvoAlExtraer: sprit.polvoAlExtraer || '',
       polvoAlInvocar: sprit.polvoAlInvocar || '',
-      // 🔵 NUEVOS CAMPOS
       metodoSubidaNivel: sprit.metodoSubidaNivel || '',
       temporada: sprit.temporada || '',
       estaEnElJuego: sprit.estaEnElJuego !== undefined ? sprit.estaEnElJuego : true
@@ -671,9 +682,36 @@ function SpritsList() {
   };
 
   const handleEditChange = (e) => {
-    setEditSprit({
-      ...editSprit,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    
+    setEditSprit(prev => {
+      const updated = { ...prev, [name]: value };
+      
+      if (name === 'temporada') {
+        updated.nombre = '';
+        updated.material = '';
+        updated.rareza = '';
+        updated.polvoAlExtraer = '';
+        updated.polvoAlInvocar = '';
+      }
+      
+      if (name === 'rareza' || name === 'nivelEspiritu') {
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
+        if (rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        }
+      }
+      
+      if (name === 'material' || name === 'rareza') {
+        const material = name === 'material' ? value : updated.material;
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        if (material && rareza) {
+          updated.polvoAlInvocar = calcularPolvoInvocar(material, rareza);
+        }
+      }
+      
+      return updated;
     });
   };
 
@@ -735,6 +773,8 @@ function SpritsList() {
   };
 
   const abrirAddModal = () => {
+    const temporadaDefault = opcionesTemporada.length > 0 ? opcionesTemporada[0] : '';
+    
     setNewSprit({
       nombre: '',
       rareza: '',
@@ -743,6 +783,9 @@ function SpritsList() {
       nivelEspiritu: '',
       polvoAlExtraer: '',
       polvoAlInvocar: '',
+      metodoSubidaNivel: '',
+      temporada: temporadaDefault,
+      estaEnElJuego: true
     });
     setShowAddModal(true);
   };
@@ -762,9 +805,36 @@ function SpritsList() {
   };
 
   const handleAddChange = (e) => {
-    setNewSprit({
-      ...newSprit,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    
+    setNewSprit(prev => {
+      const updated = { ...prev, [name]: value };
+      
+      if (name === 'temporada') {
+        updated.nombre = '';
+        updated.material = '';
+        updated.rareza = '';
+        updated.polvoAlExtraer = '';
+        updated.polvoAlInvocar = '';
+      }
+      
+      if (name === 'rareza' || name === 'nivelEspiritu') {
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
+        if (rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        }
+      }
+      
+      if (name === 'material' || name === 'rareza') {
+        const material = name === 'material' ? value : updated.material;
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        if (material && rareza) {
+          updated.polvoAlInvocar = calcularPolvoInvocar(material, rareza);
+        }
+      }
+      
+      return updated;
     });
   };
 
@@ -838,7 +908,8 @@ function SpritsList() {
       rareza: '', 
       material: '',
       nombre: '',
-      orden: 'default'
+      orden: 'default',
+      temporada: '',
     });
   };
 
@@ -846,14 +917,12 @@ function SpritsList() {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
     if (filtros.nombre && sprit.nombre !== filtros.nombre) return false;
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
     return true;
   });
 
   // 🔵 Solo ordenar cuando los órdenes estén cargados
   const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
-
-  if (loading) return <div className="loading">Cargando sprits...</div>;
-  if (error) return <div className="error">{error}</div>;
 
   const polvoNecesario = calcularPolvoNecesario();
   
@@ -861,11 +930,121 @@ function SpritsList() {
   const progresoDominadosInventario = calcularProgreso(s => s.estaDominado);
   const progresoDominadosGeneral = calcularProgreso(s => s.yaFueDominado);
 
+  const cargarOpcionesPorTemporada = async (temporada) => {
+    if (!temporada) return;
+    
+    setCargandoOpciones(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresFiltrados = nombresRes.data
+        .filter(item => item.temporada === temporada)
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesNombres(nombresFiltrados);
+
+      const materialesRes = await materialesService.getAll();
+      const materialesFiltrados = materialesRes.data
+        .filter(item => item.temporada === temporada)
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesMateriales(materialesFiltrados);
+
+      const polvoExtraerRes = await cantidadPolvoExtraerService.getAll();
+      const polvoExtraerMap = {};
+      polvoExtraerRes.data
+        .filter(item => item.temporada === temporada)
+        .forEach(item => {
+          const clave = `${item.rareza}-${item.nivelEspiritu}`;
+          polvoExtraerMap[clave] = item.cantidad;
+        });
+      setOpcionesPolvoExtraer(polvoExtraerMap);
+
+      const polvoInvocarRes = await cantidadPolvoInvocarService.getAll();
+      const polvoInvocarMap = {};
+      polvoInvocarRes.data
+        .filter(item => item.temporada === temporada)
+        .forEach(item => {
+          const clave = `${item.material}-${item.rareza}`;
+          polvoInvocarMap[clave] = item.cantidad;
+        });
+      setOpcionesPolvoInvocar(polvoInvocarMap);
+
+    } catch (error) {
+      console.error('Error al cargar opciones por temporada:', error);
+    } finally {
+      setCargandoOpciones(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showAddModal && newSprit.temporada) {
+      cargarOpcionesPorTemporada(newSprit.temporada);
+    }
+  }, [showAddModal, newSprit.temporada]);
+
+  useEffect(() => {
+    if (showEditModal && editSprit.temporada) {
+      cargarOpcionesPorTemporada(editSprit.temporada);
+    }
+  }, [showEditModal, editSprit.temporada]);
+
+  const calcularPolvoExtraer = (rareza, nivel) => {
+    if (!rareza || !nivel) return '';
+    const clave = `${rareza}-${nivel}`;
+    return opcionesPolvoExtraer[clave] || '';
+  };
+
+  const calcularPolvoInvocar = (material, rareza) => {
+    if (!material || !rareza) return '';
+    const clave = `${material}-${rareza}`;
+    return opcionesPolvoInvocar[clave] || '';
+  };
+
+  const cargarMetodosSubida = async () => {
+    setCargandoMetodos(true);
+    try {
+      const response = await metodoSubidaNivelService.getAll();
+      const metodos = response.data
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesMetodosSubida(metodos);
+    } catch (error) {
+      console.error('Error al cargar métodos de subida:', error);
+    } finally {
+      setCargandoMetodos(false);
+    }
+  };
+
+  // AGREGAR NUEVO CÓDIGO ARRIBA DE ESTO SINO F
+  if (loading) return <div className="loading">Cargando sprits...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="sprits-container">
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
+        <select 
+          name="temporada" 
+          value={filtros.temporada} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #ff6f00',
+            background: '#16213e',
+            color: '#ffb74d',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '150px'
+          }}
+        >
+          <option value="">Todas las temporadas</option>
+          {opcionesTemporada.map(temp => (
+            <option key={temp} value={temp}>{temp}</option>
+          ))}
+        </select>
+
         <select 
           name="orden" 
           value={filtros.orden} 
@@ -1187,39 +1366,108 @@ function SpritsList() {
             
             <div className="modal-body">
               <div className="edit-form">
+                {/* 🔵 TEMPORADA - ComboBox */}
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={newSprit.temporada || ''}
+                    onChange={handleAddChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {opcionesTemporada.map(temp => (
+                      <option key={temp} value={temp}>{temp}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 NOMBRE - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Nombre *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu del Punto Cero"
-                    value={newSprit.nombre}
+                    value={newSprit.nombre || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={!newSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombres.map(nombre => (
+                      <option key={nombre} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
+                  {!newSprit.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
                 </div>
 
-                <div className="form-group">
-                  <label>Rareza *</label>
-                  <input
-                    type="text"
-                    name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={newSprit.rareza}
-                    onChange={handleAddChange}
-                  />
-                </div>
-
+                {/* 🔵 MATERIAL - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Material *</label>
-                  <input
-                    type="text"
+                  <select
                     name="material"
-                    placeholder="Ej: Galaxia"
-                    value={newSprit.material}
+                    value={newSprit.material || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={!newSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {opcionesMateriales.map(material => (
+                      <option key={material} value={material}>{material}</option>
+                    ))}
+                  </select>
                 </div>
 
+                {/* 🔵 RAREZA - Input de texto (se mantiene) */}
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <select
+                    name="rareza"
+                    value={newSprit.rareza || ''}
+                    onChange={handleAddChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 RUTA DE IMAGEN */}
                 <div className="form-group">
                   <label>Ruta de la Imagen</label>
                   <input
@@ -1231,6 +1479,7 @@ function SpritsList() {
                   />
                 </div>
 
+                {/* 🔵 NIVEL DE ESPÍRITU */}
                 <div className="form-group">
                   <label>Nivel de Espíritu</label>
                   <input
@@ -1239,9 +1488,12 @@ function SpritsList() {
                     placeholder="Ej: 1"
                     value={newSprit.nivelEspiritu}
                     onChange={handleAddChange}
+                    min="1"
+                    max="5"
                   />
                 </div>
 
+                {/* 🔵 POLVO AL EXTRAER - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1259,61 +1511,73 @@ function SpritsList() {
                         borderColor: '#35cf35'
                       }}
                     />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
                   </div>
+                  <small style={{ color: '#666' }}>
+                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
+                  </small>
                 </div>
 
+                {/* 🔵 POLVO AL INVOCAR - Se calcula automáticamente */}
                 <div className="form-group">
-                <label>Polvo al Invocar</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input
-                    type="number"
-                    name="polvoAlInvocar"
-                    placeholder="Se calcula automáticamente"
-                    value={newSprit.polvoAlInvocar || ''}
-                    readOnly
-                    style={{ 
-                      flex: 1, 
-                      cursor: 'not-allowed',
-                      opacity: 0.8,
-                      backgroundColor: '#1a1a2e',
-                      borderColor: '#9c27b0'
-                    }}
-                  />
-                  <img 
-                    src="./imagenesSprites/polvoEspiritu.png" 
-                    alt="Polvo"
-                    style={{ width: '24px', height: '24px' }}
-                  />
+                  <label>Polvo al Invocar</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlInvocar"
+                      placeholder="Se calcula automáticamente"
+                      value={newSprit.polvoAlInvocar || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#9c27b0'
+                      }}
+                    />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
+                  </div>
+                  <small style={{ color: '#888' }}>
+                    💡 Se calcula automáticamente según Material y Rareza
+                  </small>
                 </div>
 
+                {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
                 <div className="form-group">
                   <label>Método de Subida de Nivel</label>
-                  <input
-                    type="text"
+                  <select
                     name="metodoSubidaNivel"
-                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
                     value={newSprit.metodoSubidaNivel || ''}
                     onChange={handleAddChange}
-                  />
-                  <small style={{ color: '#666' }}>
-                    💡 Cómo se sube de nivel a este sprit en el juego
-                  </small>
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Temporada</label>
-                  <input
-                    type="text"
-                    name="temporada"
-                    placeholder="Ej: C7T4"
-                    value={newSprit.temporada || ''}
-                    onChange={handleAddChange}
-                  />
-                  <small style={{ color: '#666' }}>
-                    💡 Temporada a la que pertenece el sprit
-                  </small>
-                </div>
-              </div>
               </div>
             </div>
 
@@ -1324,7 +1588,7 @@ function SpritsList() {
               <button 
                 className="btn-guardar" 
                 onClick={guardarNuevoSprit}
-                disabled={agregando}
+                disabled={agregando || cargandoOpciones}
               >
                 {agregando ? '⏳ Guardando...' : '💾 Agregar Sprit'}
               </button>
@@ -1343,39 +1607,105 @@ function SpritsList() {
             
             <div className="modal-body">
               <div className="edit-form">
+                {/* 🔵 TEMPORADA - ComboBox */}
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={editSprit.temporada || ''}
+                    onChange={handleEditChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {opcionesTemporada.map(temp => (
+                      <option key={temp} value={temp}>{temp}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 NOMBRE - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Nombre *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu del Punto Cero"
-                    value={editSprit.nombre}
+                    value={editSprit.nombre || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={!editSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombres.map(nombre => (
+                      <option key={nombre} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Rareza *</label>
-                  <input
-                    type="text"
-                    name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={editSprit.rareza}
-                    onChange={handleEditChange}
-                  />
-                </div>
-
+                {/* 🔵 MATERIAL - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Material *</label>
-                  <input
-                    type="text"
+                  <select
                     name="material"
-                    placeholder="Ej: Galaxia"
-                    value={editSprit.material}
+                    value={editSprit.material || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={!editSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {opcionesMateriales.map(material => (
+                      <option key={material} value={material}>{material}</option>
+                    ))}
+                  </select>
                 </div>
 
+                {/* 🔵 RAREZA - Input de texto */}
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <select
+                    name="rareza"
+                    value={editSprit.rareza || ''}
+                    onChange={handleEditChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 RUTA DE IMAGEN */}
                 <div className="form-group">
                   <label>Ruta de la Imagen</label>
                   <input
@@ -1387,6 +1717,7 @@ function SpritsList() {
                   />
                 </div>
 
+                {/* 🔵 NIVEL DE ESPÍRITU */}
                 <div className="form-group">
                   <label>Nivel de Espíritu</label>
                   <input
@@ -1395,9 +1726,12 @@ function SpritsList() {
                     placeholder="Ej: 1"
                     value={editSprit.nivelEspiritu}
                     onChange={handleEditChange}
+                    min="1"
+                    max="5"
                   />
                 </div>
 
+                {/* 🔵 POLVO AL EXTRAER - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1415,61 +1749,73 @@ function SpritsList() {
                         borderColor: '#35cf35'
                       }}
                     />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
                   </div>
+                  <small style={{ color: '#666' }}>
+                    💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
+                  </small>
                 </div>
 
+                {/* 🔵 POLVO AL INVOCAR - Se calcula automáticamente */}
                 <div className="form-group">
-                <label>Polvo al Invocar</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input
-                    type="number"
-                    name="polvoAlInvocar"
-                    placeholder="Se calcula automáticamente"
-                    value={editSprit.polvoAlInvocar || ''}
-                    readOnly
-                    style={{ 
-                      flex: 1, 
-                      cursor: 'not-allowed',
-                      opacity: 0.8,
-                      backgroundColor: '#1a1a2e',
-                      borderColor: '#9c27b0'
-                    }}
-                  />
-                  <img 
-                    src="./imagenesSprites/polvoEspiritu.png" 
-                    alt="Polvo"
-                    style={{ width: '24px', height: '24px' }}
-                  />
+                  <label>Polvo al Invocar</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlInvocar"
+                      placeholder="Se calcula automáticamente"
+                      value={editSprit.polvoAlInvocar || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#9c27b0'
+                      }}
+                    />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
+                  </div>
+                  <small style={{ color: '#888' }}>
+                    💡 Se calcula automáticamente según Material y Rareza
+                  </small>
                 </div>
 
+                {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
                 <div className="form-group">
                   <label>Método de Subida de Nivel</label>
-                  <input
-                    type="text"
+                  <select
                     name="metodoSubidaNivel"
-                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
                     value={editSprit.metodoSubidaNivel || ''}
                     onChange={handleEditChange}
-                  />
-                  <small style={{ color: '#666' }}>
-                    💡 Cómo se sube de nivel a este sprit en el juego
-                  </small>
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Temporada</label>
-                  <input
-                    type="text"
-                    name="temporada"
-                    placeholder="Ej: C7T4"
-                    value={editSprit.temporada || ''}
-                    onChange={handleEditChange}
-                  />
-                  <small style={{ color: '#666' }}>
-                    💡 Temporada a la que pertenece el sprit
-                  </small>
-                </div>
-              </div>
               </div>
             </div>
 
@@ -1480,7 +1826,7 @@ function SpritsList() {
               <button 
                 className="btn-guardar" 
                 onClick={guardarSpritEditado}
-                disabled={editando}
+                disabled={editando || cargandoOpciones}
               >
                 {editando ? '⏳ Guardando...' : '💾 Guardar Cambios'}
               </button>
