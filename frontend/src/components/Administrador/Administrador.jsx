@@ -1,3 +1,5 @@
+// frontend/src/components/Administrador/Administrador.jsx
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PolvoEspirituAdmin from './PolvoEspirituAdmin';
@@ -6,6 +8,7 @@ import MaterialesAdmin from './MaterialesAdmin';
 import NombresSpritesAdmin from './NombresSpritesAdmin';
 import OrdenesAdmin from './OrdenesAdmin';
 import BackupAdmin from './BackupAdmin';
+import MetodosSubidaNivelAdmin from './MetodosSubidaNivelAdmin'; // 🔵 NUEVO
 import './Administrador.css';
 
 function Administrador() {
@@ -25,6 +28,8 @@ function Administrador() {
         return <NombresSpritesAdmin />;
       case 'ordenes':
         return <OrdenesAdmin />;
+      case 'metodos-subida':
+        return <MetodosSubidaNivelAdmin />;
       case 'backup':
         return <BackupAdmin />;
       default:
@@ -57,7 +62,7 @@ function Administrador() {
                 <span>Polvo al Extraer</span>
               </li>
 
-              {/* 🔵 Polvo al Invocar*/}
+              {/* 🔵 Polvo al Invocar */}
               <li 
                 className={seccionActiva === 'polvo-invocar' ? 'active' : ''}
                 onClick={() => setSeccionActiva('polvo-invocar')}
@@ -95,6 +100,15 @@ function Administrador() {
               >
                 <span className="nav-icon">📋</span>
                 <span>Órdenes</span>
+              </li>
+
+              {/* 🔵 Métodos de Subida de Nivel - NUEVO */}
+              <li 
+                className={seccionActiva === 'metodos-subida' ? 'active' : ''}
+                onClick={() => setSeccionActiva('metodos-subida')}
+              >
+                <span className="nav-icon">📈</span>
+                <span>Métodos de Subida</span>
               </li>
 
               {/* 🔵 Backup */}

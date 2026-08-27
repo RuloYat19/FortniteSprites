@@ -18,7 +18,8 @@ function CalculadoraPolvoEspiritu() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'
+    orden: 'default',
+    temporada: ''  // 🔵 NUEVO
   });
   
   // 🔵 Estado para los sprits seleccionados
@@ -34,6 +35,7 @@ function CalculadoraPolvoEspiritu() {
   const [nombresDisponibles, setNombresDisponibles] = useState([]);
   const [materialesDisponibles, setMaterialesDisponibles] = useState([]);
   const [filtrosCargados, setFiltrosCargados] = useState(false);
+  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);  // 🔵 NUEVO
 
   // 🔵 Cargar órdenes desde el backend
   const cargarOrdenes = async () => {
@@ -77,7 +79,6 @@ function CalculadoraPolvoEspiritu() {
         materialesService.getAll()
       ]);
 
-      // Ordenar por numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
         .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
@@ -129,12 +130,10 @@ function CalculadoraPolvoEspiritu() {
           const seleccionadoA = spritsSeleccionados[a.id] || false;
           const seleccionadoB = spritsSeleccionados[b.id] || false;
           
-          // Primero los seleccionados, luego los no seleccionados
           if (seleccionadoA !== seleccionadoB) {
             return seleccionadoA ? -1 : 1;
           }
           
-          // Dentro del mismo grupo, ordenar por orden default
           const nombreA = ordenDefault[a.nombre] || 999;
           const nombreB = ordenDefault[b.nombre] || 999;
           if (nombreA !== nombreB) {
@@ -145,7 +144,6 @@ function CalculadoraPolvoEspiritu() {
           return materialA - materialB;
         });
 
-      
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
@@ -179,7 +177,7 @@ function CalculadoraPolvoEspiritu() {
     }
   };
 
-  // 🔵 Toggle de selección de un sprit (todos se pueden seleccionar)
+  // 🔵 Toggle de selección de un sprit
   const toggleSeleccion = (id) => {
     setSpritsSeleccionados(prev => ({
       ...prev,
@@ -187,14 +185,14 @@ function CalculadoraPolvoEspiritu() {
     }));
   };
 
-  // 🔵 Calcular el polvo total de los sprits seleccionados (solo los que NO están en inventario)
+  // 🔵 Calcular el polvo total de los sprits seleccionados
   const calcularPolvoSeleccionado = () => {
     return sprits
       .filter(sprit => spritsSeleccionados[sprit.id] && !sprit.estaEnInventario)
       .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
   };
 
-  // 🔵 Contar cuántos sprits están seleccionados (todos)
+  // 🔵 Contar cuántos sprits están seleccionados
   const contarSeleccionados = () => {
     return Object.values(spritsSeleccionados).filter(Boolean).length;
   };
@@ -216,7 +214,8 @@ function CalculadoraPolvoEspiritu() {
       rareza: '', 
       material: '',
       nombre: '',
-      orden: 'default'
+      orden: 'default',
+      temporada: ''  // 🔵 NUEVO
     });
   };
 
@@ -225,10 +224,13 @@ function CalculadoraPolvoEspiritu() {
     setSpritsSeleccionados({});
   };
 
+  // 🔵 Filtrar sprits
   const spritsFiltrados = sprits.filter(sprit => {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
     if (filtros.nombre && sprit.nombre !== filtros.nombre) return false;
+    // 🔵 NUEVO FILTRO POR TEMPORADA
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -247,6 +249,28 @@ function CalculadoraPolvoEspiritu() {
       <h1>Calculadora de Polvo de Espíritu</h1>
       
       <div className="filtros">
+        {/* 🔵 NUEVO FILTRO DE TEMPORADA */}
+        <select 
+          name="temporada" 
+          value={filtros.temporada} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #ff6f00',
+            background: '#16213e',
+            color: '#ffb74d',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '150px'
+          }}
+        >
+          <option value="">Todas las temporadas</option>
+          {opcionesTemporada.map(temp => (
+            <option key={temp} value={temp}>{temp}</option>
+          ))}
+        </select>
+        
         {/* 🔵 Filtro "Por Orden" */}
         <select 
           name="orden" 
@@ -274,6 +298,7 @@ function CalculadoraPolvoEspiritu() {
           ))}
         </select>
 
+        {/* 🔵 FILTRO DE RAREZA */}
         <select name="rareza" value={filtros.rareza} onChange={handleFiltroChange}>
           <option value="">Todas las rarezas</option>
           <option value="Raro">Raro</option>
