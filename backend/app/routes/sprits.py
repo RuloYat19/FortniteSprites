@@ -11,7 +11,11 @@ def get_all_sprits(
     db: Session = Depends(get_db),
     solo_coleccionados: Optional[bool] = Query(None, description="Filtrar solo los coleccionados"),
     rareza: Optional[str] = Query(None, description="Filtrar por rareza"),
-    material: Optional[str] = Query(None, description="Filtrar por material")
+    material: Optional[str] = Query(None, description="Filtrar por material"),
+    # 🔵 NUEVOS FILTROS
+    temporada: Optional[str] = Query(None, description="Filtrar por temporada (ej: C7T3)"),
+    esta_en_el_juego: Optional[bool] = Query(None, description="Filtrar por disponibilidad en el juego"),
+    metodo_subida_nivel: Optional[str] = Query(None, description="Filtrar por método de subida de nivel")
 ):
     """
     Obtener todos los sprits con filtros opcionales
@@ -28,6 +32,16 @@ def get_all_sprits(
     if material:
         query = query.filter(models.Sprit.material == material)
     
+    # 🔵 NUEVOS FILTROS
+    if temporada:
+        query = query.filter(models.Sprit.temporada == temporada)
+    
+    if esta_en_el_juego is not None:
+        query = query.filter(models.Sprit.estaEnElJuego == esta_en_el_juego)
+    
+    if metodo_subida_nivel:
+        query = query.filter(models.Sprit.metodoSubidaNivel.ilike(f"%{metodo_subida_nivel}%"))
+    
     sprits = query.all()
     return sprits
 
@@ -42,7 +56,7 @@ def get_sprit(sprit_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=schemas.SpritResponse, status_code=status.HTTP_201_CREATED)
 def create_sprit(sprit: schemas.SpritCreate, db: Session = Depends(get_db)):
     """Crear un nuevo sprit"""
-    db_sprit = models.Sprit(**sprit.model_dump())  # .dict() en Pydantic v1, .model_dump() en v2
+    db_sprit = models.Sprit(**sprit.model_dump())
     db.add(db_sprit)
     db.commit()
     db.refresh(db_sprit)
@@ -55,7 +69,7 @@ def update_sprit(sprit_id: int, sprit: schemas.SpritUpdate, db: Session = Depend
     if not db_sprit:
         raise HTTPException(status_code=404, detail="Sprit no encontrado")
     
-    update_data = sprit.model_dump(exclude_unset=True)  # .dict() en v1
+    update_data = sprit.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_sprit, key, value)
     
@@ -186,3 +200,38 @@ def actualizar_polvos_sprits(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al actualizar polvos: {str(e)}"
         )
+
+# 🔵 NUEVO ENDPOINT - Obtener sprits por temporada
+@router.get("/temporada/{temporada}", response_model=List[schemas.SpritResponse])
+def get_sprits_by_temporada(
+    temporada: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todos los sprits de una temporada específica.
+    """
+    sprits = db.query(models.Sprit).filter(
+        models.Sprit.temporada == temporada
+    ).all()
+    
+    if not sprits:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron sprits para la temporada {temporada}"
+        )
+    
+    return sprits
+
+# 🔵 NUEVO ENDPOINT - Obtener sprits disponibles en el juego
+@router.get("/disponibles", response_model=List[schemas.SpritResponse])
+def get_sprits_disponibles(
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todos los sprits que están disponibles en el juego.
+    """
+    sprits = db.query(models.Sprit).filter(
+        models.Sprit.estaEnElJuego == True
+    ).all()
+    
+    return sprits

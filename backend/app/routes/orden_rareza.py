@@ -14,19 +14,20 @@ def get_all_orden_rareza(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    nombre: Optional[str] = None
+    nombre: Optional[str] = None,
+    temporada: Optional[str] = Query(None, description="Filtrar por temporada (ej: C7T3)")
 ):
     """
     Obtener todos los órdenes por rareza con filtros opcionales
     """
     query = db.query(models.OrdenRareza)
     
-    # Aplicar filtros
     if nombre:
         query = query.filter(models.OrdenRareza.nombre.ilike(f"%{nombre}%"))
+    if temporada:
+        query = query.filter(models.OrdenRareza.temporada == temporada)
     
-    # Ordenar por número de orden
-    query = query.order_by(models.OrdenRareza.numeroOrden)
+    query = query.order_by(models.OrdenRareza.temporada, models.OrdenRareza.numeroOrden)
     
     return query.offset(skip).limit(limit).all()
 
@@ -88,6 +89,29 @@ def verificar_nombre_existe_rareza(
     return existe
 
 # ============================================
+# GET - Obtener por temporada
+# ============================================
+@router.get("/temporada/{temporada}", response_model=List[schemas.OrdenRarezaResponse])
+def get_orden_rareza_by_temporada(
+    temporada: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todos los órdenes por rareza de una temporada específica.
+    """
+    ordenes = db.query(models.OrdenRareza).filter(
+        models.OrdenRareza.temporada == temporada
+    ).order_by(models.OrdenRareza.numeroOrden).all()
+    
+    if not ordenes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron órdenes por rareza para la temporada {temporada}"
+        )
+    
+    return ordenes
+
+# ============================================
 # POST - Crear un nuevo orden por rareza
 # ============================================
 @router.post(
@@ -101,7 +125,8 @@ def create_orden_rareza(
 ):
     """
     Crear un nuevo orden por rareza.
-    Verifica que no exista un nombre duplicado o número de orden duplicado.
+    Verifica que no exista un nombre duplicado.
+    Verifica que no exista la combinación (numeroOrden, temporada) duplicada.
     """
     # Verificar si ya existe un nombre igual
     existing = db.query(models.OrdenRareza).filter(
@@ -114,16 +139,28 @@ def create_orden_rareza(
             detail=f"Ya existe un orden por rareza con el nombre: '{orden.nombre}'"
         )
     
-    # Verificar si el número de orden ya está en uso
-    existing_orden = db.query(models.OrdenRareza).filter(
-        models.OrdenRareza.numeroOrden == orden.numeroOrden
-    ).first()
-    
-    if existing_orden:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe un orden por rareza con el número de orden {orden.numeroOrden}"
-        )
+    # 🔵 Verificar combinación (numeroOrden, temporada)
+    if orden.temporada:
+        existing_orden = db.query(models.OrdenRareza).filter(
+            models.OrdenRareza.numeroOrden == orden.numeroOrden,
+            models.OrdenRareza.temporada == orden.temporada
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un orden por rareza con el número de orden {orden.numeroOrden} para la temporada {orden.temporada}"
+            )
+    else:
+        existing_orden = db.query(models.OrdenRareza).filter(
+            models.OrdenRareza.numeroOrden == orden.numeroOrden
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un orden por rareza con el número de orden {orden.numeroOrden}"
+            )
     
     db_orden = models.OrdenRareza(**orden.model_dump())
     db.add(db_orden)
@@ -153,7 +190,7 @@ def create_ordenes_rareza_batch(
     
     for orden_data in ordenes:
         try:
-            # Verificar si ya existe
+            # Verificar si ya existe un nombre igual
             existing = db.query(models.OrdenRareza).filter(
                 models.OrdenRareza.nombre == orden_data.nombre
             ).first()
@@ -162,13 +199,19 @@ def create_ordenes_rareza_batch(
                 errores.append(f"'{orden_data.nombre}' ya existe")
                 continue
             
-            # Verificar número de orden duplicado
-            existing_orden = db.query(models.OrdenRareza).filter(
-                models.OrdenRareza.numeroOrden == orden_data.numeroOrden
-            ).first()
+            # 🔵 Verificar combinación (numeroOrden, temporada)
+            if orden_data.temporada:
+                existing_orden = db.query(models.OrdenRareza).filter(
+                    models.OrdenRareza.numeroOrden == orden_data.numeroOrden,
+                    models.OrdenRareza.temporada == orden_data.temporada
+                ).first()
+            else:
+                existing_orden = db.query(models.OrdenRareza).filter(
+                    models.OrdenRareza.numeroOrden == orden_data.numeroOrden
+                ).first()
             
             if existing_orden:
-                errores.append(f"Número de orden {orden_data.numeroOrden} ya está en uso")
+                errores.append(f"Número de orden {orden_data.numeroOrden} ya está en uso para la temporada {orden_data.temporada or 'sin temporada'}")
                 continue
             
             db_orden = models.OrdenRareza(**orden_data.model_dump())
@@ -180,7 +223,6 @@ def create_ordenes_rareza_batch(
     
     if creados:
         db.commit()
-        # Refrescar los creados
         ordenes_creados = db.query(models.OrdenRareza).filter(
             models.OrdenRareza.nombre.in_(creados)
         ).all()
@@ -226,17 +268,27 @@ def update_orden_rareza(
                 detail=f"Ya existe un orden por rareza con el nombre: '{orden_update.nombre}'"
             )
     
-    # Verificar duplicado de número de orden (excluyendo el mismo registro)
+    # 🔵 Verificar duplicado de combinación (numeroOrden, temporada)
     if orden_update.numeroOrden:
-        existing_orden = db.query(models.OrdenRareza).filter(
-            models.OrdenRareza.numeroOrden == orden_update.numeroOrden,
-            models.OrdenRareza.id != orden_id
-        ).first()
+        temporada_actual = db_orden.temporada
+        nueva_temporada = orden_update.temporada if orden_update.temporada is not None else temporada_actual
+        
+        if nueva_temporada:
+            existing_orden = db.query(models.OrdenRareza).filter(
+                models.OrdenRareza.numeroOrden == orden_update.numeroOrden,
+                models.OrdenRareza.temporada == nueva_temporada,
+                models.OrdenRareza.id != orden_id
+            ).first()
+        else:
+            existing_orden = db.query(models.OrdenRareza).filter(
+                models.OrdenRareza.numeroOrden == orden_update.numeroOrden,
+                models.OrdenRareza.id != orden_id
+            ).first()
         
         if existing_orden:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un orden por rareza con el número de orden {orden_update.numeroOrden}"
+                detail=f"Ya existe un orden por rareza con el número de orden {orden_update.numeroOrden} para la temporada {nueva_temporada or 'sin temporada'}"
             )
     
     # Actualizar campos
