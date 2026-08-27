@@ -1,6 +1,6 @@
 -- ============================================
 -- BACKUP DE BASE DE DATOS
--- Fecha: 2026-08-25 04:35:13
+-- Fecha: 2026-08-27 20:35:33
 -- ============================================
 
 USE FORTNITEDB;
@@ -17,6 +17,9 @@ INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VA
 INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (6, 'C7T3', 'Cúbico', '2026-07-23 13:54:44', NULL);
 INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (8, 'C7T3', 'Gema', '2026-07-30 14:10:05', '2026-07-30 14:23:36');
 INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (7, 'C7T3', 'Patito', '2026-07-30 14:23:57', NULL);
+INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (9, 'C7T4', 'Normal', '2026-08-27 20:13:43', NULL);
+INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (10, 'C7T4', 'Oro', '2026-08-27 20:14:18', NULL);
+INSERT INTO material (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (11, 'C7T4', 'Hacker', '2026-08-27 20:16:55', NULL);
 
 -- ============================================
 -- TABLA: nombresSprites
@@ -46,6 +49,18 @@ INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (23, 'C7T3', 'Espíritu de Ironmouse', '2026-07-30 14:29:05', NULL);
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (24, 'C7T3', 'Espíritu de Llama', '2026-07-30 14:29:18', NULL);
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (25, 'C7T3', 'Espíritu de Bananín', '2026-07-30 14:29:30', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (26, 'C7T4', 'Espíritu de Killswitch', '2026-08-27 19:34:34', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (27, 'C7T4', 'Espíritu de Sonic', '2026-08-27 19:34:54', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (28, 'C7T4', 'Espíritu Aventurero', '2026-08-27 19:35:13', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (29, 'C7T4', 'Espíritu de Jackrabbit', '2026-08-27 19:35:36', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (30, 'C7T4', 'Espíritu de Jonesy', '2026-08-27 19:35:50', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (31, 'C7T4', 'Espíritu Victorioso', '2026-08-27 19:36:05', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (32, 'C7T4', 'Espíritu de 8 Bits', '2026-08-27 19:36:23', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (33, 'C7T4', 'Espíritu de Klombo', '2026-08-27 19:36:37', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (34, 'C7T4', 'Espíritu de Shadow', '2026-08-27 19:36:56', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (35, 'C7T4', 'Espíritu de Tails', '2026-08-27 19:37:13', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (36, 'C7T4', 'Espíritu de Arbustín', '2026-08-27 19:37:31', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (37, 'C7T4', 'Espíritu Explorador de la Tormenta', '2026-08-27 19:40:55', NULL);
 
 -- ============================================
 -- TABLA: ordenDefault
@@ -128,6 +143,7 @@ INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelE
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (18, 'C7T3', 'Mítico', 3, 975, '2026-07-03 00:24:41', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'C7T3', 'Mítico', 4, 1150, '2026-07-03 00:24:41', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'C7T3', 'Mítico', 5, 1300, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (21, 'C7T4', 'Raro', 1, 500, '2026-08-27 01:49:22', '2026-08-27 20:28:55');
 
 -- ============================================
 -- TABLA: cantidadPolvoEspirituInvocar
@@ -164,6 +180,13 @@ INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rare
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (26, 'C7T3', 'Patito', 'Épico', 4000, '2026-07-30 14:27:44', NULL);
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (27, 'C7T3', 'Patito', 'Legendario', 6750, '2026-07-30 14:27:54', NULL);
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (28, 'C7T3', 'Patito', 'Mítico', 10000, '2026-07-30 14:28:09', NULL);
+
+-- ============================================
+-- TABLA: metodoSubidaNivel
+-- ============================================
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (1, 'Se sube de nivel abriendo contenedores', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Se sube de nivel ganando partidas', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Se sube de nivel consumiendo consumibles', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
 
 -- ============================================
 -- TABLA: sprits
@@ -285,10 +308,3 @@ INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Demoníaco', 'Épico', 'Gema', './imagenesSprites/demoniacoGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:09:23', '2026-08-13 00:08:12');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Gema', './imagenesSprites/puntoCeroGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1300, 10000, '2026-08-12 02:09:45', '2026-08-18 03:58:17');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Aura', 'Épico', 'Gema', './imagenesSprites/auraGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:10:04', '2026-08-12 14:20:40');
-
--- ============================================
--- TABLA: Método de Subida de Nivel de los Espíritus
--- ============================================
-INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (1, 'Se sube de nivel abriendo contenedores', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
-INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Se sube de nivel ganando partidas', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
-INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Se sube de nivel consumiendo consumibles', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
