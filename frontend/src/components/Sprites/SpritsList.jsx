@@ -18,7 +18,8 @@ function SpritsList() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'
+    orden: 'default',
+    temporada: '',
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -907,7 +908,8 @@ function SpritsList() {
       rareza: '', 
       material: '',
       nombre: '',
-      orden: 'default'
+      orden: 'default',
+      temporada: '',
     });
   };
 
@@ -915,6 +917,7 @@ function SpritsList() {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
     if (filtros.nombre && sprit.nombre !== filtros.nombre) return false;
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -1021,6 +1024,27 @@ function SpritsList() {
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
+        <select 
+          name="temporada" 
+          value={filtros.temporada} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #ff6f00',
+            background: '#16213e',
+            color: '#ffb74d',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '150px'
+          }}
+        >
+          <option value="">Todas las temporadas</option>
+          {opcionesTemporada.map(temp => (
+            <option key={temp} value={temp}>{temp}</option>
+          ))}
+        </select>
+
         <select 
           name="orden" 
           value={filtros.orden} 
