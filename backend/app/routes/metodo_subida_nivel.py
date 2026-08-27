@@ -14,8 +14,7 @@ def get_all_metodos(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    nombre: Optional[str] = None,
-    temporada: Optional[str] = Query(None, description="Filtrar por temporada (ej: C7T3)")
+    nombre: Optional[str] = None
 ):
     """
     Obtener todos los métodos de subida de nivel con filtros opcionales
@@ -24,10 +23,8 @@ def get_all_metodos(
     
     if nombre:
         query = query.filter(models.MetodoSubidaNivel.nombre.ilike(f"%{nombre}%"))
-    if temporada:
-        query = query.filter(models.MetodoSubidaNivel.temporada == temporada)
     
-    query = query.order_by(models.MetodoSubidaNivel.temporada, models.MetodoSubidaNivel.numeroOrden)
+    query = query.order_by(models.MetodoSubidaNivel.numeroOrden)
     
     return query.offset(skip).limit(limit).all()
 
@@ -89,29 +86,6 @@ def verificar_nombre_existe(
     return existe
 
 # ============================================
-# GET - Obtener por temporada
-# ============================================
-@router.get("/temporada/{temporada}", response_model=List[schemas.MetodoSubidaNivelResponse])
-def get_metodos_by_temporada(
-    temporada: str,
-    db: Session = Depends(get_db)
-):
-    """
-    Obtener todos los métodos de subida de nivel de una temporada específica.
-    """
-    metodos = db.query(models.MetodoSubidaNivel).filter(
-        models.MetodoSubidaNivel.temporada == temporada
-    ).order_by(models.MetodoSubidaNivel.numeroOrden).all()
-    
-    if not metodos:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontraron métodos para la temporada {temporada}"
-        )
-    
-    return metodos
-
-# ============================================
 # POST - Crear un nuevo método
 # ============================================
 @router.post(
@@ -126,7 +100,6 @@ def create_metodo(
     """
     Crear un nuevo método de subida de nivel.
     Verifica que no exista un nombre duplicado.
-    Verifica que no exista la combinación (numeroOrden, temporada) duplicada.
     """
     # Verificar si ya existe un nombre igual
     existing = db.query(models.MetodoSubidaNivel).filter(
@@ -139,28 +112,16 @@ def create_metodo(
             detail=f"Ya existe un método de subida de nivel con el nombre: '{metodo.nombre}'"
         )
     
-    # 🔵 Verificar combinación (numeroOrden, temporada)
-    if metodo.temporada:
-        existing_orden = db.query(models.MetodoSubidaNivel).filter(
-            models.MetodoSubidaNivel.numeroOrden == metodo.numeroOrden,
-            models.MetodoSubidaNivel.temporada == metodo.temporada
-        ).first()
-        
-        if existing_orden:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un método con el número de orden {metodo.numeroOrden} para la temporada {metodo.temporada}"
-            )
-    else:
-        existing_orden = db.query(models.MetodoSubidaNivel).filter(
-            models.MetodoSubidaNivel.numeroOrden == metodo.numeroOrden
-        ).first()
-        
-        if existing_orden:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un método con el número de orden {metodo.numeroOrden}"
-            )
+    # Verificar que el número de orden no esté duplicado
+    existing_orden = db.query(models.MetodoSubidaNivel).filter(
+        models.MetodoSubidaNivel.numeroOrden == metodo.numeroOrden
+    ).first()
+    
+    if existing_orden:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe un método con el número de orden {metodo.numeroOrden}"
+        )
     
     db_metodo = models.MetodoSubidaNivel(**metodo.model_dump())
     db.add(db_metodo)
@@ -199,19 +160,13 @@ def create_metodos_batch(
                 errores.append(f"'{metodo_data.nombre}' ya existe")
                 continue
             
-            # 🔵 Verificar combinación (numeroOrden, temporada)
-            if metodo_data.temporada:
-                existing_orden = db.query(models.MetodoSubidaNivel).filter(
-                    models.MetodoSubidaNivel.numeroOrden == metodo_data.numeroOrden,
-                    models.MetodoSubidaNivel.temporada == metodo_data.temporada
-                ).first()
-            else:
-                existing_orden = db.query(models.MetodoSubidaNivel).filter(
-                    models.MetodoSubidaNivel.numeroOrden == metodo_data.numeroOrden
-                ).first()
+            # Verificar número de orden duplicado
+            existing_orden = db.query(models.MetodoSubidaNivel).filter(
+                models.MetodoSubidaNivel.numeroOrden == metodo_data.numeroOrden
+            ).first()
             
             if existing_orden:
-                errores.append(f"Número de orden {metodo_data.numeroOrden} ya está en uso para la temporada {metodo_data.temporada or 'sin temporada'}")
+                errores.append(f"Número de orden {metodo_data.numeroOrden} ya está en uso")
                 continue
             
             db_metodo = models.MetodoSubidaNivel(**metodo_data.model_dump())
@@ -268,27 +223,17 @@ def update_metodo(
                 detail=f"Ya existe un método de subida de nivel con el nombre: '{metodo_update.nombre}'"
             )
     
-    # 🔵 Verificar duplicado de combinación (numeroOrden, temporada)
+    # Verificar duplicado de número de orden (excluyendo el mismo registro)
     if metodo_update.numeroOrden:
-        temporada_actual = db_metodo.temporada
-        nueva_temporada = metodo_update.temporada if metodo_update.temporada is not None else temporada_actual
-        
-        if nueva_temporada:
-            existing_orden = db.query(models.MetodoSubidaNivel).filter(
-                models.MetodoSubidaNivel.numeroOrden == metodo_update.numeroOrden,
-                models.MetodoSubidaNivel.temporada == nueva_temporada,
-                models.MetodoSubidaNivel.id != metodo_id
-            ).first()
-        else:
-            existing_orden = db.query(models.MetodoSubidaNivel).filter(
-                models.MetodoSubidaNivel.numeroOrden == metodo_update.numeroOrden,
-                models.MetodoSubidaNivel.id != metodo_id
-            ).first()
+        existing_orden = db.query(models.MetodoSubidaNivel).filter(
+            models.MetodoSubidaNivel.numeroOrden == metodo_update.numeroOrden,
+            models.MetodoSubidaNivel.id != metodo_id
+        ).first()
         
         if existing_orden:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un método con el número de orden {metodo_update.numeroOrden} para la temporada {nueva_temporada or 'sin temporada'}"
+                detail=f"Ya existe un método con el número de orden {metodo_update.numeroOrden}"
             )
     
     # Actualizar campos
