@@ -234,6 +234,8 @@ function MaterialesAdmin() {
         return 'material-patito';
       case 'gema':
         return 'material-gema';
+      case 'hacker':
+        return 'material-hacker';
       default:
         return 'material-normal';
     }
