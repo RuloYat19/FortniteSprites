@@ -285,3 +285,10 @@ INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Demoníaco', 'Épico', 'Gema', './imagenesSprites/demoniacoGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:09:23', '2026-08-13 00:08:12');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Gema', './imagenesSprites/puntoCeroGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1300, 10000, '2026-08-12 02:09:45', '2026-08-18 03:58:17');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Aura', 'Épico', 'Gema', './imagenesSprites/auraGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:10:04', '2026-08-12 14:20:40');
+
+-- ============================================
+-- TABLA: Método de Subida de Nivel de los Espíritus
+-- ============================================
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (1, 'Se sube de nivel abriendo contenedores', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (2, 'Se sube de nivel ganando partidas', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
+INSERT INTO metodoSubidaNivel (numeroOrden, nombre, created_at, updated_at) VALUES (3, 'Se sube de nivel consumiendo consumibles', '2026-07-01 09:36:01', '2026-08-02 23:33:29');
