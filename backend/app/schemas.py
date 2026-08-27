@@ -195,7 +195,6 @@ class OrdenRarezaResponse(OrdenRarezaBase):
 # ============================================
 class MetodoSubidaNivelBase(BaseModel):
     numeroOrden: int
-    temporada: Optional[str] = None
     nombre: str
 
 class MetodoSubidaNivelCreate(MetodoSubidaNivelBase):
@@ -203,7 +202,6 @@ class MetodoSubidaNivelCreate(MetodoSubidaNivelBase):
 
 class MetodoSubidaNivelUpdate(BaseModel):
     numeroOrden: Optional[int] = None
-    temporada: Optional[str] = None
     nombre: Optional[str] = None
 
 class MetodoSubidaNivelResponse(MetodoSubidaNivelBase):

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routes import sprits, cantidad_polvo_extraer, cantidad_polvo_invocar, material, nombres_sprites, orden_default, orden_rareza, backup
+from app.routes import sprits, cantidad_polvo_extraer, cantidad_polvo_invocar, material, nombres_sprites, orden_default, orden_rareza, backup, metodo_subida_nivel
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)

@@ -209,19 +209,17 @@ GO
 -- ================================================
 -- TABLA: Método de Subida de Nivel para los Espíritus
 -- ================================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ordenRareza')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'metodoSubidaNivel')
 BEGIN
     CREATE TABLE metodoSubidaNivel (
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
-        temporada VARCHAR(20) NULL,
         nombre VARCHAR(50) NOT NULL,
         created_at DATETIME DEFAULT GETDATE(),
         updated_at DATETIME NULL
     );
     
     CREATE INDEX idx_metodoSubidaNivel_nombre ON metodoSubidaNivel(nombre);
-    CREATE INDEX idx_metodoSubidaNivel_temporada ON metodoSubidaNivel(temporada);
     
     PRINT '✅ Tabla metodoSubidaNivel creada';
 END
