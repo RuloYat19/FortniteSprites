@@ -112,4 +112,16 @@ export const backupService = {
   getInfo: () => axios.get(`${API_URL}/backup/info`),
 };
 
+export const metodoSubidaNivelService = {
+  getAll: () => axios.get(`${API_URL}/metodo-subida-nivel`),
+  getById: (id) => axios.get(`${API_URL}/metodo-subida-nivel/${id}`),
+  getByNombre: (nombre) => axios.get(`${API_URL}/metodo-subida-nivel/nombre/${nombre}`),
+  existe: (nombre) => axios.get(`${API_URL}/metodo-subida-nivel/existe/${nombre}`),
+  create: (data) => axios.post(`${API_URL}/metodo-subida-nivel`, data),
+  createBatch: (data) => axios.post(`${API_URL}/metodo-subida-nivel/batch`, data),
+  update: (id, data) => axios.put(`${API_URL}/metodo-subida-nivel/${id}`, data),
+  delete: (id) => axios.delete(`${API_URL}/metodo-subida-nivel/${id}`),
+};
+
+
 export default api;
