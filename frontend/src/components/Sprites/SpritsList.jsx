@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
+import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService, metodoSubidaNivelService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -79,6 +79,9 @@ function SpritsList() {
   const [opcionesMateriales, setOpcionesMateriales] = useState([]);
   const [opcionesPolvoExtraer, setOpcionesPolvoExtraer] = useState({});
   const [opcionesPolvoInvocar, setOpcionesPolvoInvocar] = useState({});
+  const [opcionesRarezas, setOpcionesRarezas] = useState(['Raro', 'Épico', 'Legendario', 'Mítico']);
+  const [opcionesMetodosSubida, setOpcionesMetodosSubida] = useState([]);
+  const [cargandoMetodos, setCargandoMetodos] = useState(false);
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
 
   // 🔵 Cargar órdenes desde el backend
@@ -370,11 +373,12 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
-  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes y filtros
+  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes, filtros y métodos
   useEffect(() => {
     cargarSprits();
     cargarOrdenes();
-    cargarFiltros(); // 🔵 NUEVO: Cargar nombres y materiales para filtros
+    cargarFiltros();
+    cargarMetodosSubida();
   }, []);
 
   // Para editar el Sprite
@@ -993,6 +997,22 @@ function SpritsList() {
     return opcionesPolvoInvocar[clave] || '';
   };
 
+  const cargarMetodosSubida = async () => {
+    setCargandoMetodos(true);
+    try {
+      const response = await metodoSubidaNivelService.getAll();
+      const metodos = response.data
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesMetodosSubida(metodos);
+    } catch (error) {
+      console.error('Error al cargar métodos de subida:', error);
+    } finally {
+      setCargandoMetodos(false);
+    }
+  };
+
+  // AGREGAR NUEVO CÓDIGO ARRIBA DE ESTO SINO F
   if (loading) return <div className="loading">Cargando sprits...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -1402,13 +1422,25 @@ function SpritsList() {
                 {/* 🔵 RAREZA - Input de texto (se mantiene) */}
                 <div className="form-group">
                   <label>Rareza *</label>
-                  <input
-                    type="text"
+                  <select
                     name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={newSprit.rareza}
+                    value={newSprit.rareza || ''}
                     onChange={handleAddChange}
-                  />
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* 🔵 RUTA DE IMAGEN */}
@@ -1498,13 +1530,29 @@ function SpritsList() {
                 {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
                 <div className="form-group">
                   <label>Método de Subida de Nivel</label>
-                  <input
-                    type="text"
+                  <select
                     name="metodoSubidaNivel"
-                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
                     value={newSprit.metodoSubidaNivel || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
               </div>
             </div>
@@ -1612,13 +1660,25 @@ function SpritsList() {
                 {/* 🔵 RAREZA - Input de texto */}
                 <div className="form-group">
                   <label>Rareza *</label>
-                  <input
-                    type="text"
+                  <select
                     name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={editSprit.rareza}
+                    value={editSprit.rareza || ''}
                     onChange={handleEditChange}
-                  />
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* 🔵 RUTA DE IMAGEN */}
@@ -1708,13 +1768,29 @@ function SpritsList() {
                 {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
                 <div className="form-group">
                   <label>Método de Subida de Nivel</label>
-                  <input
-                    type="text"
+                  <select
                     name="metodoSubidaNivel"
-                    placeholder="Ej: Abriendo contenedores, Misiones semanales..."
                     value={editSprit.metodoSubidaNivel || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
               </div>
             </div>
