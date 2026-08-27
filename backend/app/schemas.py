@@ -14,6 +14,9 @@ class SpritBase(BaseModel):
     estaDominado: bool = False
     estaEnInventario: bool = False
     estaDesbloqueado: bool = False
+    estaEnElJuego: bool = True
+    temporada: Optional[str] = None
+    metodoSubidaNivel: Optional[str] = None
     nivelEspiritu: Optional[int] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
@@ -30,6 +33,9 @@ class SpritUpdate(BaseModel):
     estaDominado: Optional[bool] = None
     estaEnInventario: Optional[bool] = None
     estaDesbloqueado: Optional[bool] = None
+    estaEnElJuego: Optional[bool] = None
+    temporada: Optional[str] = None
+    metodoSubidaNivel: Optional[str] = None
     nivelEspiritu: Optional[int] = None
     polvoAlExtraer: Optional[int] = None
     polvoAlInvocar: Optional[int] = None
@@ -43,15 +49,44 @@ class SpritResponse(SpritBase):
         from_attributes = True
 
 # ============================================
-# SCHEMAS PARA CANTIDADPOLVOESPIRITU
+# SCHEMAS PARA CANTIDADPOLVOESPIRITUEXTRAER
 # ============================================
-class CantidadPolvoBase(BaseModel):
+class CantidadPolvoExtraerBase(BaseModel):
     numeroOrden: int
+    temporada: Optional[str] = None
     rareza: str
     nivelEspiritu: int
     cantidad: int
 
-class CantidadPolvoResponse(CantidadPolvoBase):
+class CantidadPolvoExtraerResponse(CantidadPolvoExtraerBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+# ============================================
+# SCHEMAS PARA CANTIDADPOLVOESPIRITUINVOCAR
+# ============================================
+class CantidadPolvoInvocarBase(BaseModel):
+    numeroOrden: int
+    temporada: Optional[str] = None
+    material: str
+    rareza: str
+    cantidad: int
+
+class CantidadPolvoInvocarCreate(CantidadPolvoInvocarBase):
+    pass
+
+class CantidadPolvoInvocarUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
+    material: Optional[str] = None
+    rareza: Optional[str] = None
+    cantidad: Optional[int] = None
+
+class CantidadPolvoInvocarResponse(CantidadPolvoInvocarBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -64,6 +99,7 @@ class CantidadPolvoResponse(CantidadPolvoBase):
 # ============================================
 class MaterialBase(BaseModel):
     numeroOrden: int
+    temporada: Optional[str] = None
     nombre: str
 
 class MaterialCreate(MaterialBase):
@@ -71,6 +107,7 @@ class MaterialCreate(MaterialBase):
 
 class MaterialUpdate(BaseModel):
     numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
     nombre: Optional[str] = None
 
 class MaterialResponse(MaterialBase):
@@ -86,6 +123,7 @@ class MaterialResponse(MaterialBase):
 # ============================================
 class NombreSpritBase(BaseModel):
     numeroOrden: int
+    temporada: Optional[str] = None
     nombre: str
 
 class NombreSpritCreate(NombreSpritBase):
@@ -93,6 +131,7 @@ class NombreSpritCreate(NombreSpritBase):
 
 class NombreSpritUpdate(BaseModel):
     numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
     nombre: Optional[str] = None
 
 class NombreSpritResponse(NombreSpritBase):
@@ -108,6 +147,7 @@ class NombreSpritResponse(NombreSpritBase):
 # ============================================
 class OrdenDefaultBase(BaseModel):
     numeroOrden: int
+    temporada: Optional[str] = None
     nombre: str
 
 class OrdenDefaultCreate(OrdenDefaultBase):
@@ -115,6 +155,7 @@ class OrdenDefaultCreate(OrdenDefaultBase):
 
 class OrdenDefaultUpdate(BaseModel):
     numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
     nombre: Optional[str] = None
 
 class OrdenDefaultResponse(OrdenDefaultBase):
@@ -130,6 +171,7 @@ class OrdenDefaultResponse(OrdenDefaultBase):
 # ============================================
 class OrdenRarezaBase(BaseModel):
     numeroOrden: int
+    temporada: Optional[str] = None
     nombre: str
 
 class OrdenRarezaCreate(OrdenRarezaBase):
@@ -137,9 +179,32 @@ class OrdenRarezaCreate(OrdenRarezaBase):
 
 class OrdenRarezaUpdate(BaseModel):
     numeroOrden: Optional[int] = None
+    temporada: Optional[str] = None
     nombre: Optional[str] = None
 
 class OrdenRarezaResponse(OrdenRarezaBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+# ============================================
+# SCHEMAS PARA METODO SUBIDA NIVEL
+# ============================================
+class MetodoSubidaNivelBase(BaseModel):
+    numeroOrden: int
+    nombre: str
+
+class MetodoSubidaNivelCreate(MetodoSubidaNivelBase):
+    pass
+
+class MetodoSubidaNivelUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    nombre: Optional[str] = None
+
+class MetodoSubidaNivelResponse(MetodoSubidaNivelBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

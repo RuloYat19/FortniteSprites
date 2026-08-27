@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoService } from '../../services/api';
+import { cantidadPolvoExtraerService, spritsService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -8,10 +8,14 @@ function PolvoEspirituAdmin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // 🔵 Estado para el botón de actualización
+  const [actualizando, setActualizando] = useState(false);
+  
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
     rareza: '',
-    nivelEspiritu: ''
+    nivelEspiritu: '',
+    temporada: ''  // 🔵 NUEVO FILTRO
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -20,6 +24,7 @@ function PolvoEspirituAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
+    temporada: '',  // 🔵 NUEVO CAMPO
     rareza: '',
     nivelEspiritu: '',
     cantidad: ''
@@ -34,19 +39,24 @@ function PolvoEspirituAdmin() {
   });
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
+  
+  // 🔵 Estado para el modal de confirmación de actualización
+  const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
-  // 🔵 Niveles y Rarezas disponibles
+  // 🔵 Niveles, Rarezas y Temporadas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
   const niveles = [1, 2, 3, 4, 5];
+  const temporadas = ['C7T3', 'C7T4'];  // 🔵 NUEVO
 
   useEffect(() => {
     cargarCantidades();
   }, []);
 
+  // 🔵 Cargar cantidades
   const cargarCantidades = async () => {
     try {
       setLoading(true);
-      const response = await cantidadPolvoService.getAll();
+      const response = await cantidadPolvoExtraerService.getAll();
       const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
       setCantidades(dataOrdenada);
       setError(null);
@@ -64,7 +74,43 @@ function PolvoEspirituAdmin() {
     setShowConfirmModal(true);
     setTimeout(() => {
       setShowConfirmModal(false);
-    }, 3000);
+    }, 4000);
+  };
+
+  // 🔵 FUNCIÓN PARA ACTUALIZAR POLVOS EN SPRITS
+  const actualizarPolvosEnSprits = async () => {
+    setActualizando(true);
+    try {
+      const response = await spritsService.actualizarPolvos();
+      
+      const { sprits_actualizados, total_sprits, sprits_con_error, errores } = response.data;
+      
+      let mensaje = `✅ Se actualizaron ${sprits_actualizados} de ${total_sprits} sprits`;
+      if (sprits_con_error > 0) {
+        mensaje += ` (${sprits_con_error} con errores)`;
+      }
+      
+      mostrarConfirmacion(
+        '🔄 Actualización completada',
+        mensaje,
+        sprits_con_error > 0 ? 'warning' : 'success'
+      );
+      
+      if (errores && errores.length > 0) {
+        console.warn('Errores al actualizar:', errores);
+      }
+      
+    } catch (err) {
+      console.error('Error al actualizar polvos:', err);
+      mostrarConfirmacion(
+        '❌ Error',
+        err.response?.data?.detail || 'Hubo un error al actualizar los polvos de los sprits',
+        'error'
+      );
+    } finally {
+      setActualizando(false);
+      setShowActualizarConfirmModal(false);
+    }
   };
 
   // 🔵 Manejar filtros
@@ -78,7 +124,8 @@ function PolvoEspirituAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       rareza: '',
-      nivelEspiritu: ''
+      nivelEspiritu: '',
+      temporada: ''  // 🔵 NUEVO
     });
   };
 
@@ -105,6 +152,7 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
+      temporada: '',
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -118,6 +166,7 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
+      temporada: registro.temporada || '',
       rareza: registro.rareza,
       nivelEspiritu: registro.nivelEspiritu,
       cantidad: registro.cantidad
@@ -131,6 +180,7 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
+      temporada: '',
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -147,7 +197,7 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.rareza || 
+    if (!formData.numeroOrden || !formData.temporada || !formData.rareza || 
         !formData.nivelEspiritu || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
@@ -175,16 +225,18 @@ function PolvoEspirituAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        temporada: formData.temporada,
         rareza: formData.rareza,
         nivelEspiritu: parseInt(formData.nivelEspiritu),
         cantidad: parseInt(formData.cantidad)
       };
 
       if (editando) {
-        await cantidadPolvoService.update(formData.id, data);
+        await cantidadPolvoExtraerService.update(formData.id, data);
         mostrarConfirmacion('✅ Actualizado', 'Registro actualizado correctamente', 'success');
       } else {
-        await cantidadPolvoService.create(data);
+        await cantidadPolvoExtraerService.create(data);
+        mostrarConfirmacion('✅ Creado', 'Registro creado correctamente', 'success');
       }
       
       cerrarModal();
@@ -206,7 +258,7 @@ function PolvoEspirituAdmin() {
     if (!registroAEliminar) return;
 
     try {
-      await cantidadPolvoService.delete(registroAEliminar.id);
+      await cantidadPolvoExtraerService.delete(registroAEliminar.id);
       setShowDeleteConfirmModal(false);
       setRegistroAEliminar(null);
       mostrarConfirmacion('🗑️ Eliminado', 'Registro eliminado correctamente', 'success');
@@ -221,6 +273,7 @@ function PolvoEspirituAdmin() {
   const datosFiltrados = cantidades.filter(item => {
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
     if (filtros.nivelEspiritu && item.nivelEspiritu !== parseInt(filtros.nivelEspiritu)) return false;
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;  // 🔵 NUEVO
     return true;
   });
 
@@ -239,13 +292,27 @@ function PolvoEspirituAdmin() {
           className="nav-icon-img"
         />
         <span className="titulo">
-          Gestión de Polvo de Espíritu
+          Gestión de Polvo al Extraer
         </span>
       </header>
 
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
+          {/* 🔵 NUEVO FILTRO DE TEMPORADA */}
+          <select 
+            name="temporada" 
+            value={filtros.temporada} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            style={{ borderColor: '#ff6f00', color: '#ffb74d' }}
+          >
+            <option value="">Todas las temporadas</option>
+            {temporadas.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
           <select 
             name="rareza" 
             value={filtros.rareza} 
@@ -275,9 +342,31 @@ function PolvoEspirituAdmin() {
           </button>
         </div>
 
-        <button className="btn-agregar-admin" onClick={abrirCrearModal}>
-          ➕ Agregar registro
-        </button>
+        <div className="filtros-group" style={{ gap: '8px' }}>
+          <button 
+            className="btn-actualizar-sprits"
+            onClick={() => setShowActualizarConfirmModal(true)}
+            disabled={actualizando}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '6px',
+              background: '#FF9800',
+              color: '#fff',
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {actualizando ? '⏳ Actualizando...' : '🔄 Actualizar Valores en Sprites'}
+          </button>
+          
+          <button className="btn-agregar-admin" onClick={abrirCrearModal}>
+            ➕ Agregar registro
+          </button>
+        </div>
       </div>
 
       {/* 🔵 ESTADÍSTICAS */}
@@ -304,6 +393,7 @@ function PolvoEspirituAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
+              <th>Temporada</th>  {/* 🔵 NUEVA COLUMNA */}
               <th>Rareza</th>
               <th>Nivel</th>
               <th>Cantidad</th>
@@ -313,7 +403,7 @@ function PolvoEspirituAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="5" className="no-data">
+                <td colSpan="6" className="no-data">  {/* 🔵 Actualizado a 6 columnas */}
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
@@ -321,6 +411,11 @@ function PolvoEspirituAdmin() {
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
+                      {item.temporada || 'N/A'}
+                    </span>
+                  </td>
                   <td>
                     <span className={`rareza-badge-admin ${item.rareza.toLowerCase()}`}>
                       {item.rareza}
@@ -387,6 +482,30 @@ function PolvoEspirituAdmin() {
                       💡 Número asignado automáticamente
                     </small>
                   )}
+                </div>
+
+                {/* 🔵 NUEVO CAMPO - Temporada */}
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={formData.temporada}
+                    onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {temporadas.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="form-group">
@@ -458,10 +577,22 @@ function PolvoEspirituAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro Rareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nTemporada: ${registroAEliminar?.temporada}\nRareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
+        showCancelButton={true}
+      />
+
+      {/* 🔵 MODAL DE CONFIRMACIÓN PARA ACTUALIZAR SPRITS */}
+      <ConfirmModal
+        isOpen={showActualizarConfirmModal}
+        onClose={() => setShowActualizarConfirmModal(false)}
+        title="⚠️ Confirmar actualización"
+        message={`¿Estás seguro de actualizar los valores de polvo en TODOS los sprits?\n\nEsto recalculará el polvo al extraer de cada sprit según la rareza y nivel.\n\nEsta acción puede tomar unos segundos.`}
+        type="warning"
+        confirmText="Sí, actualizar"
+        onConfirm={actualizarPolvosEnSprits}
         showCancelButton={true}
       />
     </div>

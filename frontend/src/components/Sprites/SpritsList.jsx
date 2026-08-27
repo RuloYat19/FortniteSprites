@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService, cantidadPolvoService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
+import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService, metodoSubidaNivelService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -10,6 +10,7 @@ function SpritsList() {
   const [loading, setLoading] = useState(true);
 
   const [cantidadesPolvo, setCantidadesPolvo] = useState({});
+  const [cantidadesPolvoInvocar, setCantidadesPolvoInvocar] = useState({});
   const [loadingPolvo, setLoadingPolvo] = useState(false);
   
   const [error, setError] = useState(null);
@@ -17,7 +18,8 @@ function SpritsList() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'
+    orden: 'default',
+    temporada: '',
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -41,8 +43,11 @@ function SpritsList() {
     nombreArchivoImagen: '',
     nivelEspiritu: '',
     polvoAlExtraer: '',
-    polvoAlInvocar: ''
-  });
+    polvoAlInvocar: '',
+    metodoSubidaNivel: '',
+    temporada: '',
+    estaEnElJuego: true
+    });
   const [editando, setEditando] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -53,7 +58,10 @@ function SpritsList() {
     nombreArchivoImagen: '',
     nivelEspiritu: '',
     polvoAlExtraer: '',
-    polvoAlInvocar: ''
+    polvoAlInvocar: '',
+    metodoSubidaNivel: '',
+    temporada: '',
+    estaEnElJuego: true
   });
   const [agregando, setAgregando] = useState(false);
 
@@ -66,6 +74,16 @@ function SpritsList() {
 
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
+
+  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);
+  const [opcionesNombres, setOpcionesNombres] = useState([]);
+  const [opcionesMateriales, setOpcionesMateriales] = useState([]);
+  const [opcionesPolvoExtraer, setOpcionesPolvoExtraer] = useState({});
+  const [opcionesPolvoInvocar, setOpcionesPolvoInvocar] = useState({});
+  const [opcionesRarezas, setOpcionesRarezas] = useState(['Raro', 'Épico', 'Legendario', 'Mítico']);
+  const [opcionesMetodosSubida, setOpcionesMetodosSubida] = useState([]);
+  const [cargandoMetodos, setCargandoMetodos] = useState(false);
+  const [cargandoOpciones, setCargandoOpciones] = useState(false);
 
   // 🔵 Cargar órdenes desde el backend
   const cargarOrdenes = async () => {
@@ -156,7 +174,7 @@ function SpritsList() {
           return materialA - materialB;
         });
       
-      case 'no-inventario':
+      {/*case 'no-inventario':
         return [...spritsList].sort((a, b) => {
           if (a.estaEnInventario !== b.estaEnInventario) {
             return a.estaEnInventario ? 1 : -1;
@@ -169,8 +187,73 @@ function SpritsList() {
             return ordenA.nombreA - ordenB.nombreA;
           }
           return ordenA.materialA - ordenB.materialA;
+        });*/}
+
+      case 'no-dominado':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaDominado !== b.estaDominado) {
+            return a.estaDominado ? 1 : -1;
+          }
+          
+          if (!a.estaDominado && !b.estaDominado) {
+            if (a.estaEnInventario !== b.estaEnInventario) {
+              return a.estaEnInventario ? -1 : 1;
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
         });
-      
+
+      case 'invocar-mayor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoB - polvoA; // Mayor a menor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+
+      case 'invocar-menor':
+        return [...spritsList].sort((a, b) => {
+          if (a.estaEnInventario !== b.estaEnInventario) {
+            return a.estaEnInventario ? 1 : -1;
+          }
+          
+          if (!a.estaEnInventario && !b.estaEnInventario) {
+            const polvoA = a.polvoAlInvocar || 0;
+            const polvoB = b.polvoAlInvocar || 0;
+            if (polvoA !== polvoB) {
+              return polvoA - polvoB; // Menor a mayor
+            }
+          }
+          
+          const ordenA = obtenerOrdenDefault(a);
+          const ordenB = obtenerOrdenDefault(b);
+          if (ordenA.nombreA !== ordenB.nombreA) {
+            return ordenA.nombreA - ordenB.nombreA;
+          }
+          return ordenA.materialA - ordenB.materialA;
+        });
+        
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
@@ -200,7 +283,7 @@ function SpritsList() {
     }
     
     try {
-      const response = await cantidadPolvoService.getByCombinacion(rareza, nivelEspiritu);
+      const response = await cantidadPolvoExtraerService.getByCombinacion(rareza, nivelEspiritu);
       const cantidad = response.data?.cantidad || 0;
       
       setCantidadesPolvo(prev => ({
@@ -235,6 +318,55 @@ function SpritsList() {
     }
   };
 
+  const obtenerPolvoAlInvocar = async (material, rareza) => {
+    if (!material || !rareza) return 0;
+    
+    const clave = `${material}-${rareza}`;
+    
+    // Verificar si ya está en caché
+    if (cantidadesPolvoInvocar[clave] !== undefined) {
+      return cantidadesPolvoInvocar[clave];
+    }
+    
+    try {
+      const response = await cantidadPolvoInvocarService.getByCombinacion(material, rareza);
+      const cantidad = response.data?.cantidad || 0;
+      
+      // Guardar en caché
+      setCantidadesPolvoInvocar(prev => ({
+        ...prev,
+        [clave]: cantidad
+      }));
+      
+      return cantidad;
+    } catch (error) {
+      console.error(`Error al obtener polvo al invocar para ${material} - ${rareza}:`, error);
+      return 0;
+    }
+  };
+
+  const actualizarPolvoAlInvocar = async (spritId, material, rareza) => {
+    if (!material || !rareza) return;
+    
+    const polvo = await obtenerPolvoAlInvocar(material, rareza);
+    
+    // Actualizar estado local
+    setSprits(prevSprits => 
+      prevSprits.map(sprit => 
+        sprit.id === spritId 
+          ? { ...sprit, polvoAlInvocar: polvo }
+          : sprit
+      )
+    );
+    
+    // Actualizar en el backend
+    try {
+      await spritsService.update(spritId, { polvoAlInvocar: polvo });
+    } catch (error) {
+      console.error('Error al actualizar polvoAlInvocar en el backend:', error);
+    }
+  };
+
   const calcularProgreso = (condicion) => {
     const total = sprits.length;
     const completados = sprits.filter(condicion).length;
@@ -242,11 +374,12 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
-  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes y filtros
+  // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes, filtros y métodos
   useEffect(() => {
     cargarSprits();
     cargarOrdenes();
-    cargarFiltros(); // 🔵 NUEVO: Cargar nombres y materiales para filtros
+    cargarFiltros();
+    cargarMetodosSubida();
   }, []);
 
   // Para editar el Sprite
@@ -265,21 +398,73 @@ function SpritsList() {
     cargarPolvoEdicion();
   }, [showEditModal, editSprit.rareza, editSprit.nivelEspiritu]);
 
-  // Para creación de Sprite
   useEffect(() => {
-    const cargarPolvoCreacion = async () => {
+    const cargarPolvos = async () => {
       if (newSprit.rareza && newSprit.nivelEspiritu && !editando) {
-        const polvo = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
-        if (polvo > 0) {
+        // Polvo al Extraer
+        const polvoExtraer = await obtenerPolvoAlExtraer(
+          newSprit.rareza, 
+          parseInt(newSprit.nivelEspiritu)
+        );
+        if (polvoExtraer > 0) {
           setNewSprit(prev => ({
             ...prev,
-            polvoAlExtraer: polvo.toString()
+            polvoAlExtraer: polvoExtraer.toString()
+          }));
+        }
+      }
+      
+      // 🔵 NUEVO: Polvo al Invocar para creación
+      if (newSprit.material && newSprit.rareza && !editando) {
+        const polvoInvocar = await obtenerPolvoAlInvocar(
+          newSprit.material,
+          newSprit.rareza
+        );
+        if (polvoInvocar > 0) {
+          setNewSprit(prev => ({
+            ...prev,
+            polvoAlInvocar: polvoInvocar.toString()
           }));
         }
       }
     };
-    cargarPolvoCreacion();
-  }, [newSprit.rareza, newSprit.nivelEspiritu, editando]);
+    cargarPolvos();
+  }, [newSprit.rareza, newSprit.nivelEspiritu, newSprit.material, editando]);
+
+  useEffect(() => {
+    const cargarPolvos = async () => {
+      if (showEditModal) {
+        // Polvo al Extraer (si tiene rareza y nivel)
+        if (editSprit.rareza && editSprit.nivelEspiritu) {
+          const polvoExtraer = await obtenerPolvoAlExtraer(
+            editSprit.rareza, 
+            parseInt(editSprit.nivelEspiritu)
+          );
+          if (polvoExtraer > 0) {
+            setEditSprit(prev => ({
+              ...prev,
+              polvoAlExtraer: polvoExtraer.toString()
+            }));
+          }
+        }
+        
+        // 🔵 NUEVO: Polvo al Invocar (si tiene material y rareza)
+        if (editSprit.material && editSprit.rareza) {
+          const polvoInvocar = await obtenerPolvoAlInvocar(
+            editSprit.material,
+            editSprit.rareza
+          );
+          if (polvoInvocar > 0) {
+            setEditSprit(prev => ({
+              ...prev,
+              polvoAlInvocar: polvoInvocar.toString()
+            }));
+          }
+        }
+      }
+    };
+    cargarPolvos();
+  }, [showEditModal, editSprit.rareza, editSprit.nivelEspiritu, editSprit.material]);
 
   const cargarSprits = async () => {
     try {
@@ -461,8 +646,8 @@ function SpritsList() {
   const abrirEditModal = (sprit, e) => {
     e.stopPropagation();
     
-    if (sprit.rareza && sprit.nivelEspiritu) {
-      actualizarPolvoAlExtraer(sprit.id, sprit.rareza, sprit.nivelEspiritu);
+    if (sprit.temporada) {
+      cargarOpcionesPorTemporada(sprit.temporada);
     }
     
     setEditSprit({
@@ -473,7 +658,10 @@ function SpritsList() {
       nombreArchivoImagen: sprit.nombreArchivoImagen || '',
       nivelEspiritu: sprit.nivelEspiritu || '',
       polvoAlExtraer: sprit.polvoAlExtraer || '',
-      polvoAlInvocar: sprit.polvoAlInvocar || ''
+      polvoAlInvocar: sprit.polvoAlInvocar || '',
+      metodoSubidaNivel: sprit.metodoSubidaNivel || '',
+      temporada: sprit.temporada || '',
+      estaEnElJuego: sprit.estaEnElJuego !== undefined ? sprit.estaEnElJuego : true
     });
     setShowEditModal(true);
   };
@@ -494,9 +682,36 @@ function SpritsList() {
   };
 
   const handleEditChange = (e) => {
-    setEditSprit({
-      ...editSprit,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    
+    setEditSprit(prev => {
+      const updated = { ...prev, [name]: value };
+      
+      if (name === 'temporada') {
+        updated.nombre = '';
+        updated.material = '';
+        updated.rareza = '';
+        updated.polvoAlExtraer = '';
+        updated.polvoAlInvocar = '';
+      }
+      
+      if (name === 'rareza' || name === 'nivelEspiritu') {
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
+        if (rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        }
+      }
+      
+      if (name === 'material' || name === 'rareza') {
+        const material = name === 'material' ? value : updated.material;
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        if (material && rareza) {
+          updated.polvoAlInvocar = calcularPolvoInvocar(material, rareza);
+        }
+      }
+      
+      return updated;
     });
   };
 
@@ -509,11 +724,21 @@ function SpritsList() {
     setEditando(true);
     try {
       let polvoAlExtraer = editSprit.polvoAlExtraer ? parseInt(editSprit.polvoAlExtraer) : null;
+      let polvoAlInvocar = editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null;
       
+      // Calcular polvo al extraer si es necesario
       if (editSprit.rareza && editSprit.nivelEspiritu) {
         const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      // Calcular polvo al invocar si es necesario
+      if (editSprit.material && editSprit.rareza) {
+        const polvoCalculado = await obtenerPolvoAlInvocar(editSprit.material, editSprit.rareza);
+        if (polvoCalculado > 0) {
+          polvoAlInvocar = polvoCalculado;
         }
       }
       
@@ -528,7 +753,11 @@ function SpritsList() {
         nombreArchivoImagen: editSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: editSprit.polvoAlInvocar ? parseInt(editSprit.polvoAlInvocar) : null
+        polvoAlInvocar: polvoAlInvocar,
+        // 🔵 NUEVOS CAMPOS
+        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
+        temporada: editSprit.temporada || null,
+        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
       };
 
       await spritsService.update(editSprit.id, data);
@@ -544,6 +773,8 @@ function SpritsList() {
   };
 
   const abrirAddModal = () => {
+    const temporadaDefault = opcionesTemporada.length > 0 ? opcionesTemporada[0] : '';
+    
     setNewSprit({
       nombre: '',
       rareza: '',
@@ -551,7 +782,10 @@ function SpritsList() {
       nombreArchivoImagen: '',
       nivelEspiritu: '',
       polvoAlExtraer: '',
-      polvoAlInvocar: ''
+      polvoAlInvocar: '',
+      metodoSubidaNivel: '',
+      temporada: temporadaDefault,
+      estaEnElJuego: true
     });
     setShowAddModal(true);
   };
@@ -571,9 +805,36 @@ function SpritsList() {
   };
 
   const handleAddChange = (e) => {
-    setNewSprit({
-      ...newSprit,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    
+    setNewSprit(prev => {
+      const updated = { ...prev, [name]: value };
+      
+      if (name === 'temporada') {
+        updated.nombre = '';
+        updated.material = '';
+        updated.rareza = '';
+        updated.polvoAlExtraer = '';
+        updated.polvoAlInvocar = '';
+      }
+      
+      if (name === 'rareza' || name === 'nivelEspiritu') {
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
+        if (rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        }
+      }
+      
+      if (name === 'material' || name === 'rareza') {
+        const material = name === 'material' ? value : updated.material;
+        const rareza = name === 'rareza' ? value : updated.rareza;
+        if (material && rareza) {
+          updated.polvoAlInvocar = calcularPolvoInvocar(material, rareza);
+        }
+      }
+      
+      return updated;
     });
   };
 
@@ -586,11 +847,21 @@ function SpritsList() {
     setAgregando(true);
     try {
       let polvoAlExtraer = newSprit.polvoAlExtraer ? parseInt(newSprit.polvoAlExtraer) : null;
+      let polvoAlInvocar = newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null;
       
+      // Calcular polvo al extraer si es necesario
       if (newSprit.rareza && newSprit.nivelEspiritu) {
         const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
+        }
+      }
+      
+      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
+      if (newSprit.material && newSprit.rareza) {
+        const polvoCalculado = await obtenerPolvoAlInvocar(newSprit.material, newSprit.rareza);
+        if (polvoCalculado > 0) {
+          polvoAlInvocar = polvoCalculado;
         }
       }
       
@@ -603,11 +874,14 @@ function SpritsList() {
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: newSprit.polvoAlInvocar ? parseInt(newSprit.polvoAlInvocar) : null,
+        polvoAlInvocar: polvoAlInvocar,  // 🔵 Incluir polvo al invocar
         yaFueDominado: false,
         estaDominado: false,
         estaEnInventario: false,
-        estaDesbloqueado: false
+        estaDesbloqueado: false,
+        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
+        temporada: editSprit.temporada || null,
+        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
       };
 
       await spritsService.create(data);
@@ -634,7 +908,8 @@ function SpritsList() {
       rareza: '', 
       material: '',
       nombre: '',
-      orden: 'default'
+      orden: 'default',
+      temporada: '',
     });
   };
 
@@ -642,14 +917,12 @@ function SpritsList() {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
     if (filtros.nombre && sprit.nombre !== filtros.nombre) return false;
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
     return true;
   });
 
   // 🔵 Solo ordenar cuando los órdenes estén cargados
   const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
-
-  if (loading) return <div className="loading">Cargando sprits...</div>;
-  if (error) return <div className="error">{error}</div>;
 
   const polvoNecesario = calcularPolvoNecesario();
   
@@ -657,11 +930,121 @@ function SpritsList() {
   const progresoDominadosInventario = calcularProgreso(s => s.estaDominado);
   const progresoDominadosGeneral = calcularProgreso(s => s.yaFueDominado);
 
+  const cargarOpcionesPorTemporada = async (temporada) => {
+    if (!temporada) return;
+    
+    setCargandoOpciones(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresFiltrados = nombresRes.data
+        .filter(item => item.temporada === temporada)
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesNombres(nombresFiltrados);
+
+      const materialesRes = await materialesService.getAll();
+      const materialesFiltrados = materialesRes.data
+        .filter(item => item.temporada === temporada)
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesMateriales(materialesFiltrados);
+
+      const polvoExtraerRes = await cantidadPolvoExtraerService.getAll();
+      const polvoExtraerMap = {};
+      polvoExtraerRes.data
+        .filter(item => item.temporada === temporada)
+        .forEach(item => {
+          const clave = `${item.rareza}-${item.nivelEspiritu}`;
+          polvoExtraerMap[clave] = item.cantidad;
+        });
+      setOpcionesPolvoExtraer(polvoExtraerMap);
+
+      const polvoInvocarRes = await cantidadPolvoInvocarService.getAll();
+      const polvoInvocarMap = {};
+      polvoInvocarRes.data
+        .filter(item => item.temporada === temporada)
+        .forEach(item => {
+          const clave = `${item.material}-${item.rareza}`;
+          polvoInvocarMap[clave] = item.cantidad;
+        });
+      setOpcionesPolvoInvocar(polvoInvocarMap);
+
+    } catch (error) {
+      console.error('Error al cargar opciones por temporada:', error);
+    } finally {
+      setCargandoOpciones(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showAddModal && newSprit.temporada) {
+      cargarOpcionesPorTemporada(newSprit.temporada);
+    }
+  }, [showAddModal, newSprit.temporada]);
+
+  useEffect(() => {
+    if (showEditModal && editSprit.temporada) {
+      cargarOpcionesPorTemporada(editSprit.temporada);
+    }
+  }, [showEditModal, editSprit.temporada]);
+
+  const calcularPolvoExtraer = (rareza, nivel) => {
+    if (!rareza || !nivel) return '';
+    const clave = `${rareza}-${nivel}`;
+    return opcionesPolvoExtraer[clave] || '';
+  };
+
+  const calcularPolvoInvocar = (material, rareza) => {
+    if (!material || !rareza) return '';
+    const clave = `${material}-${rareza}`;
+    return opcionesPolvoInvocar[clave] || '';
+  };
+
+  const cargarMetodosSubida = async () => {
+    setCargandoMetodos(true);
+    try {
+      const response = await metodoSubidaNivelService.getAll();
+      const metodos = response.data
+        .sort((a, b) => a.numeroOrden - b.numeroOrden)
+        .map(item => item.nombre);
+      setOpcionesMetodosSubida(metodos);
+    } catch (error) {
+      console.error('Error al cargar métodos de subida:', error);
+    } finally {
+      setCargandoMetodos(false);
+    }
+  };
+
+  // AGREGAR NUEVO CÓDIGO ARRIBA DE ESTO SINO F
+  if (loading) return <div className="loading">Cargando sprits...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="sprits-container">
       <h1>Sprits de Fortnite</h1>
       
       <div className="filtros">
+        <select 
+          name="temporada" 
+          value={filtros.temporada} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #ff6f00',
+            background: '#16213e',
+            color: '#ffb74d',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '150px'
+          }}
+        >
+          <option value="">Todas las temporadas</option>
+          {opcionesTemporada.map(temp => (
+            <option key={temp} value={temp}>{temp}</option>
+          ))}
+        </select>
+
         <select 
           name="orden" 
           value={filtros.orden} 
@@ -671,13 +1054,17 @@ function SpritsList() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
-          <option value="no-inventario">Faltan en Inventario</option>
+          {/*<option value="no-inventario">Faltan en Inventario</option>*/}
+          <option value="no-dominado">Faltan por Dominar</option>
+          <option value="invocar-mayor">Mayor a Menor en Invocar</option>
+          <option value="invocar-menor">Menor a Mayor en Invocar</option>
         </select>
 
         <select 
           name="nombre" 
           value={filtros.nombre} 
           onChange={handleFiltroChange}
+          className="filtro-nombres"
         >
           <option value="">Todos los nombres</option>
           {nombresDisponibles.map((nombre) => (
@@ -917,8 +1304,21 @@ function SpritsList() {
                     <span className="detail-value">{sprit.polvoAlInvocar || 0}</span>
                   </div>
                   
+                  {sprit.temporada && (
+                    <div className="detail-item">
+                      <span className="detail-label">📅 Temporada:</span>
+                      <span className="detail-value">{sprit.temporada}</span>
+                    </div>
+                  )}
+
+                  <div className="detail-item">
+                    <span className="detail-value">
+                      {sprit.metodoSubidaNivel || 'No especificado'}
+                    </span>
+                  </div>
                 </div>
 
+                  
                 <div className="back-actions">
                   <span 
                     className="action-icon"
@@ -966,39 +1366,108 @@ function SpritsList() {
             
             <div className="modal-body">
               <div className="edit-form">
+                {/* 🔵 TEMPORADA - ComboBox */}
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={newSprit.temporada || ''}
+                    onChange={handleAddChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {opcionesTemporada.map(temp => (
+                      <option key={temp} value={temp}>{temp}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 NOMBRE - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Nombre *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu del Punto Cero"
-                    value={newSprit.nombre}
+                    value={newSprit.nombre || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={!newSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombres.map(nombre => (
+                      <option key={nombre} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
+                  {!newSprit.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
                 </div>
 
-                <div className="form-group">
-                  <label>Rareza *</label>
-                  <input
-                    type="text"
-                    name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={newSprit.rareza}
-                    onChange={handleAddChange}
-                  />
-                </div>
-
+                {/* 🔵 MATERIAL - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Material *</label>
-                  <input
-                    type="text"
+                  <select
                     name="material"
-                    placeholder="Ej: Galaxia"
-                    value={newSprit.material}
+                    value={newSprit.material || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={!newSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {opcionesMateriales.map(material => (
+                      <option key={material} value={material}>{material}</option>
+                    ))}
+                  </select>
                 </div>
 
+                {/* 🔵 RAREZA - Input de texto (se mantiene) */}
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <select
+                    name="rareza"
+                    value={newSprit.rareza || ''}
+                    onChange={handleAddChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 RUTA DE IMAGEN */}
                 <div className="form-group">
                   <label>Ruta de la Imagen</label>
                   <input
@@ -1010,6 +1479,7 @@ function SpritsList() {
                   />
                 </div>
 
+                {/* 🔵 NIVEL DE ESPÍRITU */}
                 <div className="form-group">
                   <label>Nivel de Espíritu</label>
                   <input
@@ -1018,9 +1488,12 @@ function SpritsList() {
                     placeholder="Ej: 1"
                     value={newSprit.nivelEspiritu}
                     onChange={handleAddChange}
+                    min="1"
+                    max="5"
                   />
                 </div>
 
+                {/* 🔵 POLVO AL EXTRAER - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1038,21 +1511,72 @@ function SpritsList() {
                         borderColor: '#35cf35'
                       }}
                     />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
                   </div>
                   <small style={{ color: '#666' }}>
                     💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
                   </small>
                 </div>
 
+                {/* 🔵 POLVO AL INVOCAR - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Invocar</label>
-                  <input
-                    type="number"
-                    name="polvoAlInvocar"
-                    placeholder="Ej: 15000"
-                    value={newSprit.polvoAlInvocar}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlInvocar"
+                      placeholder="Se calcula automáticamente"
+                      value={newSprit.polvoAlInvocar || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#9c27b0'
+                      }}
+                    />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
+                  </div>
+                  <small style={{ color: '#888' }}>
+                    💡 Se calcula automáticamente según Material y Rareza
+                  </small>
+                </div>
+
+                {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
+                <div className="form-group">
+                  <label>Método de Subida de Nivel</label>
+                  <select
+                    name="metodoSubidaNivel"
+                    value={newSprit.metodoSubidaNivel || ''}
                     onChange={handleAddChange}
-                  />
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
               </div>
             </div>
@@ -1064,7 +1588,7 @@ function SpritsList() {
               <button 
                 className="btn-guardar" 
                 onClick={guardarNuevoSprit}
-                disabled={agregando}
+                disabled={agregando || cargandoOpciones}
               >
                 {agregando ? '⏳ Guardando...' : '💾 Agregar Sprit'}
               </button>
@@ -1083,39 +1607,105 @@ function SpritsList() {
             
             <div className="modal-body">
               <div className="edit-form">
+                {/* 🔵 TEMPORADA - ComboBox */}
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={editSprit.temporada || ''}
+                    onChange={handleEditChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {opcionesTemporada.map(temp => (
+                      <option key={temp} value={temp}>{temp}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 NOMBRE - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Nombre *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu del Punto Cero"
-                    value={editSprit.nombre}
+                    value={editSprit.nombre || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={!editSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombres.map(nombre => (
+                      <option key={nombre} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Rareza *</label>
-                  <input
-                    type="text"
-                    name="rareza"
-                    placeholder="Ej: Mítico"
-                    value={editSprit.rareza}
-                    onChange={handleEditChange}
-                  />
-                </div>
-
+                {/* 🔵 MATERIAL - ComboBox dinámico */}
                 <div className="form-group">
                   <label>Material *</label>
-                  <input
-                    type="text"
+                  <select
                     name="material"
-                    placeholder="Ej: Galaxia"
-                    value={editSprit.material}
+                    value={editSprit.material || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={!editSprit.temporada || cargandoOpciones}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {opcionesMateriales.map(material => (
+                      <option key={material} value={material}>{material}</option>
+                    ))}
+                  </select>
                 </div>
 
+                {/* 🔵 RAREZA - Input de texto */}
+                <div className="form-group">
+                  <label>Rareza *</label>
+                  <select
+                    name="rareza"
+                    value={editSprit.rareza || ''}
+                    onChange={handleEditChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar rareza</option>
+                    {opcionesRarezas.map(rareza => (
+                      <option key={rareza} value={rareza}>{rareza}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔵 RUTA DE IMAGEN */}
                 <div className="form-group">
                   <label>Ruta de la Imagen</label>
                   <input
@@ -1127,6 +1717,7 @@ function SpritsList() {
                   />
                 </div>
 
+                {/* 🔵 NIVEL DE ESPÍRITU */}
                 <div className="form-group">
                   <label>Nivel de Espíritu</label>
                   <input
@@ -1135,9 +1726,12 @@ function SpritsList() {
                     placeholder="Ej: 1"
                     value={editSprit.nivelEspiritu}
                     onChange={handleEditChange}
+                    min="1"
+                    max="5"
                   />
                 </div>
 
+                {/* 🔵 POLVO AL EXTRAER - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Extraer</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1155,21 +1749,72 @@ function SpritsList() {
                         borderColor: '#35cf35'
                       }}
                     />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
                   </div>
                   <small style={{ color: '#666' }}>
                     💡 Se calcula automáticamente según Rareza y Nivel de Espíritu
                   </small>
                 </div>
 
+                {/* 🔵 POLVO AL INVOCAR - Se calcula automáticamente */}
                 <div className="form-group">
                   <label>Polvo al Invocar</label>
-                  <input
-                    type="number"
-                    name="polvoAlInvocar"
-                    placeholder="Ej: 15000"
-                    value={editSprit.polvoAlInvocar}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="number"
+                      name="polvoAlInvocar"
+                      placeholder="Se calcula automáticamente"
+                      value={editSprit.polvoAlInvocar || ''}
+                      readOnly
+                      style={{ 
+                        flex: 1, 
+                        cursor: 'not-allowed',
+                        opacity: 0.8,
+                        backgroundColor: '#1a1a2e',
+                        borderColor: '#9c27b0'
+                      }}
+                    />
+                    <img 
+                      src="./imagenesSprites/polvoEspiritu.png" 
+                      alt="Polvo"
+                      style={{ width: '24px', height: '24px' }}
+                    />
+                  </div>
+                  <small style={{ color: '#888' }}>
+                    💡 Se calcula automáticamente según Material y Rareza
+                  </small>
+                </div>
+
+                {/* 🔵 MÉTODO DE SUBIDA DE NIVEL */}
+                <div className="form-group">
+                  <label>Método de Subida de Nivel</label>
+                  <select
+                    name="metodoSubidaNivel"
+                    value={editSprit.metodoSubidaNivel || ''}
                     onChange={handleEditChange}
-                  />
+                    disabled={cargandoMetodos}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar método</option>
+                    {opcionesMetodosSubida.map(metodo => (
+                      <option key={metodo} value={metodo}>{metodo}</option>
+                    ))}
+                  </select>
+                  {cargandoMetodos && (
+                    <small style={{ color: '#888' }}>⏳ Cargando métodos...</small>
+                  )}
                 </div>
               </div>
             </div>
@@ -1181,7 +1826,7 @@ function SpritsList() {
               <button 
                 className="btn-guardar" 
                 onClick={guardarSpritEditado}
-                disabled={editando}
+                disabled={editando || cargandoOpciones}
               >
                 {editando ? '⏳ Guardando...' : '💾 Guardar Cambios'}
               </button>

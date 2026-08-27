@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { spritsService } from '../services/api';
+import { 
+  spritsService, 
+  ordenDefaultService, 
+  ordenRarezaService, 
+  materialesService, 
+  nombresSpritesService 
+} from '../../services/api';
 import './CalculadoraPolvoEspiritu.css';
 
 function CalculadoraPolvoEspiritu() {
@@ -18,93 +24,136 @@ function CalculadoraPolvoEspiritu() {
   // 🔵 Estado para los sprits seleccionados
   const [spritsSeleccionados, setSpritsSeleccionados] = useState({});
 
-  // 🔵 Orden de materiales
-  const ordenMateriales = {
-    'Normal': 1,
-    'Oro': 2,
-    'Gomita': 3,
-    'Galaxia': 4
+  // 🔵 ESTADOS PARA LOS ÓRDENES
+  const [ordenDefault, setOrdenDefault] = useState({});
+  const [ordenRareza, setOrdenRareza] = useState({});
+  const [ordenMaterial, setOrdenMaterial] = useState({});
+  const [ordenesCargados, setOrdenesCargados] = useState(false);
+
+  // 🔵 ESTADOS PARA FILTROS DINÁMICOS
+  const [nombresDisponibles, setNombresDisponibles] = useState([]);
+  const [materialesDisponibles, setMaterialesDisponibles] = useState([]);
+  const [filtrosCargados, setFiltrosCargados] = useState(false);
+
+  // 🔵 Cargar órdenes desde el backend
+  const cargarOrdenes = async () => {
+    try {
+      const [defaultRes, rarezaRes, materialRes] = await Promise.all([
+        ordenDefaultService.getAll(),
+        ordenRarezaService.getAll(),
+        materialesService.getAll()
+      ]);
+
+      const defaultObj = {};
+      defaultRes.data.forEach(item => {
+        defaultObj[item.nombre] = item.numeroOrden;
+      });
+
+      const rarezaObj = {};
+      rarezaRes.data.forEach(item => {
+        rarezaObj[item.nombre] = item.numeroOrden;
+      });
+
+      const materialObj = {};
+      materialRes.data.forEach(item => {
+        materialObj[item.nombre] = item.numeroOrden;
+      });
+
+      setOrdenDefault(defaultObj);
+      setOrdenRareza(rarezaObj);
+      setOrdenMaterial(materialObj);
+      setOrdenesCargados(true);
+    } catch (err) {
+      console.error('Error al cargar órdenes:', err);
+      setOrdenesCargados(true);
+    }
   };
 
-  // 🔵 Orden de nombres (Default)
-  const ordenNombresDefault = {
-    'Espíritu de Agua': 1,
-    'Espíritu de Tierra': 2,
-    'Espíritu de Fuego': 3,
-    'Espíritu Pato': 4,
-    'Espíritu Fantasmal': 5,
-    'Espíritu Demoníaco': 6,
-    'Espíritu Rey': 7,
-    'Espíritu Dormilón': 8,
-    'Espíritu Punk': 9,
-    'Espíritu del Punto Cero': 10,
-    'Cacahuate Tostado': 11,
-    'Espíritu de Pez': 12,
-    'Espíritu Goleador': 13,
-    'Espíritu de Aura': 14,
-    'Espíritu Jefe': 15,
-    'Espíritu Parca': 16
+  // 🔵 Cargar nombres y materiales para los filtros
+  const cargarFiltros = async () => {
+    try {
+      const [nombresRes, materialesRes] = await Promise.all([
+        nombresSpritesService.getAll(),
+        materialesService.getAll()
+      ]);
+
+      // Ordenar por numeroOrden (si existe) o por ID
+      const nombresOrdenados = nombresRes.data
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
+        .map(item => item.nombre);
+      
+      const materiales = materialesRes.data.map(item => item.nombre);
+
+      setNombresDisponibles(nombresOrdenados);
+      setMaterialesDisponibles(materiales);
+      setFiltrosCargados(true);
+    } catch (err) {
+      console.error('Error al cargar filtros:', err);
+      setFiltrosCargados(true);
+    }
   };
 
-  // 🔵 Orden de nombres por Rareza
-  const ordenNombresRareza = {
-    'Espíritu de Agua': 1,
-    'Espíritu de Tierra': 2,
-    'Espíritu de Fuego': 3,
-    'Espíritu de Pez': 4,
-    'Espíritu Pato': 5,
-    'Espíritu Fantasmal': 6,
-    'Espíritu Demoníaco': 7,
-    'Espíritu Rey': 8,
-    'Espíritu Goleador': 9,
-    'Espíritu de Aura': 10,
-    'Espíritu Dormilón': 11,
-    'Espíritu Punk': 12,
-    'Espíritu Jefe': 13,
-    'Espíritu Parca': 14,
-    'Espíritu del Punto Cero': 15,
-    'Cacahuate Tostado': 16
-  };
-
-  // 🔵 Función para ordenar sprits según el criterio seleccionado
+  // 🔵 Función de ordenamiento que usa los datos del backend
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
+
+    const obtenerOrdenDefault = (sprit) => {
+      const nombreA = ordenDefault[sprit.nombre] || 999;
+      const materialA = ordenMaterial[sprit.material] || 999;
+      return { nombreA, materialA };
+    };
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por material
-          const ordenA = ordenMateriales[a.material] || 999;
-          const ordenB = ordenMateriales[b.material] || 999;
+          const ordenA = ordenMaterial[a.material] || 999;
+          const ordenB = ordenMaterial[b.material] || 999;
           if (ordenA !== ordenB) return ordenA - ordenB;
-          // Luego por nombre (usando orden default)
-          const nombreA = ordenNombresDefault[a.nombre] || 999;
-          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
           return nombreA - nombreB;
         });
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por rareza (usando el orden de rareza)
-          const rarezaA = ordenNombresRareza[a.nombre] || 999;
-          const rarezaB = ordenNombresRareza[b.nombre] || 999;
+          const rarezaA = ordenRareza[a.nombre] || 999;
+          const rarezaB = ordenRareza[b.nombre] || 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          // Si misma rareza, ordenar por material
-          const materialA = ordenMateriales[a.material] || 999;
-          const materialB = ordenMateriales[b.material] || 999;
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
           return materialA - materialB;
         });
+
+      case 'seleccionados':
+        return [...spritsList].sort((a, b) => {
+          const seleccionadoA = spritsSeleccionados[a.id] || false;
+          const seleccionadoB = spritsSeleccionados[b.id] || false;
+          
+          // Primero los seleccionados, luego los no seleccionados
+          if (seleccionadoA !== seleccionadoB) {
+            return seleccionadoA ? -1 : 1;
+          }
+          
+          // Dentro del mismo grupo, ordenar por orden default
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
+          if (nombreA !== nombreB) {
+            return nombreA - nombreB;
+          }
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
+          return materialA - materialB;
+        });
+
       
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          // Primero ordenar por nombre (orden default)
-          const nombreA = ordenNombresDefault[a.nombre] || 999;
-          const nombreB = ordenNombresDefault[b.nombre] || 999;
+          const nombreA = ordenDefault[a.nombre] || 999;
+          const nombreB = ordenDefault[b.nombre] || 999;
           if (nombreA !== nombreB) return nombreA - nombreB;
-          // Luego por material
-          const materialA = ordenMateriales[a.material] || 999;
-          const materialB = ordenMateriales[b.material] || 999;
+          const materialA = ordenMaterial[a.material] || 999;
+          const materialB = ordenMaterial[b.material] || 999;
           return materialA - materialB;
         });
     }
@@ -112,6 +161,8 @@ function CalculadoraPolvoEspiritu() {
 
   useEffect(() => {
     cargarSprits();
+    cargarOrdenes();
+    cargarFiltros();
   }, []);
 
   const cargarSprits = async () => {
@@ -174,25 +225,6 @@ function CalculadoraPolvoEspiritu() {
     setSpritsSeleccionados({});
   };
 
-  const nombresDisponibles = [
-    'Espíritu de Agua',
-    'Espíritu de Tierra',
-    'Espíritu de Fuego',
-    'Espíritu Pato',
-    'Espíritu Fantasmal',
-    'Espíritu Demoníaco',
-    'Espíritu Rey',
-    'Espíritu Dormilón',
-    'Espíritu Punk',
-    'Espíritu del Punto Cero',
-    'Cacahuate Tostado',
-    'Espíritu de Pez',
-    'Espíritu Goleador',
-    'Espíritu de Aura',
-    'Espíritu Jefe',
-    'Espíritu Parca'
-  ];
-
   const spritsFiltrados = sprits.filter(sprit => {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
@@ -201,7 +233,7 @@ function CalculadoraPolvoEspiritu() {
   });
 
   // 🔵 Aplicar el ordenamiento a los sprits filtrados
-  const spritsOrdenados = ordenarSprits(spritsFiltrados);
+  const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
 
   if (loading) return <div className="loading">Cargando sprits...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -215,7 +247,7 @@ function CalculadoraPolvoEspiritu() {
       <h1>Calculadora de Polvo de Espíritu</h1>
       
       <div className="filtros">
-        {/* 🔵 Nuevo filtro "Por Orden" - a la izquierda */}
+        {/* 🔵 Filtro "Por Orden" */}
         <select 
           name="orden" 
           value={filtros.orden} 
@@ -225,8 +257,10 @@ function CalculadoraPolvoEspiritu() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
+          <option value="seleccionados">Seleccionados</option>
         </select>
 
+        {/* 🔵 FILTRO DE NOMBRES - DINÁMICO */}
         <select 
           name="nombre" 
           value={filtros.nombre} 
@@ -248,23 +282,23 @@ function CalculadoraPolvoEspiritu() {
           <option value="Mítico">Mítico</option>
         </select>
         
+        {/* 🔵 FILTRO DE MATERIALES - DINÁMICO */}
         <select name="material" value={filtros.material} onChange={handleFiltroChange}>
           <option value="">Todos los materiales</option>
-          <option value="Normal">Normal</option>
-          <option value="Oro">Oro</option>
-          <option value="Gomita">Gomita</option>
-          <option value="Galaxia">Galaxia</option>
+          {materialesDisponibles.map((material) => (
+            <option key={material} value={material}>
+              {material}
+            </option>
+          ))}
         </select>
         
-        <button onClick={limpiarFiltros}>
-          Limpiar filtros
-        </button>
-
-        <button className="btn-limpiar-seleccion" onClick={limpiarSelecciones}>
-          🗑️ Limpiar selección
-        </button>
-
         <div className="filtros-botones">
+          <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+            🗑️ Limpiar filtros
+          </button>
+          <button className="btn-limpiar-seleccion" onClick={limpiarSelecciones}>
+            🗑️ Limpiar selección
+          </button>
           <button 
             className="btn-volver"
             onClick={() => navigate('/')}
@@ -324,7 +358,6 @@ function CalculadoraPolvoEspiritu() {
                 </div>
 
                 <div className="sprit-rareza-wrapper">
-                  {/* 🔵 Emoji de mora si está en inventario */}
                   {sprit.estaEnInventario && (
                     <span className="inventario-icon" title="Ya está en inventario">🫐</span>
                   )}

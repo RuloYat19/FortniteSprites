@@ -14,19 +14,35 @@ class Sprit(Base):
     estaDominado = Column(Boolean, default=False)
     estaEnInventario = Column(Boolean, default=False)
     estaDesbloqueado = Column(Boolean, default=False)
+    estaEnElJuego = Column(Boolean, default=True)  # Si está disponible en el juego
+    temporada = Column(String(20), nullable=True)  # Ej: "C7T3"
+    metodoSubidaNivel = Column(String(100), nullable=True)  # Ej: "Abriendo contenedores"
     nivelEspiritu = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
     polvoAlExtraer = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
     polvoAlInvocar = Column(Integer, nullable=True) # Ej: 2000, 500, 10000
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-class CantidadPolvoEspiritu(Base):
-    __tablename__ = "cantidadPolvoEspiritu"
+class CantidadPolvoEspirituExtraer(Base):
+    __tablename__ = "cantidadPolvoEspirituExtraer"
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
     rareza = Column(String(50), nullable=False)
     nivelEspiritu = Column(Integer, nullable=False)
+    cantidad = Column(Integer, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+class CantidadPolvoEspirituInvocar(Base):
+    __tablename__ = "cantidadPolvoEspirituInvocar"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
+    material = Column(String(50), nullable=False)
+    rareza = Column(String(50), nullable=False)
     cantidad = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -36,6 +52,7 @@ class Material(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
     nombre = Column(String(50), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -45,6 +62,7 @@ class NombreSprit(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
     nombre = Column(String(50), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -54,6 +72,7 @@ class OrdenDefault(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
     nombre = Column(String(50), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -63,6 +82,16 @@ class OrdenRareza(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
+    temporada = Column(String(20), nullable=True)
     nombre = Column(String(50), nullable=False, unique=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+class MetodoSubidaNivel(Base):
+    __tablename__ = "metodoSubidaNivel"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numeroOrden = Column(Integer, nullable=False)
+    nombre = Column(String(100), nullable=False, unique=True)  # Ej: "Abriendo contenedores"
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

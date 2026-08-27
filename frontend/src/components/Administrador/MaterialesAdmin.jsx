@@ -10,7 +10,8 @@ function MaterialesAdmin() {
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
-    nombre: ''
+    nombre: '',
+    temporada: '',
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -19,7 +20,8 @@ function MaterialesAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
-    nombre: ''
+    temporada: '',
+    nombre: '',
   });
 
   // 🔵 Estado para modales de confirmación
@@ -31,6 +33,8 @@ function MaterialesAdmin() {
   });
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
+
+  const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarMateriales();
@@ -71,7 +75,8 @@ function MaterialesAdmin() {
 
   const limpiarFiltros = () => {
     setFiltros({
-      nombre: ''
+      nombre: '',
+      temporada: '',
     });
   };
 
@@ -98,7 +103,8 @@ function MaterialesAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
-      nombre: ''
+      temporada: '',
+      nombre: '',
     });
     setEditando(false);
     setShowModal(true);
@@ -109,7 +115,8 @@ function MaterialesAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
-      nombre: registro.nombre
+      temporada: registro.temporada || '',
+      nombre: registro.nombre,
     });
     setEditando(true);
     setShowModal(true);
@@ -120,7 +127,8 @@ function MaterialesAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
-      nombre: ''
+      temporada: '',
+      nombre: '',
     });
     setEditando(false);
   };
@@ -135,7 +143,7 @@ function MaterialesAdmin() {
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
     // Validaciones
-    if (!formData.numeroOrden || !formData.nombre.trim()) {
+    if (!formData.numeroOrden || !formData.temporada || !formData.nombre.trim()) { // 🔵 Agregar temporada
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
@@ -163,6 +171,7 @@ function MaterialesAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        temporada: formData.temporada, // 🔵 NUEVO
         nombre: formData.nombre.trim()
       };
 
@@ -219,6 +228,12 @@ function MaterialesAdmin() {
         return 'material-galaxia';
       case 'holofoil':
         return 'material-holofoil';
+      case 'cúbico':
+        return 'material-cúbico';
+      case 'patito':
+        return 'material-patito';
+      case 'gema':
+        return 'material-gema';
       default:
         return 'material-normal';
     }
@@ -227,6 +242,7 @@ function MaterialesAdmin() {
   // 🔵 Filtrar datos
   const datosFiltrados = materiales.filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false; // 🔵 NUEVO
     return true;
   });
 
@@ -248,6 +264,19 @@ function MaterialesAdmin() {
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
+          <select 
+            name="temporada" 
+            value={filtros.temporada} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            style={{ borderColor: '#ff6f00', color: '#ffb74d' }}
+          >
+            <option value="">Todas las temporadas</option>
+            {temporadas.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
           <input
             type="text"
             name="nombre"
@@ -288,55 +317,61 @@ function MaterialesAdmin() {
 
       {/* 🔵 TABLA */}
       <div className="admin-table-container">
-        <table className="admin-table">
-          <thead>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th># Orden</th>
+            <th>Temporada</th>
+            <th>Material</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {datosFiltrados.length === 0 ? (
             <tr>
-              <th># Orden</th>
-              <th>Material</th>
-              <th>Acciones</th>
+              <td colSpan="4" className="no-data">
+                {materiales.length === 0 ? 'No hay materiales en la base de datos' : 'No hay materiales que coincidan con los filtros'}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {datosFiltrados.length === 0 ? (
-              <tr>
-                <td colSpan="3" className="no-data">
-                  {materiales.length === 0 ? 'No hay materiales en la base de datos' : 'No hay materiales que coincidan con los filtros'}
-                </td>
-              </tr>
-            ) : (
-              datosFiltrados.map((item) => {
-                const materialClass = getMaterialClass(item.nombre);
-                return (
-                  <tr key={item.id}>
-                    <td className="td-orden">{item.numeroOrden}</td>
-                    <td>
-                      <span className={`detail-value ${materialClass}`}>
-                        {item.nombre}
-                      </span>
-                    </td>
-                    <td className="td-acciones">
-                      <button 
-                        className="btn-editar"
-                        onClick={() => abrirEditarModal(item)}
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        className="btn-eliminar"
-                        onClick={() => confirmarEliminacion(item)}
-                        title="Eliminar"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+          ) : (
+            datosFiltrados.map((item) => {
+              const materialClass = getMaterialClass(item.nombre);
+              return (
+                <tr key={item.id}>
+                  <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
+                      {item.temporada || 'N/A'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`detail-value ${materialClass}`}>
+                      {item.nombre}
+                    </span>
+                  </td>
+                  <td className="td-acciones">
+                    <button 
+                      className="btn-editar"
+                      onClick={() => abrirEditarModal(item)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="btn-eliminar"
+                      onClick={() => confirmarEliminacion(item)}
+                      title="Eliminar"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+    </div>
 
       {/* 🔵 MODAL PARA CREAR/EDITAR */}
       {showModal && (
@@ -349,6 +384,29 @@ function MaterialesAdmin() {
             
             <div className="modal-body">
               <div className="admin-form">
+                <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={formData.temporada || ''}
+                    onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {temporadas.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="form-group">
                   <label>Número de Orden *</label>
                   <input

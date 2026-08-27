@@ -14,7 +14,8 @@ def get_all_nombres(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    nombre: Optional[str] = None
+    nombre: Optional[str] = None,
+    temporada: Optional[str] = Query(None, description="Filtrar por temporada (ej: C7T3)")
 ):
     """
     Obtener todos los nombres de sprits con filtros opcionales
@@ -23,8 +24,10 @@ def get_all_nombres(
     
     if nombre:
         query = query.filter(models.NombreSprit.nombre.ilike(f"%{nombre}%"))
+    if temporada:
+        query = query.filter(models.NombreSprit.temporada == temporada)
     
-    query = query.order_by(models.NombreSprit.numeroOrden)
+    query = query.order_by(models.NombreSprit.temporada, models.NombreSprit.numeroOrden)
     
     return query.offset(skip).limit(limit).all()
 
@@ -81,6 +84,29 @@ def buscar_nombres(
     return nombres
 
 # ============================================
+# GET - Obtener por temporada
+# ============================================
+@router.get("/temporada/{temporada}", response_model=List[schemas.NombreSpritResponse])
+def get_nombres_by_temporada(
+    temporada: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todos los nombres de sprits de una temporada específica.
+    """
+    nombres = db.query(models.NombreSprit).filter(
+        models.NombreSprit.temporada == temporada
+    ).order_by(models.NombreSprit.numeroOrden).all()
+    
+    if not nombres:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron nombres para la temporada {temporada}"
+        )
+    
+    return nombres
+
+# ============================================
 # POST - Crear un nuevo nombre
 # ============================================
 @router.post(
@@ -95,6 +121,7 @@ def create_nombre(
     """
     Crear un nuevo nombre de sprit.
     Verifica que no exista un nombre duplicado.
+    Verifica que no exista la combinación (numeroOrden, temporada) duplicada.
     """
     # Verificar si ya existe un nombre igual
     existing = db.query(models.NombreSprit).filter(
@@ -107,15 +134,28 @@ def create_nombre(
             detail=f"Ya existe un nombre de sprit: '{nombre.nombre}'"
         )
     
-    existing_orden = db.query(models.NombreSprit).filter(
-        models.NombreSprit.numeroOrden == nombre.numeroOrden
-    ).first()
-    
-    if existing_orden:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe un nombre con el número de orden {nombre.numeroOrden}"
-        )
+    # 🔵 Verificar combinación (numeroOrden, temporada)
+    if nombre.temporada:
+        existing_orden = db.query(models.NombreSprit).filter(
+            models.NombreSprit.numeroOrden == nombre.numeroOrden,
+            models.NombreSprit.temporada == nombre.temporada
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un nombre con el número de orden {nombre.numeroOrden} para la temporada {nombre.temporada}"
+            )
+    else:
+        existing_orden = db.query(models.NombreSprit).filter(
+            models.NombreSprit.numeroOrden == nombre.numeroOrden
+        ).first()
+        
+        if existing_orden:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un nombre con el número de orden {nombre.numeroOrden}"
+            )
     
     db_nombre = models.NombreSprit(**nombre.model_dump())
     db.add(db_nombre)
@@ -145,7 +185,7 @@ def create_nombres_batch(
     
     for nombre_data in nombres:
         try:
-            # Verificar si ya existe
+            # Verificar si ya existe un nombre igual
             existing = db.query(models.NombreSprit).filter(
                 models.NombreSprit.nombre == nombre_data.nombre
             ).first()
@@ -154,13 +194,19 @@ def create_nombres_batch(
                 errores.append(f"'{nombre_data.nombre}' ya existe")
                 continue
             
-            # 🔵 Verificar número de orden duplicado
-            existing_orden = db.query(models.NombreSprit).filter(
-                models.NombreSprit.numeroOrden == nombre_data.numeroOrden
-            ).first()
+            # 🔵 Verificar combinación (numeroOrden, temporada)
+            if nombre_data.temporada:
+                existing_orden = db.query(models.NombreSprit).filter(
+                    models.NombreSprit.numeroOrden == nombre_data.numeroOrden,
+                    models.NombreSprit.temporada == nombre_data.temporada
+                ).first()
+            else:
+                existing_orden = db.query(models.NombreSprit).filter(
+                    models.NombreSprit.numeroOrden == nombre_data.numeroOrden
+                ).first()
             
             if existing_orden:
-                errores.append(f"Número de orden {nombre_data.numeroOrden} ya está en uso")
+                errores.append(f"Número de orden {nombre_data.numeroOrden} ya está en uso para la temporada {nombre_data.temporada or 'sin temporada'}")
                 continue
             
             db_nombre = models.NombreSprit(**nombre_data.model_dump())
@@ -217,17 +263,27 @@ def update_nombre(
                 detail=f"Ya existe un nombre de sprit: '{nombre_update.nombre}'"
             )
     
-    # 🔵 Verificar duplicado de número de orden (excluyendo el mismo registro)
+    # 🔵 Verificar duplicado de combinación (numeroOrden, temporada)
     if nombre_update.numeroOrden:
-        existing_orden = db.query(models.NombreSprit).filter(
-            models.NombreSprit.numeroOrden == nombre_update.numeroOrden,
-            models.NombreSprit.id != nombre_id
-        ).first()
+        temporada_actual = db_nombre.temporada
+        nueva_temporada = nombre_update.temporada if nombre_update.temporada is not None else temporada_actual
+        
+        if nueva_temporada:
+            existing_orden = db.query(models.NombreSprit).filter(
+                models.NombreSprit.numeroOrden == nombre_update.numeroOrden,
+                models.NombreSprit.temporada == nueva_temporada,
+                models.NombreSprit.id != nombre_id
+            ).first()
+        else:
+            existing_orden = db.query(models.NombreSprit).filter(
+                models.NombreSprit.numeroOrden == nombre_update.numeroOrden,
+                models.NombreSprit.id != nombre_id
+            ).first()
         
         if existing_orden:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ya existe un nombre con el número de orden {nombre_update.numeroOrden}"
+                detail=f"Ya existe un nombre con el número de orden {nombre_update.numeroOrden} para la temporada {nueva_temporada or 'sin temporada'}"
             )
     
     # Actualizar campos
