@@ -2,7 +2,5 @@
 ### Cosas que editar
 
 ### Cosas Nuevas para Añadir
-- Filtro para separarlos por temporadas y dejar como default el actual "C7T4" -> Calculadora
-
 - Implementar algo visual para indicar que el espíritu aún no está disponible -> Inventario Sprites, Dominados y Calculadora
 - Filtro de los que ya salieron y los que no -> Inventario Sprites, Dominados y Calculadora
