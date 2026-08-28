@@ -20,7 +20,9 @@ function Dominados() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default'
+    orden: 'default',
+    yaFueDominado: '',
+    temporada: ''  // 🔵 NUEVO
   });
 
   // 🔵 ESTADOS PARA LOS ÓRDENES
@@ -33,6 +35,7 @@ function Dominados() {
   const [nombresDisponibles, setNombresDisponibles] = useState([]);
   const [materialesDisponibles, setMaterialesDisponibles] = useState([]);
   const [filtrosCargados, setFiltrosCargados] = useState(false);
+  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);  // 🔵 NUEVO
 
   // 🔵 Estado para el modal de resetear dominado
   const [showResetModal, setShowResetModal] = useState(false);
@@ -94,7 +97,6 @@ function Dominados() {
         materialesService.getAll()
       ]);
 
-      // Ordenar por numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
         .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
@@ -186,7 +188,9 @@ function Dominados() {
       rareza: '', 
       material: '',
       nombre: '',
-      orden: 'default'
+      orden: 'default',
+      yaFueDominado: '',
+      temporada: ''  // 🔵 NUEVO
     });
   };
 
@@ -270,10 +274,18 @@ function Dominados() {
     }, 3000);
   };
 
+  // 🔵 Filtrar sprits
   const spritsFiltrados = sprits.filter(sprit => {
     if (filtros.rareza && sprit.rareza !== filtros.rareza) return false;
     if (filtros.material && sprit.material !== filtros.material) return false;
     if (filtros.nombre && sprit.nombre !== filtros.nombre) return false;
+    // 🔵 FILTRO POR yaFueDominado
+    if (filtros.yaFueDominado !== '') {
+      const filtro = filtros.yaFueDominado === 'true';
+      if (sprit.yaFueDominado !== filtro) return false;
+    }
+    // 🔵 NUEVO FILTRO POR TEMPORADA
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -293,6 +305,49 @@ function Dominados() {
       <h1>Sprits Dominados</h1>
       
       <div className="filtros">
+        {/* 🔵 NUEVO FILTRO DE TEMPORADA */}
+        <select 
+          name="temporada" 
+          value={filtros.temporada} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #ff6f00',
+            background: '#16213e',
+            color: '#ffb74d',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '150px'
+          }}
+        >
+          <option value="">Todas las temporadas</option>
+          {opcionesTemporada.map(temp => (
+            <option key={temp} value={temp}>{temp}</option>
+          ))}
+        </select>
+
+        {/* 🔵 FILTRO DE DOMINADOS */}
+        <select 
+          name="yaFueDominado" 
+          value={filtros.yaFueDominado} 
+          onChange={handleFiltroChange}
+          style={{
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '2px solid #FFD700',
+            background: '#16213e',
+            color: '#FFD700',
+            fontSize: '14px',
+            cursor: 'pointer',
+            minWidth: '180px'
+          }}
+        >
+          <option value="">Todos los sprits</option>
+          <option value="true">👑 Ya fueron dominados</option>
+          <option value="false">⏳ No han sido dominados</option>
+        </select>
+        
         {/* 🔵 Filtro "Por Orden" */}
         <select 
           name="orden" 
@@ -319,6 +374,7 @@ function Dominados() {
           ))}
         </select>
 
+        {/* 🔵 FILTRO DE RAREZA */}
         <select name="rareza" value={filtros.rareza} onChange={handleFiltroChange}>
           <option value="">Todas las rarezas</option>
           <option value="Raro">Raro</option>

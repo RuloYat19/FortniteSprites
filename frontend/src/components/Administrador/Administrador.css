@@ -483,7 +483,8 @@
 .detail-value.material-holofoil,
 .detail-value.material-cúbico,
 .detail-value.material-patito,
-.detail-value.material-gema {
+.detail-value.material-gema,
+.detail-value.material-hacker {
   display: inline-block;
   padding: 4px 16px;
   border-radius: 20px;
@@ -548,13 +549,21 @@
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
+.detail-value.material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #8D877A !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
 /* 🔵 Hover effect para los badges de material */
 .detail-value.material-normal:hover,
 .detail-value.material-oro:hover,
 .detail-value.material-gomita:hover,
 .detail-value.material-galaxia:hover,
 .detail-value.material-holofoil:hover,
-.detail-value.material-cúbico:hover {
+.detail-value.material-cúbico:hover,
+.detail-value.material-hacker:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease;
 }
@@ -577,6 +586,10 @@
 
 .detail-value.material-cúbico:hover {
   box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
+}
+
+.detail-value.material-hacker:hover {
+  box-shadow: 0 0 30px rgba(19, 92, 1, 0.626);
 }
 
 /* 🔵 RESPONSIVE */
