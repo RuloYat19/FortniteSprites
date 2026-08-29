@@ -16,7 +16,7 @@ function PolvoInvocarAdmin() {
   const [filtros, setFiltros] = useState({
     material: '',
     rareza: '',
-    temporada: '',  // 🔵 NUEVO
+    temporada: 'C7T4',
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -25,7 +25,7 @@ function PolvoInvocarAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
-    temporada: '',  // 🔵 NUEVO
+    temporada: '',
     material: '',
     rareza: '',
     cantidad: '',
@@ -132,7 +132,7 @@ function PolvoInvocarAdmin() {
     setFiltros({
       material: '',
       rareza: '',
-      temporada: ''  // 🔵 NUEVO
+      temporada: 'C7T4'
     });
   };
 

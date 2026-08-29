@@ -20,7 +20,7 @@ function OrdenesAdmin() {
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
     nombre: '',
-    temporada: ''
+    temporada: 'C7T4'
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -111,7 +111,7 @@ function OrdenesAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       nombre: '',
-      temporada: ''
+      temporada: 'C7T4'
     });
   };
 
