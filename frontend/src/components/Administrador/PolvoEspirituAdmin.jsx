@@ -393,7 +393,7 @@ function PolvoEspirituAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
-              <th>Temporada</th>  {/* 🔵 NUEVA COLUMNA */}
+              <th>Temporada</th>
               <th>Rareza</th>
               <th>Nivel</th>
               <th>Cantidad</th>
@@ -403,7 +403,7 @@ function PolvoEspirituAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" className="no-data">  {/* 🔵 Actualizado a 6 columnas */}
+                <td colSpan="6" className="no-data">
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
