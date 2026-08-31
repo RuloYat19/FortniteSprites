@@ -57,6 +57,7 @@ BEGIN
         id INT IDENTITY(1,1) PRIMARY KEY,
         numeroOrden INT NOT NULL,
         temporada VARCHAR(20) NULL,
+        material VARCHAR(50) NOT NULL,
         rareza VARCHAR(50) NOT NULL,
         nivelEspiritu INT NOT NULL,
         cantidad INT NOT NULL,
@@ -64,6 +65,7 @@ BEGIN
         updated_at DATETIME NULL
     );
     
+    CREATE INDEX idx_cantidadPolvoEspirituExtraer_material ON cantidadPolvoEspirituExtraer(material);
     CREATE INDEX idx_cantidadPolvoEspirituExtraer_rareza ON cantidadPolvoEspirituExtraer(rareza);
     CREATE INDEX idx_cantidadPolvoEspirituExtraer_nivelEspiritu ON cantidadPolvoEspirituExtraer(nivelEspiritu);
     CREATE INDEX idx_cantidadPolvoEspirituExtraer_cantidad ON cantidadPolvoEspirituExtraer(cantidad);

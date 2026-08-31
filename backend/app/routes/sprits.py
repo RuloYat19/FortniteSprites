@@ -133,15 +133,14 @@ def actualizar_polvos_sprits(
         configs_extraer = db.query(models.CantidadPolvoEspirituExtraer).all()
         mapa_extraer = {}
         for config in configs_extraer:
-            # 🔵 INCLUIR TEMPORADA en la clave
-            clave = f"{config.temporada}-{config.rareza}-{config.nivelEspiritu}"
+            # 🔵 INCLUIR MATERIAL en la clave
+            clave = f"{config.temporada}-{config.material}-{config.rareza}-{config.nivelEspiritu}"
             mapa_extraer[clave] = config.cantidad
         
         # Obtener todas las configuraciones de polvo al invocar
         configs_invocar = db.query(models.CantidadPolvoEspirituInvocar).all()
         mapa_invocar = {}
         for config in configs_invocar:
-            # 🔵 INCLUIR TEMPORADA en la clave
             clave = f"{config.temporada}-{config.material}-{config.rareza}"
             mapa_invocar[clave] = config.cantidad
         
@@ -156,10 +155,9 @@ def actualizar_polvos_sprits(
             try:
                 actualizado = False
                 
-                # Calcular polvo al extraer (incluyendo temporada)
-                if sprit.rareza and sprit.nivelEspiritu and sprit.temporada:
-                    # 🔵 CLAVE CON TEMPORADA
-                    clave_extraer = f"{sprit.temporada}-{sprit.rareza}-{sprit.nivelEspiritu}"
+                # 🔵 Calcular polvo al extraer (incluyendo material)
+                if sprit.material and sprit.rareza and sprit.nivelEspiritu and sprit.temporada:
+                    clave_extraer = f"{sprit.temporada}-{sprit.material}-{sprit.rareza}-{sprit.nivelEspiritu}"
                     if clave_extraer in mapa_extraer:
                         nuevo_polvo = mapa_extraer[clave_extraer]
                         if sprit.polvoAlExtraer != nuevo_polvo:
@@ -168,7 +166,6 @@ def actualizar_polvos_sprits(
                 
                 # Calcular polvo al invocar (incluyendo temporada)
                 if sprit.material and sprit.rareza and sprit.temporada:
-                    # 🔵 CLAVE CON TEMPORADA
                     clave_invocar = f"{sprit.temporada}-{sprit.material}-{sprit.rareza}"
                     if clave_invocar in mapa_invocar:
                         nuevo_polvo = mapa_invocar[clave_invocar]
