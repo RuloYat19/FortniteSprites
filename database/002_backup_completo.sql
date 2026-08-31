@@ -1,6 +1,6 @@
 -- ============================================
 -- BACKUP DE BASE DE DATOS
--- Fecha: 2026-08-27 20:35:33
+-- Fecha: 2026-08-31 00:33:06
 -- ============================================
 
 USE FORTNITEDB;
@@ -144,6 +144,15 @@ INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelE
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'C7T3', 'Mítico', 4, 1150, '2026-07-03 00:24:41', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'C7T3', 'Mítico', 5, 1300, '2026-07-03 00:24:41', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (21, 'C7T4', 'Raro', 1, 500, '2026-08-27 01:49:22', '2026-08-27 20:28:55');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (22, 'C7T4', 'Raro', 2, 550, '2026-08-30 23:05:27', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (23, 'C7T4', 'Raro', 3, 600, '2026-08-30 23:06:52', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (24, 'C7T4', 'Raro', 4, 650, '2026-08-30 23:10:18', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (25, 'C7T4', 'Raro', 5, 700, '2026-08-30 23:13:07', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (26, 'C7T4', 'Épico', 1, 700, '2026-08-30 23:13:29', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (27, 'C7T4', 'Épico', 2, 770, '2026-08-30 23:15:06', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (28, 'C7T4', 'Épico', 3, 840, '2026-08-30 23:15:27', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (29, 'C7T4', 'Épico', 4, 910, '2026-08-30 23:19:02', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (30, 'C7T4', 'Épico', 5, 980, '2026-08-30 23:36:46', NULL);
 
 -- ============================================
 -- TABLA: cantidadPolvoEspirituInvocar
@@ -308,3 +317,6 @@ INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Demoníaco', 'Épico', 'Gema', './imagenesSprites/demoniacoGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:09:23', '2026-08-13 00:08:12');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Gema', './imagenesSprites/puntoCeroGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1300, 10000, '2026-08-12 02:09:45', '2026-08-18 03:58:17');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Aura', 'Épico', 'Gema', './imagenesSprites/auraGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:10:04', '2026-08-12 14:20:40');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Normal', './imagenesSprites/exploradorTormentaNormal.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:06:58', '2026-08-29 14:45:16');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Oro', './imagenesSprites/exploradorTormentaOro.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:07:37', '2026-08-29 14:45:29');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Hacker', './imagenesSprites/exploradorTormentaHacker.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:08:08', '2026-08-29 14:45:40');
