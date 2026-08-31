@@ -54,6 +54,7 @@ class SpritResponse(SpritBase):
 class CantidadPolvoExtraerBase(BaseModel):
     numeroOrden: int
     temporada: Optional[str] = None
+    material: str
     rareza: str
     nivelEspiritu: int
     cantidad: int
