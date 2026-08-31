@@ -15,7 +15,7 @@ function PolvoEspirituAdmin() {
   const [filtros, setFiltros] = useState({
     rareza: '',
     nivelEspiritu: '',
-    temporada: ''  // 🔵 NUEVO FILTRO
+    temporada: 'C7T4'
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -24,7 +24,7 @@ function PolvoEspirituAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
-    temporada: '',  // 🔵 NUEVO CAMPO
+    temporada: '',
     rareza: '',
     nivelEspiritu: '',
     cantidad: ''
@@ -46,7 +46,7 @@ function PolvoEspirituAdmin() {
   // 🔵 Niveles, Rarezas y Temporadas disponibles
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
   const niveles = [1, 2, 3, 4, 5];
-  const temporadas = ['C7T3', 'C7T4'];  // 🔵 NUEVO
+  const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarCantidades();
@@ -125,7 +125,7 @@ function PolvoEspirituAdmin() {
     setFiltros({
       rareza: '',
       nivelEspiritu: '',
-      temporada: ''  // 🔵 NUEVO
+      temporada: 'C7T4'
     });
   };
 
@@ -393,7 +393,7 @@ function PolvoEspirituAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
-              <th>Temporada</th>  {/* 🔵 NUEVA COLUMNA */}
+              <th>Temporada</th>
               <th>Rareza</th>
               <th>Nivel</th>
               <th>Cantidad</th>
@@ -403,7 +403,7 @@ function PolvoEspirituAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" className="no-data">  {/* 🔵 Actualizado a 6 columnas */}
+                <td colSpan="6" className="no-data">
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>

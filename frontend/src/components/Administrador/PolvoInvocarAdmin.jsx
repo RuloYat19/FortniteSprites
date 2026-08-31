@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoInvocarService, materialesService, spritsService } from '../../services/api'; // 🔵 Importar spritsService
+import { cantidadPolvoInvocarService, materialesService, spritsService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -16,7 +16,7 @@ function PolvoInvocarAdmin() {
   const [filtros, setFiltros] = useState({
     material: '',
     rareza: '',
-    temporada: '',
+    temporada: 'C7T4',
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -131,7 +131,8 @@ function PolvoInvocarAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       material: '',
-      rareza: ''
+      rareza: '',
+      temporada: 'C7T4'
     });
   };
 
@@ -158,6 +159,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
+      temporada: '',  // 🔵 NUEVO
       material: '',
       rareza: '',
       cantidad: ''
@@ -171,6 +173,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
+      temporada: registro.temporada || '',  // 🔵 NUEVO
       material: registro.material,
       rareza: registro.rareza,
       cantidad: registro.cantidad
@@ -184,6 +187,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
+      temporada: '',  // 🔵 NUEVO
       material: '',
       rareza: '',
       cantidad: ''
@@ -200,8 +204,8 @@ function PolvoInvocarAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.material || 
-        !formData.rareza || !formData.cantidad) {
+    if (!formData.numeroOrden || !formData.temporada || !formData.material || 
+        !formData.rareza || !formData.cantidad) {  // 🔵 Agregar temporada a validación
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
@@ -229,6 +233,7 @@ function PolvoInvocarAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        temporada: formData.temporada,  // 🔵 NUEVO
         material: formData.material,
         rareza: formData.rareza,
         cantidad: parseInt(formData.cantidad)
@@ -276,6 +281,8 @@ function PolvoInvocarAdmin() {
   const datosFiltrados = cantidades.filter(item => {
     if (filtros.material && item.material !== filtros.material) return false;
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
+    // 🔵 NUEVO FILTRO POR TEMPORADA
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -345,7 +352,6 @@ function PolvoInvocarAdmin() {
         </div>
 
         <div className="filtros-group" style={{ gap: '8px' }}>
-          {/* 🔵 NUEVO BOTÓN - Actualizar Valores en Sprites */}
           <button 
             className="btn-actualizar-sprits"
             onClick={() => setShowActualizarConfirmModal(true)}
@@ -406,7 +412,8 @@ function PolvoInvocarAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="5" className="no-data">
+                {/* 🔵 CORREGIDO: colSpan ahora es 6 */}
+                <td colSpan="6" className="no-data">
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
@@ -414,6 +421,12 @@ function PolvoInvocarAdmin() {
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
+                  {/* 🔵 NUEVA COLUMNA - Temporada */}
+                  <td>
+                    <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
+                      {item.temporada || 'N/A'}
+                    </span>
+                  </td>
                   <td>
                     <span className={`detail-value material-${item.material.toLowerCase()}`}>
                       {item.material}
@@ -469,6 +482,24 @@ function PolvoInvocarAdmin() {
             <div className="modal-body">
               <div className="admin-form">
                 <div className="form-group">
+                  <label>Número de Orden *</label>
+                  <input
+                    type="number"
+                    name="numeroOrden"
+                    placeholder="Ej: 1"
+                    value={formData.numeroOrden}
+                    onChange={handleFormChange}
+                    min="1"
+                    disabled={!editando}
+                  />
+                  {!editando && (
+                    <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
+                      💡 Número asignado automáticamente
+                    </small>
+                  )}
+                </div>
+
+                <div className="form-group">
                   <label>Temporada *</label>
                   <select
                     name="temporada"
@@ -489,24 +520,6 @@ function PolvoInvocarAdmin() {
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Número de Orden *</label>
-                  <input
-                    type="number"
-                    name="numeroOrden"
-                    placeholder="Ej: 1"
-                    value={formData.numeroOrden}
-                    onChange={handleFormChange}
-                    min="1"
-                    disabled={!editando}
-                  />
-                  {!editando && (
-                    <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
-                      💡 Número asignado automáticamente
-                    </small>
-                  )}
                 </div>
 
                 <div className="form-group">
@@ -578,7 +591,7 @@ function PolvoInvocarAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro?\nMaterial: ${registroAEliminar?.material}\nRareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nTemporada: ${registroAEliminar?.temporada}\nMaterial: ${registroAEliminar?.material}\nRareza: ${registroAEliminar?.rareza}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
