@@ -5,18 +5,17 @@ import ConfirmModal from '../ConfirmModal';
 
 function PolvoInvocarAdmin() {
   const [cantidades, setCantidades] = useState([]);
-  const [materiales, setMateriales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   // 🔵 Estado para el botón de actualización
   const [actualizando, setActualizando] = useState(false);
   
-  // 🔵 Filtros
+  // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
     material: '',
     rareza: '',
-    temporada: 'C7T4',
+    temporada: 'C7T4'
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -28,7 +27,7 @@ function PolvoInvocarAdmin() {
     temporada: '',
     material: '',
     rareza: '',
-    cantidad: '',
+    cantidad: ''
   });
 
   // 🔵 Estado para modales de confirmación
@@ -44,34 +43,119 @@ function PolvoInvocarAdmin() {
   // 🔵 Estado para el modal de confirmación de actualización
   const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
-  // 🔵 Rarezas disponibles
-  const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
+  // 🔵 Opciones para FILTROS (dependen del filtro de temporada)
+  const [opcionesMaterialesFiltros, setOpcionesMaterialesFiltros] = useState([]);
+  const [opcionesRarezasFiltros, setOpcionesRarezasFiltros] = useState([]);
+  const [cargandoOpcionesFiltros, setCargandoOpcionesFiltros] = useState(false);
+  
+  // 🔵 Opciones para FORMULARIO (dependen de la temporada seleccionada en el formulario)
+  const [opcionesMaterialesForm, setOpcionesMaterialesForm] = useState([]);
+  const [opcionesRarezasForm, setOpcionesRarezasForm] = useState([]);
+  const [cargandoOpcionesForm, setCargandoOpcionesForm] = useState(false);
+  
+  // 🔵 Estado para datos completos con temporada (para filtros)
+  const [materialesConTemporada, setMaterialesConTemporada] = useState([]);
 
-  // Temporadas disponibles
+  // 🔵 Temporadas disponibles
   const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarDatos();
+    cargarOpcionesFiltros();
   }, []);
 
+  // 🔵 Efecto para filtrar opciones de FILTROS según temporada seleccionada en filtros
+  useEffect(() => {
+    const temporada = filtros.temporada;
+    const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
+    
+    if (temporada) {
+      const materialesFilt = materialesConTemporada
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      
+      const materialesConFijas = [...materialesFilt, ...opcionesFijas];
+      setOpcionesMaterialesFiltros(materialesConFijas.length > 0 ? materialesConFijas : []);
+    } else {
+      // Sin filtro de temporada, mostrar todas las opciones
+      setOpcionesMaterialesFiltros(opcionesMaterialesFiltros);
+      setOpcionesRarezasFiltros(opcionesRarezasFiltros);
+    }
+  }, [filtros.temporada, materialesConTemporada]);
+
+  // 🔵 Efecto para cargar opciones del FORMULARIO cuando cambia la temporada en el formData
+  useEffect(() => {
+    if (formData.temporada) {
+      cargarOpcionesForm(formData.temporada);
+    } else {
+      setOpcionesMaterialesForm([]);
+      setOpcionesRarezasForm([]);
+    }
+  }, [formData.temporada]);
+
+  // 🔵 Cargar datos
   const cargarDatos = async () => {
     try {
       setLoading(true);
-      const [cantidadesRes, materialesRes] = await Promise.all([
-        cantidadPolvoInvocarService.getAll(),
-        materialesService.getAll()
-      ]);
-      
-      // Ordenar por numeroOrden
-      const dataOrdenada = cantidadesRes.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
+      const response = await cantidadPolvoInvocarService.getAll();
+      const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
       setCantidades(dataOrdenada);
-      setMateriales(materialesRes.data);
       setError(null);
     } catch (err) {
       setError('Error al cargar los datos');
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🔵 Cargar opciones para FILTROS (materiales y rarezas con temporada)
+  const cargarOpcionesFiltros = async () => {
+    setCargandoOpcionesFiltros(true);
+    try {
+      // Cargar materiales
+      const materialesRes = await materialesService.getAll();
+      const materialesConTemp = materialesRes.data.map(item => ({
+        nombre: item.nombre,
+        temporada: item.temporada
+      }));
+      setMaterialesConTemporada(materialesConTemp);
+      
+      const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
+      const todosMateriales = [...materialesConTemp.map(item => item.nombre), ...opcionesFijas];
+      setOpcionesMaterialesFiltros(todosMateriales);
+
+      // Cargar rarezas desde los datos de cantidadPolvoInvocar
+      const cantidadesRes = await cantidadPolvoInvocarService.getAll();
+      const rarezasUnicas = [...new Set(cantidadesRes.data.map(item => item.rareza))];
+      setOpcionesRarezasFiltros(rarezasUnicas);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones para filtros:', err);
+    } finally {
+      setCargandoOpcionesFiltros(false);
+    }
+  };
+
+  // 🔵 Cargar opciones del FORMULARIO según temporada
+  const cargarOpcionesForm = async (temporada) => {
+    if (!temporada) {
+      setOpcionesMaterialesForm([]);
+      return;
+    }
+    
+    setCargandoOpcionesForm(true);
+    try {
+      const materialesRes = await materialesService.getAll();
+      const materialesFilt = materialesRes.data
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesMaterialesForm(materialesFilt);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones del formulario:', err);
+    } finally {
+      setCargandoOpcionesForm(false);
     }
   };
 
@@ -155,11 +239,10 @@ function PolvoInvocarAdmin() {
 
   // 🔵 Abrir modal para crear
   const abrirCrearModal = () => {
-    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
-      numeroOrden: siguienteNumero.toString(),
-      temporada: '',  // 🔵 NUEVO
+      numeroOrden: obtenerSiguienteNumeroOrden().toString(),
+      temporada: '',
       material: '',
       rareza: '',
       cantidad: ''
@@ -173,7 +256,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
-      temporada: registro.temporada || '',  // 🔵 NUEVO
+      temporada: registro.temporada || '',
       material: registro.material,
       rareza: registro.rareza,
       cantidad: registro.cantidad
@@ -187,7 +270,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
-      temporada: '',  // 🔵 NUEVO
+      temporada: '',
       material: '',
       rareza: '',
       cantidad: ''
@@ -205,12 +288,11 @@ function PolvoInvocarAdmin() {
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
     if (!formData.numeroOrden || !formData.temporada || !formData.material || 
-        !formData.rareza || !formData.cantidad) {  // 🔵 Agregar temporada a validación
+        !formData.rareza || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
 
-    // Verificar duplicado de número de orden en creación
     if (!editando) {
       const numeroExistente = cantidades.some(
         item => item.numeroOrden === parseInt(formData.numeroOrden)
@@ -233,7 +315,7 @@ function PolvoInvocarAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
-        temporada: formData.temporada,  // 🔵 NUEVO
+        temporada: formData.temporada,
         material: formData.material,
         rareza: formData.rareza,
         cantidad: parseInt(formData.cantidad)
@@ -281,7 +363,6 @@ function PolvoInvocarAdmin() {
   const datosFiltrados = cantidades.filter(item => {
     if (filtros.material && item.material !== filtros.material) return false;
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
-    // 🔵 NUEVO FILTRO POR TEMPORADA
     if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
@@ -327,10 +408,11 @@ function PolvoInvocarAdmin() {
             value={filtros.material} 
             onChange={handleFiltroChange}
             className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
           >
-            <option value="">Todos los materiales</option>
-            {materiales.map(m => (
-              <option key={m.id} value={m.nombre}>{m.nombre}</option>
+            <option value="">Materiales en General</option>
+            {opcionesMaterialesFiltros.map((material, index) => (
+              <option key={index} value={material}>{material}</option>
             ))}
           </select>
 
@@ -339,10 +421,11 @@ function PolvoInvocarAdmin() {
             value={filtros.rareza} 
             onChange={handleFiltroChange}
             className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
           >
             <option value="">Todas las rarezas</option>
-            {rarezas.map(r => (
-              <option key={r} value={r}>{r}</option>
+            {opcionesRarezasFiltros.map((rareza, index) => (
+              <option key={index} value={rareza}>{rareza}</option>
             ))}
           </select>
 
@@ -412,7 +495,6 @@ function PolvoInvocarAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                {/* 🔵 CORREGIDO: colSpan ahora es 6 */}
                 <td colSpan="6" className="no-data">
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
@@ -421,7 +503,6 @@ function PolvoInvocarAdmin() {
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
-                  {/* 🔵 NUEVA COLUMNA - Temporada */}
                   <td>
                     <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
                       {item.temporada || 'N/A'}
@@ -528,12 +609,28 @@ function PolvoInvocarAdmin() {
                     name="material"
                     value={formData.material}
                     onChange={handleFormChange}
+                    disabled={cargandoOpcionesForm || !formData.temporada}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
                   >
                     <option value="">Seleccionar material</option>
-                    {materiales.map(m => (
-                      <option key={m.id} value={m.nombre}>{m.nombre}</option>
+                    {opcionesMaterialesForm.map((material, index) => (
+                      <option key={index} value={material}>{material}</option>
                     ))}
                   </select>
+                  {!formData.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
+                  {cargandoOpcionesForm && (
+                    <small style={{ color: '#888' }}>⏳ Cargando materiales...</small>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -542,10 +639,19 @@ function PolvoInvocarAdmin() {
                     name="rareza"
                     value={formData.rareza}
                     onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
                   >
                     <option value="">Seleccionar rareza</option>
-                    {rarezas.map(r => (
-                      <option key={r} value={r}>{r}</option>
+                    {opcionesRarezasFiltros.map((rareza, index) => (
+                      <option key={index} value={rareza}>{rareza}</option>
                     ))}
                   </select>
                 </div>

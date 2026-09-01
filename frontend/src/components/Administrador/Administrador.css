@@ -477,6 +477,8 @@
 
 /* 🔵 BADGE DE MATERIAL EN ADMIN */
 .detail-value.material-normal,
+.detail-value.material-todos,
+.detail-value.material-variantes,
 .detail-value.material-oro,
 .detail-value.material-gomita,
 .detail-value.material-galaxia,
@@ -498,6 +500,18 @@
   background: #0f3460 !important;
   border-color: #0f3460 !important;
   color: #ffffff !important;
+}
+
+.detail-value.material-todos {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #35cf35 !important;
+}
+
+.detail-value.material-variantes {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #C9BD00 !important;
 }
 
 .detail-value.material-oro {

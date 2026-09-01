@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cantidadPolvoExtraerService, spritsService } from '../../services/api';
+import { cantidadPolvoExtraerService, spritsService, materialesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -11,8 +11,9 @@ function PolvoEspirituAdmin() {
   // 🔵 Estado para el botón de actualización
   const [actualizando, setActualizando] = useState(false);
   
-  // 🔵 Filtros
+  // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
+    material: '',
     rareza: '',
     nivelEspiritu: '',
     temporada: 'C7T4'
@@ -25,6 +26,7 @@ function PolvoEspirituAdmin() {
     id: null,
     numeroOrden: '',
     temporada: '',
+    material: '',
     rareza: '',
     nivelEspiritu: '',
     cantidad: ''
@@ -43,14 +45,62 @@ function PolvoEspirituAdmin() {
   // 🔵 Estado para el modal de confirmación de actualización
   const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
-  // 🔵 Niveles, Rarezas y Temporadas disponibles
-  const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
+  // 🔵 Opciones para FILTROS (dependen del filtro de temporada)
+  const [opcionesMaterialesFiltros, setOpcionesMaterialesFiltros] = useState([]);
+  const [opcionesRarezasFiltros, setOpcionesRarezasFiltros] = useState([]);
+  const [cargandoOpcionesFiltros, setCargandoOpcionesFiltros] = useState(false);
+  
+  // 🔵 Opciones para FORMULARIO (dependen de la temporada seleccionada en el formulario)
+  const [opcionesMaterialesForm, setOpcionesMaterialesForm] = useState([]);
+  const [opcionesRarezasForm, setOpcionesRarezasForm] = useState([]);
+  const [cargandoOpcionesForm, setCargandoOpcionesForm] = useState(false);
+  
+  // 🔵 Estado para datos completos con temporada (para filtros)
+  const [materialesConTemporada, setMaterialesConTemporada] = useState([]);
+
+  // 🔵 Niveles y Temporadas disponibles
   const niveles = [1, 2, 3, 4, 5];
   const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarCantidades();
+    cargarOpcionesFiltros();
   }, []);
+
+  // 🔵 Efecto para filtrar opciones de FILTROS según temporada seleccionada en filtros
+  useEffect(() => {
+    const temporada = filtros.temporada;
+    const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
+    
+    if (temporada) {
+      const materialesFilt = materialesConTemporada
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      
+      const materialesConFijas = [...materialesFilt, ...opcionesFijas];
+      setOpcionesMaterialesFiltros(materialesConFijas.length > 0 ? materialesConFijas : []);
+      
+      if (filtros.material && !materialesFilt.includes(filtros.material) && !opcionesFijas.includes(filtros.material)) {
+        setFiltros(prev => ({ ...prev, material: '' }));
+      }
+      if (filtros.rareza && !rarezasFilt.includes(filtros.rareza)) {
+        setFiltros(prev => ({ ...prev, rareza: '' }));
+      }
+    } else {
+      setOpcionesMaterialesFiltros(opcionesMaterialesFiltros);
+      setOpcionesRarezasFiltros(opcionesRarezasFiltros);
+    }
+  }, [filtros.temporada, materialesConTemporada]);
+
+  // 🔵 Efecto para cargar opciones del FORMULARIO cuando cambia la temporada en el formData
+  useEffect(() => {
+    if (formData.temporada) {
+      cargarOpcionesForm(formData.temporada);
+    } else {
+      setOpcionesMaterialesForm([]);
+      setOpcionesRarezasForm([]);
+    }
+  }, [formData.temporada]);
 
   // 🔵 Cargar cantidades
   const cargarCantidades = async () => {
@@ -65,6 +115,54 @@ function PolvoEspirituAdmin() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🔵 Cargar opciones para FILTROS (materiales y rarezas con temporada)
+  const cargarOpcionesFiltros = async () => {
+    setCargandoOpcionesFiltros(true);
+    try {
+      const materialesRes = await materialesService.getAll();
+      const materialesConTemp = materialesRes.data.map(item => ({
+        nombre: item.nombre,
+        temporada: item.temporada
+      }));
+      setMaterialesConTemporada(materialesConTemp);
+      
+      const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
+      const todosMateriales = [...materialesConTemp.map(item => item.nombre), ...opcionesFijas];
+      setOpcionesMaterialesFiltros(todosMateriales);
+
+      const cantidadesRes = await cantidadPolvoExtraerService.getAll();
+      const rarezasUnicas = [...new Set(cantidadesRes.data.map(item => item.rareza))];
+      setOpcionesRarezasFiltros(rarezasUnicas);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones para filtros:', err);
+    } finally {
+      setCargandoOpcionesFiltros(false);
+    }
+  };
+
+  // 🔵 Cargar opciones del FORMULARIO según temporada
+  const cargarOpcionesForm = async (temporada) => {
+    if (!temporada) {
+      setOpcionesMaterialesForm([]);
+      return;
+    }
+    
+    setCargandoOpcionesForm(true);
+    try {
+      const materialesRes = await materialesService.getAll();
+      const materialesFilt = materialesRes.data
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesMaterialesForm(materialesFilt);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones del formulario:', err);
+    } finally {
+      setCargandoOpcionesForm(false);
     }
   };
 
@@ -123,6 +221,7 @@ function PolvoEspirituAdmin() {
 
   const limpiarFiltros = () => {
     setFiltros({
+      material: '',
       rareza: '',
       nivelEspiritu: '',
       temporada: 'C7T4'
@@ -148,11 +247,11 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Abrir modal para crear
   const abrirCrearModal = () => {
-    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
-      numeroOrden: siguienteNumero.toString(),
+      numeroOrden: obtenerSiguienteNumeroOrden().toString(),
       temporada: '',
+      material: '',
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -167,6 +266,7 @@ function PolvoEspirituAdmin() {
       id: registro.id,
       numeroOrden: registro.numeroOrden,
       temporada: registro.temporada || '',
+      material: registro.material || '',
       rareza: registro.rareza,
       nivelEspiritu: registro.nivelEspiritu,
       cantidad: registro.cantidad
@@ -181,6 +281,7 @@ function PolvoEspirituAdmin() {
       id: null,
       numeroOrden: '',
       temporada: '',
+      material: '',
       rareza: '',
       nivelEspiritu: '',
       cantidad: ''
@@ -197,8 +298,8 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.temporada || !formData.rareza || 
-        !formData.nivelEspiritu || !formData.cantidad) {
+    if (!formData.numeroOrden || !formData.temporada || !formData.material || 
+        !formData.rareza || !formData.nivelEspiritu || !formData.cantidad) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
@@ -226,6 +327,7 @@ function PolvoEspirituAdmin() {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
         temporada: formData.temporada,
+        material: formData.material,
         rareza: formData.rareza,
         nivelEspiritu: parseInt(formData.nivelEspiritu),
         cantidad: parseInt(formData.cantidad)
@@ -271,9 +373,10 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Filtrar datos
   const datosFiltrados = cantidades.filter(item => {
+    if (filtros.material && item.material !== filtros.material) return false;
     if (filtros.rareza && item.rareza !== filtros.rareza) return false;
     if (filtros.nivelEspiritu && item.nivelEspiritu !== parseInt(filtros.nivelEspiritu)) return false;
-    if (filtros.temporada && item.temporada !== filtros.temporada) return false;  // 🔵 NUEVO
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -299,7 +402,6 @@ function PolvoEspirituAdmin() {
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
-          {/* 🔵 NUEVO FILTRO DE TEMPORADA */}
           <select 
             name="temporada" 
             value={filtros.temporada} 
@@ -314,14 +416,28 @@ function PolvoEspirituAdmin() {
           </select>
 
           <select 
+            name="material" 
+            value={filtros.material} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
+          >
+            <option value="">Materiales en General</option>
+            {opcionesMaterialesFiltros.map((material, index) => (
+              <option key={index} value={material}>{material}</option>
+            ))}
+          </select>
+
+          <select 
             name="rareza" 
             value={filtros.rareza} 
             onChange={handleFiltroChange}
             className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
           >
             <option value="">Todas las rarezas</option>
-            {rarezas.map(r => (
-              <option key={r} value={r}>{r}</option>
+            {opcionesRarezasFiltros.map((rareza, index) => (
+              <option key={index} value={rareza}>{rareza}</option>
             ))}
           </select>
 
@@ -394,6 +510,7 @@ function PolvoEspirituAdmin() {
             <tr>
               <th># Orden</th>
               <th>Temporada</th>
+              <th>Material</th>
               <th>Rareza</th>
               <th>Nivel</th>
               <th>Cantidad</th>
@@ -403,7 +520,7 @@ function PolvoEspirituAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="6" className="no-data">
+                <td colSpan="7" className="no-data">
                   {cantidades.length === 0 ? 'No hay registros en la base de datos' : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
@@ -414,6 +531,11 @@ function PolvoEspirituAdmin() {
                   <td>
                     <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
                       {item.temporada || 'N/A'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`detail-value material-${item.material?.toLowerCase() || 'normal'}`}>
+                      {item.material || 'N/A'}
                     </span>
                   </td>
                   <td>
@@ -484,7 +606,6 @@ function PolvoEspirituAdmin() {
                   )}
                 </div>
 
-                {/* 🔵 NUEVO CAMPO - Temporada */}
                 <div className="form-group">
                   <label>Temporada *</label>
                   <select
@@ -509,15 +630,54 @@ function PolvoEspirituAdmin() {
                 </div>
 
                 <div className="form-group">
+                  <label>Material *</label>
+                  <select
+                    name="material"
+                    value={formData.material}
+                    onChange={handleFormChange}
+                    disabled={cargandoOpcionesForm || !formData.temporada}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar material</option>
+                    {opcionesMaterialesForm.map((material, index) => (
+                      <option key={index} value={material}>{material}</option>
+                    ))}
+                  </select>
+                  {!formData.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
+                  {cargandoOpcionesForm && (
+                    <small style={{ color: '#888' }}>⏳ Cargando materiales...</small>
+                  )}
+                </div>
+
+                <div className="form-group">
                   <label>Rareza *</label>
                   <select
                     name="rareza"
                     value={formData.rareza}
                     onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
                   >
                     <option value="">Seleccionar rareza</option>
-                    {rarezas.map(r => (
-                      <option key={r} value={r}>{r}</option>
+                    {opcionesRarezasFiltros.map((rareza, index) => (
+                      <option key={index} value={rareza}>{rareza}</option>
                     ))}
                   </select>
                 </div>
@@ -577,7 +737,7 @@ function PolvoEspirituAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro?\nTemporada: ${registroAEliminar?.temporada}\nRareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nTemporada: ${registroAEliminar?.temporada}\nMaterial: ${registroAEliminar?.material}\nRareza: ${registroAEliminar?.rareza}\nNivel: ${registroAEliminar?.nivelEspiritu}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}
