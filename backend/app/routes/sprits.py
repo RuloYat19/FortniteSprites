@@ -128,23 +128,20 @@ def toggle_inventario(sprit_id: int, db: Session = Depends(get_db)):
 def actualizar_polvos_sprits(
     db: Session = Depends(get_db)
 ):
-    """
-    Actualiza los valores de polvo (extraer e invocar) de todos los sprits
-    según las tablas de configuración.
-    """
     try:
         # Obtener todas las configuraciones de polvo al extraer
         configs_extraer = db.query(models.CantidadPolvoEspirituExtraer).all()
         mapa_extraer = {}
         for config in configs_extraer:
-            clave = f"{config.rareza}-{config.nivelEspiritu}"
+            # 🔵 INCLUIR MATERIAL en la clave
+            clave = f"{config.temporada}-{config.material}-{config.rareza}-{config.nivelEspiritu}"
             mapa_extraer[clave] = config.cantidad
         
         # Obtener todas las configuraciones de polvo al invocar
         configs_invocar = db.query(models.CantidadPolvoEspirituInvocar).all()
         mapa_invocar = {}
         for config in configs_invocar:
-            clave = f"{config.material}-{config.rareza}"
+            clave = f"{config.temporada}-{config.material}-{config.rareza}"
             mapa_invocar[clave] = config.cantidad
         
         # Obtener todos los sprits
@@ -158,18 +155,18 @@ def actualizar_polvos_sprits(
             try:
                 actualizado = False
                 
-                # Calcular polvo al extraer
-                if sprit.rareza and sprit.nivelEspiritu:
-                    clave_extraer = f"{sprit.rareza}-{sprit.nivelEspiritu}"
+                # 🔵 Calcular polvo al extraer (incluyendo material)
+                if sprit.material and sprit.rareza and sprit.nivelEspiritu and sprit.temporada:
+                    clave_extraer = f"{sprit.temporada}-{sprit.material}-{sprit.rareza}-{sprit.nivelEspiritu}"
                     if clave_extraer in mapa_extraer:
                         nuevo_polvo = mapa_extraer[clave_extraer]
                         if sprit.polvoAlExtraer != nuevo_polvo:
                             sprit.polvoAlExtraer = nuevo_polvo
                             actualizado = True
                 
-                # Calcular polvo al invocar
-                if sprit.material and sprit.rareza:
-                    clave_invocar = f"{sprit.material}-{sprit.rareza}"
+                # Calcular polvo al invocar (incluyendo temporada)
+                if sprit.material and sprit.rareza and sprit.temporada:
+                    clave_invocar = f"{sprit.temporada}-{sprit.material}-{sprit.rareza}"
                     if clave_invocar in mapa_invocar:
                         nuevo_polvo = mapa_invocar[clave_invocar]
                         if sprit.polvoAlInvocar != nuevo_polvo:

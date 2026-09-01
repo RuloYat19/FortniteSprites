@@ -29,6 +29,7 @@ class CantidadPolvoEspirituExtraer(Base):
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
     temporada = Column(String(20), nullable=True)
+    material = Column(String(50), nullable=False)
     rareza = Column(String(50), nullable=False)
     nivelEspiritu = Column(Integer, nullable=False)
     cantidad = Column(Integer, nullable=False)
@@ -53,7 +54,7 @@ class Material(Base):
     id = Column(Integer, primary_key=True, index=True)
     numeroOrden = Column(Integer, nullable=False)
     temporada = Column(String(20), nullable=True)
-    nombre = Column(String(50), nullable=False, unique=True)
+    nombre = Column(String(50), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 

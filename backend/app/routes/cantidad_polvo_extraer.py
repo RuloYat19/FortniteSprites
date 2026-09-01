@@ -1,5 +1,3 @@
-# app/routes/cantidad_polvo_extraer.py
-
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -16,6 +14,7 @@ def get_all_cantidades(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
+    material: Optional[str] = None,  # 🔵 NUEVO FILTRO
     rareza: Optional[str] = None,
     nivel_espiritu: Optional[int] = None,
     numero_orden: Optional[int] = None,
@@ -23,10 +22,13 @@ def get_all_cantidades(
 ):
     """
     Obtener todas las cantidades de polvo de espíritu.
-    Se pueden aplicar filtros opcionales por rareza, nivel o número de orden.
+    Se pueden aplicar filtros opcionales por material, rareza, nivel o número de orden.
     """
     query = db.query(models.CantidadPolvoEspirituExtraer)
     
+    # 🔵 NUEVO FILTRO
+    if material:
+        query = query.filter(models.CantidadPolvoEspirituExtraer.material == material)
     if rareza:
         query = query.filter(models.CantidadPolvoEspirituExtraer.rareza == rareza)
     if nivel_espiritu:
@@ -39,6 +41,7 @@ def get_all_cantidades(
     query = query.order_by(
         models.CantidadPolvoEspirituExtraer.temporada,
         models.CantidadPolvoEspirituExtraer.numeroOrden,
+        models.CantidadPolvoEspirituExtraer.material,
         models.CantidadPolvoEspirituExtraer.rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu
     )
@@ -71,15 +74,17 @@ def get_cantidad_by_id(
 # ============================================
 @router.get("/buscar/", response_model=Optional[schemas.CantidadPolvoExtraerResponse])
 def get_cantidad_by_combinacion(
+    material: str = Query(..., description="Material del sprit"),  # 🔵 NUEVO
     rareza: str = Query(..., description="Rareza del sprit"),
     nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
     temporada: Optional[str] = Query(None, description="Temporada (ej: C7T3)")
 ):
     """
     Obtener la cantidad de polvo para una combinación específica
-    de rareza y nivel de espíritu.
+    de material, rareza y nivel de espíritu.
     """
     query = db.query(models.CantidadPolvoEspirituExtraer).filter(
+        models.CantidadPolvoEspirituExtraer.material == material,  # 🔵 NUEVO
         models.CantidadPolvoEspirituExtraer.rareza == rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu == nivel_espiritu
     )
@@ -92,7 +97,7 @@ def get_cantidad_by_combinacion(
     if not cantidad:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró cantidad para {rareza} - Nivel {nivel_espiritu}" + (f" - Temporada {temporada}" if temporada else "")
+            detail=f"No se encontró cantidad para {material} - {rareza} - Nivel {nivel_espiritu}" + (f" - Temporada {temporada}" if temporada else "")
         )
     
     return cantidad
@@ -121,6 +126,34 @@ def get_cantidades_by_orden(
     return cantidades
 
 # ============================================
+# GET - Obtener cantidades por material
+# ============================================
+@router.get("/material/{material}", response_model=List[schemas.CantidadPolvoExtraerResponse])
+def get_cantidades_by_material(
+    material: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener todas las cantidades de polvo por material.
+    """
+    cantidades = db.query(models.CantidadPolvoEspirituExtraer).filter(
+        models.CantidadPolvoEspirituExtraer.material == material
+    ).order_by(
+        models.CantidadPolvoEspirituExtraer.temporada,
+        models.CantidadPolvoEspirituExtraer.numeroOrden,
+        models.CantidadPolvoEspirituExtraer.rareza,
+        models.CantidadPolvoEspirituExtraer.nivelEspiritu
+    ).all()
+    
+    if not cantidades:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No se encontraron cantidades para el material {material}"
+        )
+    
+    return cantidades
+
+# ============================================
 # GET - Obtener cantidades por rareza
 # ============================================
 @router.get("/rareza/{rareza}", response_model=List[schemas.CantidadPolvoExtraerResponse])
@@ -136,6 +169,7 @@ def get_cantidades_by_rareza(
     ).order_by(
         models.CantidadPolvoEspirituExtraer.temporada,
         models.CantidadPolvoEspirituExtraer.numeroOrden,
+        models.CantidadPolvoEspirituExtraer.material,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu
     ).all()
     
@@ -162,6 +196,7 @@ def get_cantidades_by_temporada(
         models.CantidadPolvoEspirituExtraer.temporada == temporada
     ).order_by(
         models.CantidadPolvoEspirituExtraer.numeroOrden,
+        models.CantidadPolvoEspirituExtraer.material,
         models.CantidadPolvoEspirituExtraer.rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu
     ).all()
@@ -188,11 +223,11 @@ def create_cantidad(
 ):
     """
     Crear una nueva cantidad de polvo de espíritu.
-    Verifica que no exista una combinación duplicada de (rareza, nivelEspiritu, temporada).
-    Verifica que no exista la combinación (numeroOrden, temporada) duplicada.
+    Verifica que no exista una combinación duplicada.
     """
-    # Verificar duplicado de combinación (rareza, nivelEspiritu, temporada)
+    # 🔵 Verificar duplicado de combinación (material, rareza, nivelEspiritu, temporada)
     query = db.query(models.CantidadPolvoEspirituExtraer).filter(
+        models.CantidadPolvoEspirituExtraer.material == cantidad.material,
         models.CantidadPolvoEspirituExtraer.rareza == cantidad.rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu == cantidad.nivelEspiritu
     )
@@ -203,10 +238,10 @@ def create_cantidad(
     if query.first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe una cantidad para {cantidad.rareza} - Nivel {cantidad.nivelEspiritu}" + (f" - Temporada {cantidad.temporada}" if cantidad.temporada else "")
+            detail=f"Ya existe una cantidad para {cantidad.material} - {cantidad.rareza} - Nivel {cantidad.nivelEspiritu}" + (f" - Temporada {cantidad.temporada}" if cantidad.temporada else "")
         )
     
-    # 🔵 Verificar combinación (numeroOrden, temporada)
+    # Verificar combinación (numeroOrden, temporada)
     if cantidad.temporada:
         existing_orden = db.query(models.CantidadPolvoEspirituExtraer).filter(
             models.CantidadPolvoEspirituExtraer.numeroOrden == cantidad.numeroOrden,
@@ -258,8 +293,9 @@ def update_cantidad(
             detail="Cantidad de polvo no encontrada"
         )
     
-    # Verificar duplicado de combinación (rareza, nivelEspiritu, temporada)
+    # 🔵 Verificar duplicado de combinación (material, rareza, nivelEspiritu, temporada)
     query = db.query(models.CantidadPolvoEspirituExtraer).filter(
+        models.CantidadPolvoEspirituExtraer.material == cantidad_update.material,
         models.CantidadPolvoEspirituExtraer.rareza == cantidad_update.rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu == cantidad_update.nivelEspiritu,
         models.CantidadPolvoEspirituExtraer.id != cantidad_id
@@ -273,10 +309,10 @@ def update_cantidad(
     if query.first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe una cantidad para {cantidad_update.rareza} - Nivel {cantidad_update.nivelEspiritu}" + (f" - Temporada {cantidad_update.temporada}" if cantidad_update.temporada else "")
+            detail=f"Ya existe una cantidad para {cantidad_update.material} - {cantidad_update.rareza} - Nivel {cantidad_update.nivelEspiritu}" + (f" - Temporada {cantidad_update.temporada}" if cantidad_update.temporada else "")
         )
     
-    # 🔵 Verificar duplicado de combinación (numeroOrden, temporada)
+    # Verificar duplicado de combinación (numeroOrden, temporada)
     temporada_actual = db_cantidad.temporada
     nueva_temporada = cantidad_update.temporada if cantidad_update.temporada is not None else temporada_actual
     
@@ -369,14 +405,16 @@ def delete_cantidad(
 # ============================================
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cantidad_by_combinacion(
+    material: str = Query(..., description="Material del sprit"),  # 🔵 NUEVO
     rareza: str = Query(..., description="Rareza del sprit"),
     nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
     temporada: Optional[str] = Query(None, description="Temporada (ej: C7T3)")
 ):
     """
-    Eliminar una cantidad de polvo por combinación de rareza, nivel y temporada.
+    Eliminar una cantidad de polvo por combinación de material, rareza, nivel y temporada.
     """
     query = db.query(models.CantidadPolvoEspirituExtraer).filter(
+        models.CantidadPolvoEspirituExtraer.material == material,  # 🔵 NUEVO
         models.CantidadPolvoEspirituExtraer.rareza == rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu == nivel_espiritu
     )
@@ -391,7 +429,7 @@ def delete_cantidad_by_combinacion(
     if not db_cantidad:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró cantidad para {rareza} - Nivel {nivel_espiritu}" + (f" - Temporada {temporada}" if temporada else "")
+            detail=f"No se encontró cantidad para {material} - {rareza} - Nivel {nivel_espiritu}" + (f" - Temporada {temporada}" if temporada else "")
         )
     
     db.delete(db_cantidad)

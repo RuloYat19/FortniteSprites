@@ -1,6 +1,5 @@
-// frontend/src/components/Administrador/OrdenesAdmin.jsx
 import React, { useState, useEffect } from 'react';
-import { ordenDefaultService, ordenRarezaService } from '../../services/api';
+import { ordenDefaultService, ordenRarezaService, nombresSpritesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -18,9 +17,10 @@ function OrdenesAdmin() {
   const [loadingRareza, setLoadingRareza] = useState(true);
   const [errorRareza, setErrorRareza] = useState(null);
 
-  // 🔵 Filtros
+  // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
-    nombre: ''
+    nombre: '',
+    temporada: 'C7T4'
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -29,6 +29,7 @@ function OrdenesAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
+    temporada: '',
     nombre: ''
   });
 
@@ -46,6 +47,20 @@ function OrdenesAdmin() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
 
+  // 🔵 Opciones para FILTROS (dependen del filtro de temporada)
+  const [opcionesNombresFiltros, setOpcionesNombresFiltros] = useState([]);
+  const [cargandoOpcionesFiltros, setCargandoOpcionesFiltros] = useState(false);
+  
+  // 🔵 Opciones para FORMULARIO (dependen de la temporada seleccionada en el formulario)
+  const [opcionesNombresForm, setOpcionesNombresForm] = useState([]);
+  const [cargandoOpcionesForm, setCargandoOpcionesForm] = useState(false);
+  
+  // 🔵 Estado para datos completos con temporada (para filtros)
+  const [nombresConTemporada, setNombresConTemporada] = useState([]);
+
+  // 🔵 Temporadas disponibles
+  const temporadas = ['C7T3', 'C7T4'];
+
   // 🔵 Cargar datos según la pestaña activa
   useEffect(() => {
     if (tabActiva === 'default') {
@@ -53,7 +68,35 @@ function OrdenesAdmin() {
     } else {
       cargarOrdenRareza();
     }
+    cargarOpcionesFiltros();
   }, [tabActiva]);
+
+  // 🔵 Efecto para filtrar opciones de FILTROS según temporada seleccionada en filtros
+  useEffect(() => {
+    const temporada = filtros.temporada;
+    
+    if (temporada) {
+      const nombresFilt = nombresConTemporada
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesNombresFiltros(nombresFilt.length > 0 ? nombresFilt : []);
+      
+      if (filtros.nombre && !nombresFilt.includes(filtros.nombre)) {
+        setFiltros(prev => ({ ...prev, nombre: '' }));
+      }
+    } else {
+      setOpcionesNombresFiltros(opcionesNombresFiltros);
+    }
+  }, [filtros.temporada, nombresConTemporada]);
+
+  // 🔵 Efecto para cargar opciones del FORMULARIO cuando cambia la temporada en el formData
+  useEffect(() => {
+    if (formData.temporada) {
+      cargarOpcionesForm(formData.temporada);
+    } else {
+      setOpcionesNombresForm([]);
+    }
+  }, [formData.temporada]);
 
   // 🔵 Cargar Orden Default
   const cargarOrdenDefault = async () => {
@@ -87,6 +130,49 @@ function OrdenesAdmin() {
     }
   };
 
+  // 🔵 Cargar opciones para FILTROS (nombres con temporada)
+  const cargarOpcionesFiltros = async () => {
+    setCargandoOpcionesFiltros(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresConTemp = nombresRes.data.map(item => ({
+        nombre: item.nombre,
+        temporada: item.temporada
+      }));
+      setNombresConTemporada(nombresConTemp);
+      
+      const todosNombres = nombresConTemp.map(item => item.nombre);
+      setOpcionesNombresFiltros(todosNombres);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones para filtros:', err);
+    } finally {
+      setCargandoOpcionesFiltros(false);
+    }
+  };
+
+  // 🔵 Cargar opciones del FORMULARIO según temporada (solo nombres)
+  const cargarOpcionesForm = async (temporada) => {
+    if (!temporada) {
+      setOpcionesNombresForm([]);
+      return;
+    }
+    
+    setCargandoOpcionesForm(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresFilt = nombresRes.data
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesNombresForm(nombresFilt);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones del formulario:', err);
+    } finally {
+      setCargandoOpcionesForm(false);
+    }
+  };
+
   // 🔵 Mostrar confirmación simple
   const mostrarConfirmacion = (title, message, type = 'success') => {
     setConfirmModalData({ title, message, type });
@@ -106,7 +192,8 @@ function OrdenesAdmin() {
 
   const limpiarFiltros = () => {
     setFiltros({
-      nombre: ''
+      nombre: '',
+      temporada: 'C7T4'
     });
   };
 
@@ -174,6 +261,7 @@ function OrdenesAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
+      temporada: '',
       nombre: ''
     });
     setEditando(false);
@@ -185,6 +273,7 @@ function OrdenesAdmin() {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
+      temporada: registro.temporada || '',
       nombre: registro.nombre
     });
     setEditando(true);
@@ -196,6 +285,7 @@ function OrdenesAdmin() {
     setFormData({
       id: null,
       numeroOrden: '',
+      temporada: '',
       nombre: ''
     });
     setEditando(false);
@@ -210,7 +300,7 @@ function OrdenesAdmin() {
 
   // 🔵 Guardar (crear o actualizar)
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.nombre.trim()) {
+    if (!formData.numeroOrden || !formData.temporada || !formData.nombre.trim()) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
@@ -240,6 +330,7 @@ function OrdenesAdmin() {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        temporada: formData.temporada,
         nombre: formData.nombre.trim()
       };
 
@@ -315,6 +406,7 @@ function OrdenesAdmin() {
       .filter(n => n.length > 0)
       .map((n, index) => ({ 
         numeroOrden: index + 1, 
+        temporada: 'C7T3',
         nombre: n 
       }));
 
@@ -343,6 +435,7 @@ function OrdenesAdmin() {
   // 🔵 Filtrar datos
   const datosFiltrados = getDatos().filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -403,15 +496,32 @@ function OrdenesAdmin() {
       {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
-          <input
-            type="text"
+          <select 
+            name="temporada" 
+            value={filtros.temporada} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            style={{ borderColor: '#ff6f00', color: '#ffb74d' }}
+          >
+            <option value="">Todas las temporadas</option>
+            {temporadas.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
+          <select
             name="nombre"
-            placeholder="🔍 Buscar por nombre..."
             value={filtros.nombre}
             onChange={handleFiltroChange}
             className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
             style={{ minWidth: '200px' }}
-          />
+          >
+            <option value="">Todos los nombres</option>
+            {opcionesNombresFiltros.map((nombre, index) => (
+              <option key={index} value={nombre}>{nombre}</option>
+            ))}
+          </select>
 
           <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
             Limpiar Filtros
@@ -456,6 +566,7 @@ function OrdenesAdmin() {
           <thead>
             <tr>
               <th># Orden</th>
+              <th>Temporada</th>
               <th>Nombre</th>
               <th>Acciones</th>
             </tr>
@@ -463,7 +574,7 @@ function OrdenesAdmin() {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="3" className="no-data">
+                <td colSpan="4" className="no-data">
                   {totalRegistros === 0 ? `No hay registros en ${getTitulo()}` : 'No hay registros que coincidan con los filtros'}
                 </td>
               </tr>
@@ -471,6 +582,11 @@ function OrdenesAdmin() {
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
                   <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
+                      {item.temporada || 'N/A'}
+                    </span>
+                  </td>
                   <td style={{ textAlign: 'center', paddingLeft: '20px' }}>
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>
                       {item.nombre}
@@ -529,14 +645,56 @@ function OrdenesAdmin() {
                 </div>
 
                 <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={formData.temporada || ''}
+                    onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {temporadas.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
                   <label>Nombre del Sprite *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu de Agua"
                     value={formData.nombre}
                     onChange={handleFormChange}
-                  />
+                    disabled={cargandoOpcionesForm || !formData.temporada}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombresForm.map((nombre, index) => (
+                      <option key={index} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
+                  {!formData.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
+                  {cargandoOpcionesForm && (
+                    <small style={{ color: '#888' }}>⏳ Cargando nombres...</small>
+                  )}
                 </div>
               </div>
             </div>
@@ -585,7 +743,7 @@ function OrdenesAdmin() {
                     }}
                   />
                   <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
-                    💡 Ingresa un nombre por línea. Los números de orden se asignarán automáticamente.
+                    💡 Ingresa un nombre por línea. Los números de orden y temporada se asignarán automáticamente.
                   </small>
                 </div>
               </div>
@@ -622,7 +780,7 @@ function OrdenesAdmin() {
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
         title="⚠️ Confirmar eliminación"
-        message={`¿Estás seguro de eliminar el registro "${registroAEliminar?.nombre}"?\nEsta acción no se puede deshacer.`}
+        message={`¿Estás seguro de eliminar el registro?\nTemporada: ${registroAEliminar?.temporada}\nNombre: ${registroAEliminar?.nombre}\nEsta acción no se puede deshacer.`}
         type="warning"
         confirmText="Eliminar"
         onConfirm={eliminarRegistro}

@@ -10,7 +10,8 @@ function NombresSpritesAdmin() {
   
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
-    nombre: ''
+    nombre: '',
+    temporada: 'C7T4'
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -19,6 +20,7 @@ function NombresSpritesAdmin() {
   const [formData, setFormData] = useState({
     id: null,
     numeroOrden: '',
+    temporada: '',
     nombre: ''
   });
 
@@ -36,25 +38,26 @@ function NombresSpritesAdmin() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
 
+  const temporadas = ['C7T3', 'C7T4'];
+
   useEffect(() => {
     cargarNombres();
   }, []);
 
-const cargarNombres = async () => {
-  try {
-    setLoading(true);
-    const response = await nombresSpritesService.getAll();
-    const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
-    setNombres(dataOrdenada);
-    setError(null);
-  } catch (err) {
-    setError('Error al cargar los nombres');
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const cargarNombres = async () => {
+    try {
+      setLoading(true);
+      const response = await nombresSpritesService.getAll();
+      const dataOrdenada = response.data.sort((a, b) => a.numeroOrden - b.numeroOrden);
+      setNombres(dataOrdenada);
+      setError(null);
+    } catch (err) {
+      setError('Error al cargar los nombres');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 🔵 Mostrar confirmación simple
   const mostrarConfirmacion = (title, message, type = 'success') => {
@@ -75,7 +78,8 @@ const cargarNombres = async () => {
 
   const limpiarFiltros = () => {
     setFiltros({
-      nombre: ''
+      nombre: '',
+      temporada: 'C7T4'
     });
   };
 
@@ -84,6 +88,7 @@ const cargarNombres = async () => {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
+      temporada: '',
       nombre: ''
     });
     setEditando(false);
@@ -111,6 +116,7 @@ const cargarNombres = async () => {
     setFormData({
       id: registro.id,
       numeroOrden: registro.numeroOrden,
+      temporada: registro.temporada || '',
       nombre: registro.nombre
     });
     setEditando(true);
@@ -121,6 +127,8 @@ const cargarNombres = async () => {
     setShowModal(false);
     setFormData({
       id: null,
+      numeroOrden: '',
+      temporada: '',
       nombre: ''
     });
     setEditando(false);
@@ -134,7 +142,7 @@ const cargarNombres = async () => {
   };
 
   const guardarRegistro = async () => {
-    if (!formData.numeroOrden || !formData.nombre.trim()) {
+    if (!formData.numeroOrden || !formData.temporada || !formData.nombre.trim()) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Todos los campos son obligatorios', 'warning');
       return;
     }
@@ -142,6 +150,7 @@ const cargarNombres = async () => {
     try {
       const data = {
         numeroOrden: parseInt(formData.numeroOrden),
+        temporada: formData.temporada,
         nombre: formData.nombre.trim()
       };
 
@@ -202,12 +211,15 @@ const cargarNombres = async () => {
       return;
     }
 
-    // Separar por líneas y filtrar vacíos
     const nombresArray = batchText
       .split('\n')
       .map(n => n.trim())
       .filter(n => n.length > 0)
-      .map(n => ({ nombre: n }));
+      .map((n, index) => ({ 
+        numeroOrden: index + 1,
+        temporada: 'C7T3',
+        nombre: n 
+      }));
 
     if (nombresArray.length === 0) {
       mostrarConfirmacion('⚠️ Campos incompletos', 'Ingresa al menos un nombre válido', 'warning');
@@ -229,10 +241,10 @@ const cargarNombres = async () => {
   // 🔵 Filtrar datos
   const datosFiltrados = nombres.filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
 
-  // 🔵 Calcular estadísticas
   const totalRegistros = nombres.length;
   const totalFiltrados = datosFiltrados.length;
 
@@ -247,9 +259,21 @@ const cargarNombres = async () => {
         </span>
       </header>
 
-      {/* 🔵 FILTROS */}
       <div className="admin-filtros">
         <div className="filtros-group">
+          <select 
+            name="temporada" 
+            value={filtros.temporada} 
+            onChange={handleFiltroChange}
+            className="filtro-select"
+            style={{ borderColor: '#ff6f00', color: '#ffb74d' }}
+          >
+            <option value="">Todas las temporadas</option>
+            {temporadas.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+
           <input
             type="text"
             name="nombre"
@@ -279,7 +303,6 @@ const cargarNombres = async () => {
         </div>
       </div>
 
-      {/* 🔵 ESTADÍSTICAS RÁPIDAS */}
       <div className="admin-stats">
         <div className="stat-card">
           <span className="stat-icon">📝</span>
@@ -297,12 +320,12 @@ const cargarNombres = async () => {
         </div>
       </div>
 
-      {/* 🔵 TABLA */}
       <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>
               <th># Orden</th>
+              <th>Temporada</th>
               <th>Nombre</th>
               <th>Acciones</th>
             </tr>
@@ -310,14 +333,19 @@ const cargarNombres = async () => {
           <tbody>
             {datosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan="3" className="no-data">
+                <td colSpan="4" className="no-data">
                   {nombres.length === 0 ? 'No hay nombres en la base de datos' : 'No hay nombres que coincidan con los filtros'}
                 </td>
               </tr>
             ) : (
               datosFiltrados.map((item) => (
                 <tr key={item.id}>
-                  <td className="td-orden">#{item.numeroOrden}</td>
+                  <td className="td-orden">{item.numeroOrden}</td>
+                  <td>
+                    <span style={{ color: '#ffb74d', fontWeight: 'bold' }}>
+                      {item.temporada || 'N/A'}
+                    </span>
+                  </td>
                   <td style={{ textAlign: 'center', paddingLeft: '20px' }}>
                     <span style={{ fontSize: '1rem', fontWeight: 500 }}>
                       {item.nombre}
@@ -346,7 +374,6 @@ const cargarNombres = async () => {
         </table>
       </div>
 
-      {/* 🔵 MODAL PARA CREAR/EDITAR */}
       {showModal && (
         <div className="modal-overlay" onClick={cerrarModal}>
           <div className="modal-content modal-admin" onClick={(e) => e.stopPropagation()}>
@@ -376,6 +403,29 @@ const cargarNombres = async () => {
                 </div>
 
                 <div className="form-group">
+                  <label>Temporada *</label>
+                  <select
+                    name="temporada"
+                    value={formData.temporada || ''}
+                    onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar temporada</option>
+                    {temporadas.map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
                   <label>Nombre del Sprite *</label>
                   <input
                     type="text"
@@ -400,7 +450,6 @@ const cargarNombres = async () => {
         </div>
       )}
 
-      {/* 🔵 MODAL PARA BATCH */}
       {showBatchModal && (
         <div className="modal-overlay" onClick={cerrarBatchModal}>
           <div className="modal-content modal-admin" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '550px' }}>
@@ -432,7 +481,7 @@ const cargarNombres = async () => {
                     }}
                   />
                   <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
-                    💡 Ingresa un nombre por línea. Los nombres vacíos serán ignorados.
+                    💡 Ingresa un nombre por línea. Los números de orden y temporada se asignarán automáticamente.
                   </small>
                 </div>
               </div>
@@ -454,7 +503,6 @@ const cargarNombres = async () => {
         </div>
       )}
 
-      {/* 🔵 MODAL DE CONFIRMACIÓN SIMPLE */}
       <ConfirmModal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
@@ -464,7 +512,6 @@ const cargarNombres = async () => {
         confirmText="Aceptar"
       />
 
-      {/* 🔵 MODAL DE CONFIRMACIÓN PARA ELIMINAR */}
       <ConfirmModal
         isOpen={showDeleteConfirmModal}
         onClose={() => setShowDeleteConfirmModal(false)}
