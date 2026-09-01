@@ -11,7 +11,7 @@ function PolvoEspirituAdmin() {
   // 🔵 Estado para el botón de actualización
   const [actualizando, setActualizando] = useState(false);
   
-  // 🔵 Filtros
+  // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
     material: '',
     rareza: '',
@@ -45,16 +45,18 @@ function PolvoEspirituAdmin() {
   // 🔵 Estado para el modal de confirmación de actualización
   const [showActualizarConfirmModal, setShowActualizarConfirmModal] = useState(false);
 
-  // 🔵 Opciones para selects (con filtro por temporada)
-  const [opcionesMateriales, setOpcionesMateriales] = useState([]);
-  const [opcionesMaterialesFiltrados, setOpcionesMaterialesFiltrados] = useState([]);
-  const [opcionesRarezas, setOpcionesRarezas] = useState(['Raro', 'Épico', 'Legendario', 'Mítico']);
-  const [opcionesRarezasFiltrados, setOpcionesRarezasFiltrados] = useState(['Raro', 'Épico', 'Legendario', 'Mítico']);
-  const [cargandoOpciones, setCargandoOpciones] = useState(false);
+  // 🔵 Opciones para FILTROS (dependen del filtro de temporada)
+  const [opcionesMaterialesFiltros, setOpcionesMaterialesFiltros] = useState([]);
+  const [opcionesRarezasFiltros, setOpcionesRarezasFiltros] = useState([]);
+  const [cargandoOpcionesFiltros, setCargandoOpcionesFiltros] = useState(false);
   
-  // 🔵 Estado para datos completos con temporada
+  // 🔵 Opciones para FORMULARIO (dependen de la temporada seleccionada en el formulario)
+  const [opcionesMaterialesForm, setOpcionesMaterialesForm] = useState([]);
+  const [opcionesRarezasForm, setOpcionesRarezasForm] = useState([]);
+  const [cargandoOpcionesForm, setCargandoOpcionesForm] = useState(false);
+  
+  // 🔵 Estado para datos completos con temporada (para filtros)
   const [materialesConTemporada, setMaterialesConTemporada] = useState([]);
-  const [rarezaConTemporada, setRarezaConTemporada] = useState([]);
 
   // 🔵 Niveles y Temporadas disponibles
   const niveles = [1, 2, 3, 4, 5];
@@ -62,31 +64,22 @@ function PolvoEspirituAdmin() {
 
   useEffect(() => {
     cargarCantidades();
-    cargarOpciones();
+    cargarOpcionesFiltros();
   }, []);
 
-  // 🔵 Efecto para filtrar materiales y rarezas según temporada seleccionada
+  // 🔵 Efecto para filtrar opciones de FILTROS según temporada seleccionada en filtros
   useEffect(() => {
     const temporada = filtros.temporada;
     const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
     
     if (temporada) {
-      // Filtrar materiales (manteniendo las opciones fijas)
       const materialesFilt = materialesConTemporada
         .filter(item => item.temporada === temporada)
         .map(item => item.nombre);
       
-      // Combinar opciones fijas + materiales filtrados
       const materialesConFijas = [...materialesFilt, ...opcionesFijas];
-      setOpcionesMaterialesFiltrados(materialesConFijas.length > 0 ? materialesConFijas : opcionesMateriales);
+      setOpcionesMaterialesFiltros(materialesConFijas.length > 0 ? materialesConFijas : []);
       
-      // Filtrar rarezas
-      const rarezasFilt = rarezaConTemporada
-        .filter(item => item.temporada === temporada)
-        .map(item => item.nombre);
-      setOpcionesRarezasFiltrados(rarezasFilt.length > 0 ? rarezasFilt : opcionesRarezas);
-      
-      // Si el valor seleccionado no está en los filtrados, limpiarlo
       if (filtros.material && !materialesFilt.includes(filtros.material) && !opcionesFijas.includes(filtros.material)) {
         setFiltros(prev => ({ ...prev, material: '' }));
       }
@@ -94,11 +87,20 @@ function PolvoEspirituAdmin() {
         setFiltros(prev => ({ ...prev, rareza: '' }));
       }
     } else {
-      // Sin filtro de temporada, mostrar todos los materiales + opciones fijas
-      setOpcionesMaterialesFiltrados(opcionesMateriales);
-      setOpcionesRarezasFiltrados(opcionesRarezas);
+      setOpcionesMaterialesFiltros(opcionesMaterialesFiltros);
+      setOpcionesRarezasFiltros(opcionesRarezasFiltros);
     }
-  }, [filtros.temporada, materialesConTemporada, rarezaConTemporada]);
+  }, [filtros.temporada, materialesConTemporada]);
+
+  // 🔵 Efecto para cargar opciones del FORMULARIO cuando cambia la temporada en el formData
+  useEffect(() => {
+    if (formData.temporada) {
+      cargarOpcionesForm(formData.temporada);
+    } else {
+      setOpcionesMaterialesForm([]);
+      setOpcionesRarezasForm([]);
+    }
+  }, [formData.temporada]);
 
   // 🔵 Cargar cantidades
   const cargarCantidades = async () => {
@@ -116,11 +118,10 @@ function PolvoEspirituAdmin() {
     }
   };
 
-  // 🔵 Cargar opciones (materiales y rarezas con temporada)
-  const cargarOpciones = async () => {
-    setCargandoOpciones(true);
+  // 🔵 Cargar opciones para FILTROS (materiales y rarezas con temporada)
+  const cargarOpcionesFiltros = async () => {
+    setCargandoOpcionesFiltros(true);
     try {
-      // Cargar materiales
       const materialesRes = await materialesService.getAll();
       const materialesConTemp = materialesRes.data.map(item => ({
         nombre: item.nombre,
@@ -128,31 +129,40 @@ function PolvoEspirituAdmin() {
       }));
       setMaterialesConTemporada(materialesConTemp);
       
-      // 🔵 AGREGAR OPCIONES FIJAS: "Variantes" y "Todos Los Materiales"
       const opcionesFijas = ['Variantes', 'Todos Los Materiales'];
       const todosMateriales = [...materialesConTemp.map(item => item.nombre), ...opcionesFijas];
-      
-      setOpcionesMaterialesFiltrados(todosMateriales);
-      setOpcionesMateriales(todosMateriales);
+      setOpcionesMaterialesFiltros(todosMateriales);
 
-      // Cargar rarezas existentes en las configuraciones de polvo
       const cantidadesRes = await cantidadPolvoExtraerService.getAll();
       const rarezasUnicas = [...new Set(cantidadesRes.data.map(item => item.rareza))];
-      const rarezasConTemp = rarezasUnicas.map(rareza => {
-        const item = cantidadesRes.data.find(c => c.rareza === rareza);
-        return {
-          nombre: rareza,
-          temporada: item?.temporada || null
-        };
-      });
-      setRarezaConTemporada(rarezasConTemp);
-      setOpcionesRarezas(rarezasUnicas);
-      setOpcionesRarezasFiltrados(rarezasUnicas);
+      setOpcionesRarezasFiltros(rarezasUnicas);
       
     } catch (err) {
-      console.error('Error al cargar opciones:', err);
+      console.error('Error al cargar opciones para filtros:', err);
     } finally {
-      setCargandoOpciones(false);
+      setCargandoOpcionesFiltros(false);
+    }
+  };
+
+  // 🔵 Cargar opciones del FORMULARIO según temporada
+  const cargarOpcionesForm = async (temporada) => {
+    if (!temporada) {
+      setOpcionesMaterialesForm([]);
+      return;
+    }
+    
+    setCargandoOpcionesForm(true);
+    try {
+      const materialesRes = await materialesService.getAll();
+      const materialesFilt = materialesRes.data
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesMaterialesForm(materialesFilt);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones del formulario:', err);
+    } finally {
+      setCargandoOpcionesForm(false);
     }
   };
 
@@ -237,10 +247,9 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Abrir modal para crear
   const abrirCrearModal = () => {
-    const siguienteNumero = obtenerSiguienteNumeroOrden();
     setFormData({
       id: null,
-      numeroOrden: siguienteNumero.toString(),
+      numeroOrden: obtenerSiguienteNumeroOrden().toString(),
       temporada: '',
       material: '',
       rareza: '',
@@ -411,10 +420,10 @@ function PolvoEspirituAdmin() {
             value={filtros.material} 
             onChange={handleFiltroChange}
             className="filtro-select"
-            disabled={cargandoOpciones}
+            disabled={cargandoOpcionesFiltros}
           >
             <option value="">Materiales en General</option>
-            {opcionesMaterialesFiltrados.map((material, index) => (
+            {opcionesMaterialesFiltros.map((material, index) => (
               <option key={index} value={material}>{material}</option>
             ))}
           </select>
@@ -424,10 +433,10 @@ function PolvoEspirituAdmin() {
             value={filtros.rareza} 
             onChange={handleFiltroChange}
             className="filtro-select"
-            disabled={cargandoOpciones}
+            disabled={cargandoOpcionesFiltros}
           >
             <option value="">Todas las rarezas</option>
-            {opcionesRarezasFiltrados.map((rareza, index) => (
+            {opcionesRarezasFiltros.map((rareza, index) => (
               <option key={index} value={rareza}>{rareza}</option>
             ))}
           </select>
@@ -626,7 +635,7 @@ function PolvoEspirituAdmin() {
                     name="material"
                     value={formData.material}
                     onChange={handleFormChange}
-                    disabled={cargandoOpciones}
+                    disabled={cargandoOpcionesForm || !formData.temporada}
                     style={{
                       width: '100%',
                       padding: '10px 14px',
@@ -638,11 +647,14 @@ function PolvoEspirituAdmin() {
                     }}
                   >
                     <option value="">Seleccionar material</option>
-                    {opcionesMaterialesFiltrados.map((material, index) => (
+                    {opcionesMaterialesForm.map((material, index) => (
                       <option key={index} value={material}>{material}</option>
                     ))}
                   </select>
-                  {cargandoOpciones && (
+                  {!formData.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
+                  {cargandoOpcionesForm && (
                     <small style={{ color: '#888' }}>⏳ Cargando materiales...</small>
                   )}
                 </div>
@@ -653,9 +665,18 @@ function PolvoEspirituAdmin() {
                     name="rareza"
                     value={formData.rareza}
                     onChange={handleFormChange}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
                   >
                     <option value="">Seleccionar rareza</option>
-                    {opcionesRarezasFiltrados.map((rareza, index) => (
+                    {opcionesRarezasFiltros.map((rareza, index) => (
                       <option key={index} value={rareza}>{rareza}</option>
                     ))}
                   </select>
