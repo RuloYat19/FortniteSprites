@@ -96,7 +96,8 @@ function SpritsList() {
 
       const defaultObj = {};
       defaultRes.data.forEach(item => {
-        defaultObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        defaultObj[clave] = item.numeroOrden;
       });
 
       const rarezaObj = {};
@@ -106,7 +107,8 @@ function SpritsList() {
 
       const materialObj = {};
       materialRes.data.forEach(item => {
-        materialObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        materialObj[clave] = item.numeroOrden;
       });
 
       setOrdenDefault(defaultObj);
@@ -127,12 +129,13 @@ function SpritsList() {
         materialesService.getAll()
       ]);
 
-      // 🔵 ORDENAR POR numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
         .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
       
-      const materiales = materialesRes.data.map(item => item.nombre);
+      const materiales = materialesRes.data
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
+        .map(item => item.nombre);
 
       setNombresDisponibles(nombresOrdenados);
       setMaterialesDisponibles(materiales);
@@ -147,48 +150,41 @@ function SpritsList() {
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
 
-    const obtenerOrdenDefault = (sprit) => {
-      const nombreA = ordenDefault[sprit.nombre] || 999;
-      const materialA = ordenMaterial[sprit.material] || 999;
-      return { nombreA, materialA };
+    // 🔵 Función para obtener el orden del material según la temporada del sprit
+    const obtenerOrdenMaterial = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.material}`;
+      return ordenMaterial[clave] ?? 999;
+    };
+
+    // 🔵 Función para obtener el orden del nombre según la temporada del sprit
+    const obtenerOrdenNombre = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.nombre}`;
+      return ordenDefault[clave] ?? 999;
     };
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          const ordenA = ordenMaterial[a.material] || 999;
-          const ordenB = ordenMaterial[b.material] || 999;
+          const ordenA = obtenerOrdenMaterial(a);
+          const ordenB = obtenerOrdenMaterial(b);
           if (ordenA !== ordenB) return ordenA - ordenB;
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           return nombreA - nombreB;
         });
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          const rarezaA = ordenRareza[a.nombre] || 999;
-          const rarezaB = ordenRareza[b.nombre] || 999;
+          const rarezaA = ordenRareza[a.nombre] ?? 999;
+          const rarezaB = ordenRareza[b.nombre] ?? 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
       
-      {/*case 'no-inventario':
-        return [...spritsList].sort((a, b) => {
-          if (a.estaEnInventario !== b.estaEnInventario) {
-            return a.estaEnInventario ? 1 : -1;
-          }
-          
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
-        });*/}
-
       case 'no-dominado':
         return [...spritsList].sort((a, b) => {
           if (a.estaDominado !== b.estaDominado) {
@@ -201,13 +197,13 @@ function SpritsList() {
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
           
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
 
       case 'invocar-mayor':
@@ -220,16 +216,17 @@ function SpritsList() {
             const polvoA = a.polvoAlInvocar || 0;
             const polvoB = b.polvoAlInvocar || 0;
             if (polvoA !== polvoB) {
-              return polvoB - polvoA; // Mayor a menor
+              return polvoB - polvoA;
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
 
       case 'invocar-menor':
@@ -242,26 +239,30 @@ function SpritsList() {
             const polvoA = a.polvoAlInvocar || 0;
             const polvoB = b.polvoAlInvocar || 0;
             if (polvoA !== polvoB) {
-              return polvoA - polvoB; // Menor a mayor
+              return polvoA - polvoB;
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
         
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          // 🔵 PRIMERO: Ordenar por nombre según la temporada del sprit
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           if (nombreA !== nombreB) return nombreA - nombreB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          
+          // 🔵 SEGUNDO: Ordenar por material según la temporada del sprit
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
     }
@@ -373,6 +374,13 @@ function SpritsList() {
     const porcentaje = total > 0 ? (completados / total) * 100 : 0;
     return { completados, total, porcentaje };
   };
+
+  // 🔵 EFECTO - Recargar filtros y órdenes al cambiar temporada
+  useEffect(() => {
+    if (filtros.temporada) {
+      cargarSprits();
+    }
+  }, [filtros.temporada]);
 
   // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes, filtros y métodos
   useEffect(() => {
@@ -857,7 +865,6 @@ function SpritsList() {
         }
       }
       
-      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
       if (newSprit.material && newSprit.rareza) {
         const polvoCalculado = await obtenerPolvoAlInvocar(newSprit.material, newSprit.rareza);
         if (polvoCalculado > 0) {
@@ -874,14 +881,14 @@ function SpritsList() {
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: polvoAlInvocar,  // 🔵 Incluir polvo al invocar
+        polvoAlInvocar: polvoAlInvocar,
         yaFueDominado: false,
         estaDominado: false,
         estaEnInventario: false,
         estaDesbloqueado: false,
-        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
-        temporada: editSprit.temporada || null,
-        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
+        metodoSubidaNivel: newSprit.metodoSubidaNivel || null,
+        temporada: newSprit.temporada || null,
+        estaEnElJuego: newSprit.estaEnElJuego !== undefined ? newSprit.estaEnElJuego : true
       };
 
       await spritsService.create(data);
@@ -896,11 +903,13 @@ function SpritsList() {
     }
   };
 
-  const handleFiltroChange = (e) => {
-    setFiltros({
-      ...filtros,
-      [e.target.name]: e.target.value
-    });
+  const handleFiltroChange = async (e) => {
+    const { name, value } = e.target;
+    
+    setFiltros(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const limpiarFiltros = () => {
