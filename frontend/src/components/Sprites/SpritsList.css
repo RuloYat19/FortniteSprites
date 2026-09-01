@@ -480,7 +480,8 @@ body {
 .detail-value.material-holofoil,
 .detail-value.material-cúbico,
 .detail-value.material-patito,
-.detail-value.material-gema{
+.detail-value.material-gema,
+.detail-value.material-hacker{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -542,6 +543,13 @@ body {
   background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
   border-color: #d3d3d3 !important;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -717,7 +725,8 @@ body {
 .sprit-card-front .nombre-material-holofoil,
 .sprit-card-front .nombre-material-cúbico,
 .sprit-card-front .nombre-material-patito,
-.sprit-card-front .nombre-material-gema {
+.sprit-card-front .nombre-material-gema,
+.sprit-card-front .nombre-material-hacker {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -785,10 +794,18 @@ body {
   color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
+
 .sprit-card-front .nombre-material-gema {
   background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
   border-color: #d3d3d3 !important;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
