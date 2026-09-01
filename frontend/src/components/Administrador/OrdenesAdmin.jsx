@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ordenDefaultService, ordenRarezaService } from '../../services/api';
+import { ordenDefaultService, ordenRarezaService, nombresSpritesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
 
@@ -17,7 +17,7 @@ function OrdenesAdmin() {
   const [loadingRareza, setLoadingRareza] = useState(true);
   const [errorRareza, setErrorRareza] = useState(null);
 
-  // 🔵 Filtros
+  // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
     nombre: '',
     temporada: 'C7T4'
@@ -47,6 +47,17 @@ function OrdenesAdmin() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
 
+  // 🔵 Opciones para FILTROS (dependen del filtro de temporada)
+  const [opcionesNombresFiltros, setOpcionesNombresFiltros] = useState([]);
+  const [cargandoOpcionesFiltros, setCargandoOpcionesFiltros] = useState(false);
+  
+  // 🔵 Opciones para FORMULARIO (dependen de la temporada seleccionada en el formulario)
+  const [opcionesNombresForm, setOpcionesNombresForm] = useState([]);
+  const [cargandoOpcionesForm, setCargandoOpcionesForm] = useState(false);
+  
+  // 🔵 Estado para datos completos con temporada (para filtros)
+  const [nombresConTemporada, setNombresConTemporada] = useState([]);
+
   // 🔵 Temporadas disponibles
   const temporadas = ['C7T3', 'C7T4'];
 
@@ -57,7 +68,35 @@ function OrdenesAdmin() {
     } else {
       cargarOrdenRareza();
     }
+    cargarOpcionesFiltros();
   }, [tabActiva]);
+
+  // 🔵 Efecto para filtrar opciones de FILTROS según temporada seleccionada en filtros
+  useEffect(() => {
+    const temporada = filtros.temporada;
+    
+    if (temporada) {
+      const nombresFilt = nombresConTemporada
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesNombresFiltros(nombresFilt.length > 0 ? nombresFilt : []);
+      
+      if (filtros.nombre && !nombresFilt.includes(filtros.nombre)) {
+        setFiltros(prev => ({ ...prev, nombre: '' }));
+      }
+    } else {
+      setOpcionesNombresFiltros(opcionesNombresFiltros);
+    }
+  }, [filtros.temporada, nombresConTemporada]);
+
+  // 🔵 Efecto para cargar opciones del FORMULARIO cuando cambia la temporada en el formData
+  useEffect(() => {
+    if (formData.temporada) {
+      cargarOpcionesForm(formData.temporada);
+    } else {
+      setOpcionesNombresForm([]);
+    }
+  }, [formData.temporada]);
 
   // 🔵 Cargar Orden Default
   const cargarOrdenDefault = async () => {
@@ -88,6 +127,49 @@ function OrdenesAdmin() {
       console.error(err);
     } finally {
       setLoadingRareza(false);
+    }
+  };
+
+  // 🔵 Cargar opciones para FILTROS (nombres con temporada)
+  const cargarOpcionesFiltros = async () => {
+    setCargandoOpcionesFiltros(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresConTemp = nombresRes.data.map(item => ({
+        nombre: item.nombre,
+        temporada: item.temporada
+      }));
+      setNombresConTemporada(nombresConTemp);
+      
+      const todosNombres = nombresConTemp.map(item => item.nombre);
+      setOpcionesNombresFiltros(todosNombres);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones para filtros:', err);
+    } finally {
+      setCargandoOpcionesFiltros(false);
+    }
+  };
+
+  // 🔵 Cargar opciones del FORMULARIO según temporada (solo nombres)
+  const cargarOpcionesForm = async (temporada) => {
+    if (!temporada) {
+      setOpcionesNombresForm([]);
+      return;
+    }
+    
+    setCargandoOpcionesForm(true);
+    try {
+      const nombresRes = await nombresSpritesService.getAll();
+      const nombresFilt = nombresRes.data
+        .filter(item => item.temporada === temporada)
+        .map(item => item.nombre);
+      setOpcionesNombresForm(nombresFilt);
+      
+    } catch (err) {
+      console.error('Error al cargar opciones del formulario:', err);
+    } finally {
+      setCargandoOpcionesForm(false);
     }
   };
 
@@ -179,7 +261,7 @@ function OrdenesAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
-      temporada: '',  // 🔵 NUEVO
+      temporada: '',
       nombre: ''
     });
     setEditando(false);
@@ -353,7 +435,7 @@ function OrdenesAdmin() {
   // 🔵 Filtrar datos
   const datosFiltrados = getDatos().filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
-    if (filtros.temporada && item.temporada !== filtros.temporada) return false;  // 🔵 NUEVO
+    if (filtros.temporada && item.temporada !== filtros.temporada) return false;
     return true;
   });
 
@@ -427,15 +509,19 @@ function OrdenesAdmin() {
             ))}
           </select>
 
-          <input
-            type="text"
+          <select
             name="nombre"
-            placeholder="🔍 Buscar por nombre..."
             value={filtros.nombre}
             onChange={handleFiltroChange}
             className="filtro-select"
+            disabled={cargandoOpcionesFiltros}
             style={{ minWidth: '200px' }}
-          />
+          >
+            <option value="">Todos los nombres</option>
+            {opcionesNombresFiltros.map((nombre, index) => (
+              <option key={index} value={nombre}>{nombre}</option>
+            ))}
+          </select>
 
           <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
             Limpiar Filtros
@@ -583,13 +669,32 @@ function OrdenesAdmin() {
 
                 <div className="form-group">
                   <label>Nombre del Sprite *</label>
-                  <input
-                    type="text"
+                  <select
                     name="nombre"
-                    placeholder="Ej: Espíritu de Agua"
                     value={formData.nombre}
                     onChange={handleFormChange}
-                  />
+                    disabled={cargandoOpcionesForm || !formData.temporada}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <option value="">Seleccionar nombre</option>
+                    {opcionesNombresForm.map((nombre, index) => (
+                      <option key={index} value={nombre}>{nombre}</option>
+                    ))}
+                  </select>
+                  {!formData.temporada && (
+                    <small style={{ color: '#888' }}>💡 Selecciona una temporada primero</small>
+                  )}
+                  {cargandoOpcionesForm && (
+                    <small style={{ color: '#888' }}>⏳ Cargando nombres...</small>
+                  )}
                 </div>
               </div>
             </div>
