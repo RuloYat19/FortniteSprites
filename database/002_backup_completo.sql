@@ -1,6 +1,6 @@
 -- ============================================
 -- BACKUP DE BASE DE DATOS
--- Fecha: 2026-08-31 00:33:06
+-- Fecha: 2026-09-01 01:51:05
 -- ============================================
 
 USE FORTNITEDB;
@@ -60,7 +60,7 @@ INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (34, 'C7T4', 'Espíritu de Shadow', '2026-08-27 19:36:56', NULL);
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (35, 'C7T4', 'Espíritu de Tails', '2026-08-27 19:37:13', NULL);
 INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (36, 'C7T4', 'Espíritu de Arbustín', '2026-08-27 19:37:31', NULL);
-INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (37, 'C7T4', 'Espíritu Explorador de la Tormenta', '2026-08-27 19:40:55', NULL);
+INSERT INTO nombresSprites (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (37, 'C7T4', 'Espíritu Exploratormentas', '2026-08-27 19:40:55', '2026-08-31 02:01:38');
 
 -- ============================================
 -- TABLA: ordenDefault
@@ -90,6 +90,18 @@ INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at
 INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (22, 'C7T3', 'Espíritu de Ironmouse', '2026-07-31 05:27:20', '2026-07-31 05:31:59');
 INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (24, 'C7T3', 'Espíritu de Llama', '2026-07-31 05:27:27', NULL);
 INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (25, 'C7T3', 'Espíritu de Bananín', '2026-07-31 05:27:37', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (26, 'C7T4', 'Espíritu de Killswitch', '2026-09-01 01:46:00', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (27, 'C7T4', 'Espíritu de Sonic', '2026-09-01 01:46:10', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (28, 'C7T4', 'Espíritu Victorioso', '2026-09-01 01:46:41', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (29, 'C7T4', 'Espíritu de Jonesy', '2026-09-01 01:46:51', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (30, 'C7T4', 'Espíritu de Jackrabbit', '2026-09-01 01:47:01', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (31, 'C7T4', 'Espíritu de 8 Bits', '2026-09-01 01:47:11', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (32, 'C7T4', 'Espíritu Aventurero', '2026-09-01 01:47:19', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (33, 'C7T4', 'Espíritu de Tails', '2026-09-01 01:47:28', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (34, 'C7T4', 'Espíritu de Shadow', '2026-09-01 01:47:36', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (35, 'C7T4', 'Espíritu Exploratormentas', '2026-09-01 01:47:43', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (36, 'C7T4', 'Espíritu de Klombo', '2026-09-01 01:47:52', NULL);
+INSERT INTO ordenDefault (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (37, 'C7T4', 'Espíritu de Arbustín', '2026-09-01 01:48:04', NULL);
 
 -- ============================================
 -- TABLA: ordenRareza
@@ -119,30 +131,42 @@ INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at)
 INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (23, 'C7T3', 'Espíritu Parca', '2026-07-31 05:44:48', NULL);
 INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (24, 'C7T3', 'Espíritu de Ironmouse', '2026-07-31 05:45:01', NULL);
 INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (25, 'C7T3', 'Espíritu de Pollo', '2026-07-31 05:45:08', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (26, 'C7T4', 'Espíritu de Jonesy', '2026-09-01 01:48:24', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (27, 'C7T4', 'Espíritu de 8 Bits', '2026-09-01 01:48:32', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (28, 'C7T4', 'Espíritu Aventurero', '2026-09-01 01:48:44', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (29, 'C7T4', 'Espíritu Exploratormentas', '2026-09-01 01:48:52', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (30, 'C7T4', 'Espíritu de Arbustín', '2026-09-01 01:49:04', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (31, 'C7T4', 'Espíritu de Killswitch', '2026-09-01 01:49:17', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (32, 'C7T4', 'Espíritu de Sonic', '2026-09-01 01:49:23', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (33, 'C7T4', 'Espíritu de Tails', '2026-09-01 01:49:33', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (34, 'C7T4', 'Espíritu de Shadow', '2026-09-01 01:49:41', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (35, 'C7T4', 'Espíritu de Jackrabbit', '2026-09-01 01:49:53', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (36, 'C7T4', 'Espíritu Victorioso', '2026-09-01 01:50:00', NULL);
+INSERT INTO ordenRareza (numeroOrden, temporada, nombre, created_at, updated_at) VALUES (37, 'C7T4', 'Espíritu de Klombo', '2026-09-01 01:50:09', NULL);
 
 -- ============================================
 -- TABLA: cantidadPolvoEspirituExtraer
 -- ============================================
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (1, 'C7T3', 'Normal', 'Raro', 1, 500, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (2, 'C7T3', 'Normal', 'Raro', 2, 625, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (3, 'C7T3', 'Normal', 'Raro', 3, 750, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (4, 'C7T3', 'Normal', 'Raro', 4, 875, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (5, 'C7T3', 'Normal', 'Raro', 5, 1000, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (6, 'C7T3', 'Normal', 'Épico', 1, 550, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (7, 'C7T3', 'Normal', 'Épico', 2, 700, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (8, 'C7T3', 'Normal', 'Épico', 3, 825, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (9, 'C7T3', 'Normal', 'Épico', 4, 950, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (10, 'C7T3', 'Normal', 'Épico', 5, 1100, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (11, 'C7T3', 'Normal', 'Legendario', 1, 600, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (12, 'C7T3', 'Normal', 'Legendario', 2, 750, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (13, 'C7T3', 'Normal', 'Legendario', 3, 900, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (14, 'C7T3', 'Normal', 'Legendario', 4, 1050, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (15, 'C7T3', 'Normal', 'Legendario', 5, 1200, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (16, 'C7T3', 'Normal', 'Mítico', 1, 650, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (17, 'C7T3', 'Normal', 'Mítico', 2, 800, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (18, 'C7T3', 'Normal', 'Mítico', 3, 975, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'C7T3', 'Normal', 'Mítico', 4, 1150, '2026-07-03 00:24:41', NULL);
-INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'C7T3', 'Normal', 'Mítico', 5, 1300, '2026-07-03 00:24:41', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (1, 'C7T3', 'Todos Los Materiales', 'Raro', 1, 500, '2026-07-03 00:24:41', '2026-08-31 01:19:56');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (2, 'C7T3', 'Todos Los Materiales', 'Raro', 2, 625, '2026-07-03 00:24:41', '2026-08-31 01:21:00');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (3, 'C7T3', 'Todos Los Materiales', 'Raro', 3, 750, '2026-07-03 00:24:41', '2026-08-31 01:21:06');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (4, 'C7T3', 'Todos Los Materiales', 'Raro', 4, 875, '2026-07-03 00:24:41', '2026-08-31 01:21:11');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (5, 'C7T3', 'Todos Los Materiales', 'Raro', 5, 1000, '2026-07-03 00:24:41', '2026-08-31 01:21:17');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (6, 'C7T3', 'Todos Los Materiales', 'Épico', 1, 550, '2026-07-03 00:24:41', '2026-08-31 01:21:23');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (7, 'C7T3', 'Todos Los Materiales', 'Épico', 2, 700, '2026-07-03 00:24:41', '2026-08-31 01:21:34');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (8, 'C7T3', 'Todos Los Materiales', 'Épico', 3, 825, '2026-07-03 00:24:41', '2026-08-31 01:21:40');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (9, 'C7T3', 'Todos Los Materiales', 'Épico', 4, 950, '2026-07-03 00:24:41', '2026-08-31 01:21:45');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (10, 'C7T3', 'Todos Los Materiales', 'Épico', 5, 1100, '2026-07-03 00:24:41', '2026-08-31 01:21:52');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (11, 'C7T3', 'Todos Los Materiales', 'Legendario', 1, 600, '2026-07-03 00:24:41', '2026-08-31 01:22:00');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (12, 'C7T3', 'Todos Los Materiales', 'Legendario', 2, 750, '2026-07-03 00:24:41', '2026-08-31 01:22:05');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (13, 'C7T3', 'Todos Los Materiales', 'Legendario', 3, 900, '2026-07-03 00:24:41', '2026-08-31 01:22:10');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (14, 'C7T3', 'Todos Los Materiales', 'Legendario', 4, 1050, '2026-07-03 00:24:41', '2026-08-31 01:22:15');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (15, 'C7T3', 'Todos Los Materiales', 'Legendario', 5, 1200, '2026-07-03 00:24:41', '2026-08-31 01:22:21');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (16, 'C7T3', 'Todos Los Materiales', 'Mítico', 1, 650, '2026-07-03 00:24:41', '2026-08-31 01:22:28');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (17, 'C7T3', 'Todos Los Materiales', 'Mítico', 2, 800, '2026-07-03 00:24:41', '2026-08-31 01:22:34');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (18, 'C7T3', 'Todos Los Materiales', 'Mítico', 3, 975, '2026-07-03 00:24:41', '2026-08-31 01:22:39');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (19, 'C7T3', 'Todos Los Materiales', 'Mítico', 4, 1150, '2026-07-03 00:24:41', '2026-08-31 01:22:44');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (20, 'C7T3', 'Todos Los Materiales', 'Mítico', 5, 1300, '2026-07-03 00:24:41', '2026-08-31 01:22:52');
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (21, 'C7T4', 'Normal', 'Raro', 1, 500, '2026-08-27 01:49:22', '2026-08-27 20:28:55');
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (22, 'C7T4', 'Normal', 'Raro', 2, 550, '2026-08-30 23:05:27', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (23, 'C7T4', 'Normal', 'Raro', 3, 600, '2026-08-30 23:06:52', NULL);
@@ -153,6 +177,36 @@ INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rare
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (28, 'C7T4', 'Normal', 'Épico', 3, 840, '2026-08-30 23:15:27', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (29, 'C7T4', 'Normal', 'Épico', 4, 910, '2026-08-30 23:19:02', NULL);
 INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (30, 'C7T4', 'Normal', 'Épico', 5, 980, '2026-08-30 23:36:46', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (31, 'C7T4', 'Normal', 'Legendario', 1, 900, '2026-08-31 01:42:39', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (32, 'C7T4', 'Normal', 'Legendario', 2, 990, '2026-08-31 01:43:50', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (33, 'C7T4', 'Normal', 'Legendario', 3, 1080, '2026-08-31 01:45:33', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (34, 'C7T4', 'Normal', 'Legendario', 4, 1170, '2026-08-31 01:49:03', '2026-08-31 01:49:11');
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (35, 'C7T4', 'Normal', 'Legendario', 5, 1260, '2026-08-31 01:56:38', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (36, 'C7T4', 'Normal', 'Mítico', 1, 1200, '2026-08-31 09:02:42', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (37, 'C7T4', 'Normal', 'Mítico', 2, 1320, '2026-08-31 09:02:53', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (38, 'C7T4', 'Normal', 'Mítico', 3, 1440, '2026-08-31 09:03:07', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (39, 'C7T4', 'Normal', 'Mítico', 4, 1560, '2026-08-31 09:03:19', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (40, 'C7T4', 'Normal', 'Mítico', 5, 1680, '2026-08-31 09:03:30', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (41, 'C7T4', 'Variantes', 'Raro', 1, 500, '2026-08-31 09:04:38', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (42, 'C7T4', 'Variantes', 'Raro', 2, 625, '2026-08-31 09:04:49', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (43, 'C7T4', 'Variantes', 'Raro', 3, 750, '2026-08-31 09:05:04', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (44, 'C7T4', 'Variantes', 'Raro', 4, 875, '2026-08-31 09:05:32', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (45, 'C7T4', 'Variantes', 'Raro', 5, 1000, '2026-08-31 09:05:44', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (46, 'C7T4', 'Variantes', 'Épico', 1, 700, '2026-08-31 09:19:57', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (47, 'C7T4', 'Variantes', 'Épico', 2, 770, '2026-08-31 09:20:54', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (48, 'C7T4', 'Variantes', 'Épico', 3, 840, '2026-08-31 09:22:32', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (49, 'C7T4', 'Variantes', 'Épico', 4, 910, '2026-08-31 09:26:15', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (50, 'C7T4', 'Variantes', 'Épico', 5, 980, '2026-08-31 09:33:46', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (51, 'C7T4', 'Variantes', 'Legendario', 1, 900, '2026-08-31 23:49:02', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (52, 'C7T4', 'Variantes', 'Legendario', 2, 990, '2026-08-31 23:49:13', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (53, 'C7T4', 'Variantes', 'Legendario', 3, 1080, '2026-08-31 23:49:26', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (54, 'C7T4', 'Variantes', 'Legendario', 4, 1170, '2026-08-31 23:49:36', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (55, 'C7T4', 'Variantes', 'Legendario', 5, 1260, '2026-08-31 23:49:48', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (56, 'C7T4', 'Variantes', 'Mítico', 1, 1200, '2026-08-31 23:50:43', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (57, 'C7T4', 'Variantes', 'Mítico', 2, 1320, '2026-08-31 23:51:51', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (58, 'C7T4', 'Variantes', 'Mítico', 3, 1440, '2026-08-31 23:52:02', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (59, 'C7T4', 'Variantes', 'Mítico', 4, 1560, '2026-08-31 23:52:15', NULL);
+INSERT INTO cantidadPolvoEspirituExtraer (numeroOrden, temporada, material, rareza, nivelEspiritu, cantidad, created_at, updated_at) VALUES (60, 'C7T4', 'Variantes', 'Mítico', 5, 1680, '2026-08-31 23:52:32', NULL);
 
 -- ============================================
 -- TABLA: cantidadPolvoEspirituInvocar
@@ -189,6 +243,18 @@ INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rare
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (26, 'C7T3', 'Patito', 'Épico', 4000, '2026-07-30 14:27:44', NULL);
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (27, 'C7T3', 'Patito', 'Legendario', 6750, '2026-07-30 14:27:54', NULL);
 INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (28, 'C7T3', 'Patito', 'Mítico', 10000, '2026-07-30 14:28:09', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (33, 'C7T4', 'Normal', 'Raro', 100, '2026-09-01 01:37:29', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (34, 'C7T4', 'Normal', 'Épico', 1750, '2026-09-01 01:37:40', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (35, 'C7T4', 'Normal', 'Legendario', 1750, '2026-09-01 01:37:51', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (36, 'C7T4', 'Normal', 'Mítico', 2000, '2026-09-01 01:38:05', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (37, 'C7T4', 'Oro', 'Raro', 1500, '2026-09-01 01:38:18', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (38, 'C7T4', 'Oro', 'Épico', 2100, '2026-09-01 01:38:30', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (39, 'C7T4', 'Oro', 'Legendario', 2100, '2026-09-01 01:38:41', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (40, 'C7T4', 'Oro', 'Mítico', 2400, '2026-09-01 01:38:52', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (41, 'C7T4', 'Hacker', 'Raro', 1500, '2026-09-01 01:39:03', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (42, 'C7T4', 'Hacker', 'Épico', 2100, '2026-09-01 01:39:37', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (43, 'C7T4', 'Hacker', 'Legendario', 2100, '2026-09-01 01:39:48', NULL);
+INSERT INTO cantidadPolvoEspirituInvocar (numeroOrden, temporada, material, rareza, cantidad, created_at, updated_at) VALUES (44, 'C7T4', 'Hacker', 'Mítico', 2400, '2026-09-01 01:39:58', NULL);
 
 -- ============================================
 -- TABLA: metodoSubidaNivel
@@ -317,6 +383,6 @@ INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Demoníaco', 'Épico', 'Gema', './imagenesSprites/demoniacoGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:09:23', '2026-08-13 00:08:12');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu del Punto Cero', 'Mítico', 'Gema', './imagenesSprites/puntoCeroGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1300, 10000, '2026-08-12 02:09:45', '2026-08-18 03:58:17');
 INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu de Aura', 'Épico', 'Gema', './imagenesSprites/auraGema.png', 1, 1, 1, 0, 1, 'C7T3', 'Se sube de nivel abriendo contenedores', 5, 1100, 4000, '2026-08-12 02:10:04', '2026-08-12 14:20:40');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Normal', './imagenesSprites/exploradorTormentaNormal.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:06:58', '2026-08-29 14:45:16');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Oro', './imagenesSprites/exploradorTormentaOro.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:07:37', '2026-08-29 14:45:29');
-INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Explorador de la Tormenta', 'Raro', 'Hacker', './imagenesSprites/exploradorTormentaHacker.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:08:08', '2026-08-29 14:45:40');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Exploratormentas', 'Raro', 'Normal', './imagenesSprites/exploradorTormentaNormal.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:06:58', '2026-08-31 02:02:03');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Exploratormentas', 'Raro', 'Oro', './imagenesSprites/exploradorTormentaOro.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:07:37', '2026-08-31 02:02:12');
+INSERT INTO sprits (nombre, rareza, material, nombreArchivoImagen, yaFueDominado, estaDominado, estaEnInventario, estaDesbloqueado, estaEnElJuego, temporada, metodoSubidaNivel, nivelEspiritu, polvoAlExtraer, polvoAlInvocar, created_at, updated_at) VALUES ('Espíritu Exploratormentas', 'Raro', 'Hacker', './imagenesSprites/exploradorTormentaHacker.png', 0, 0, 0, 0, 0, 'C7T4', 'Se sube de nivel abriendo contenedores', 1, 500, 1000, '2026-08-29 14:08:08', '2026-08-31 02:02:21');
