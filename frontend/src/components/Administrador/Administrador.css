@@ -1,0 +1,729 @@
+/* frontend/src/components/Administrador.css */
+
+/* 🔵 CONTENEDOR PRINCIPAL */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #1a1a2e;
+  color: #fff;
+}
+
+/* 🔵 BARRA LATERAL */
+.admin-sidebar {
+  width: 260px;
+  background: #16213e;
+  border-right: 2px solid #0f3460;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  padding: 24px 20px;
+  border-bottom: 2px solid #0f3460;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo .sidebar-icon {
+  font-size: 2rem;
+}
+
+.sidebar-logo h2 {
+  color: #35cf35;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-section {
+  margin-bottom: 20px;
+}
+
+.nav-section-title {
+  color: #666;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 20px;
+  margin-bottom: 12px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav ul li {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  gap: 12px;
+  color: #aaa;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav ul li:hover {
+  background: rgba(53, 207, 53, 0.05);
+  color: #fff;
+}
+
+.sidebar-nav ul li.active {
+  background: rgba(53, 207, 53, 0.1);
+  border-left-color: #35cf35;
+  color: #35cf35;
+}
+
+.sidebar-nav .nav-icon {
+  font-size: 1.2rem;
+}
+
+.sidebar-nav .nav-badge {
+  margin-left: auto;
+  background: rgba(53, 207, 53, 0.2);
+  color: #35cf35;
+  font-size: 0.7rem;
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 2px solid #0f3460;
+}
+
+.btn-volver-sidebar {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #0f3460;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-volver-sidebar:hover {
+  border-color: #35cf35;
+  background: rgba(53, 207, 53, 0.1);
+  transform: scale(1.02);
+}
+
+/* 🔵 CONTENIDO PRINCIPAL */
+.admin-main {
+  flex: 1;
+  padding: 30px 35px;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+.admin-header {
+  margin-bottom: 30px;
+}
+
+.admin-header .nav-icon-img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(53, 207, 53, 0.3));
+  flex-shrink: 0;
+}
+
+.admin-header .titulo {
+  color: #35cf35;
+  font-size: 3.5rem;
+  margin-left: 10px;
+}
+
+.admin-subtitle {
+  color: #888;
+  font-size: 1rem;
+  margin-left: 10px;
+}
+
+/* 🔵 FILTROS */
+.admin-filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 16px 20px;
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 12px;
+  border: 1px solid #0f3460;
+}
+
+.filtros-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filtro-select {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 2px solid #0f3460;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 140px;
+  transition: border-color 0.3s;
+}
+
+.filtro-select:focus {
+  outline: none;
+  border-color: #35cf35;
+}
+
+.btn-limpiar-filtros {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #f44336;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-limpiar-filtros:hover {
+  background: #d32f2f;
+  transform: scale(1.05);
+}
+
+.btn-agregar-admin {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.btn-agregar-admin:hover {
+  background: #388e3c;
+  transform: scale(1.05);
+}
+
+/* 🔵 ESTADÍSTICAS */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 10px;
+  border: 1px solid #0f3460;
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+}
+
+.stat-card div {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* 🔵 TABLA */
+.admin-table-container {
+  background: rgba(15, 52, 96, 0.2);
+  border-radius: 12px;
+  border: 1px solid #0f3460;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table thead {
+  background: #0f3460;
+}
+
+.admin-table th {
+  padding: 14px 18px;
+  text-align: center;
+  color: #aaa;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  text-align: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(15, 52, 96, 0.5);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(53, 207, 53, 0.05);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.td-orden {
+  font-weight: 600;
+  color: #35cf35;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.td-material {
+  text-align: center;
+  font-weight: 500;
+}
+
+.td-nivel {
+  text-align: center;
+}
+
+.td-cantidad {
+  font-weight: 600;
+  color: #ffb74d;
+  text-align: center;
+}
+
+.cantidad-valor {
+  margin-right: 6px;
+}
+
+.polvo-icon-admin-small {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 2px rgba(53, 207, 53, 0.2));
+  vertical-align: middle;
+}
+
+.rareza-badge-admin {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.rareza-badge-admin.raro {
+  color: #64b5f6;
+  border-color: #2196f3;
+}
+
+.rareza-badge-admin.épico {
+  color: #ce93d8;
+  border-color: #9c27b0;
+}
+
+.rareza-badge-admin.legendario {
+  color: #ffb74d;
+  border-color: #ff6f00;
+}
+
+.rareza-badge-admin.mítico {
+  color: #ffcdd2;
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.2);
+}
+
+.td-acciones {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-editar,
+.btn-eliminar {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.btn-editar:hover {
+  background: rgba(53, 207, 53, 0.2);
+  transform: scale(1.15);
+}
+
+.btn-eliminar:hover {
+  background: rgba(244, 67, 54, 0.2);
+  transform: scale(1.15);
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* 🔵 FOOTER DE TABLA */
+.admin-table-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(15, 52, 96, 0.2);
+  color: #666;
+  font-size: 0.85rem;
+  border-top: 1px solid #0f3460;
+}
+
+.footer-hint {
+  color: #444;
+  font-size: 0.75rem;
+}
+
+/* 🔵 MODAL ADMIN */
+.modal-admin {
+  max-width: 480px;
+}
+
+.admin-form .form-group {
+  margin-bottom: 16px;
+}
+
+.admin-form .form-group label {
+  display: block;
+  color: #aaa;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.admin-form .form-group input,
+.admin-form .form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #0f3460;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.admin-form .form-group input:focus,
+.admin-form .form-group select:focus {
+  outline: none;
+  border-color: #35cf35;
+}
+
+.admin-form .form-group input::placeholder {
+  color: #555;
+}
+
+.admin-form .form-group select option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+/* 🔵 BADGE DE MATERIAL EN ADMIN */
+.detail-value.material-normal,
+.detail-value.material-todos,
+.detail-value.material-variantes,
+.detail-value.material-oro,
+.detail-value.material-gomita,
+.detail-value.material-galaxia,
+.detail-value.material-holofoil,
+.detail-value.material-cúbico,
+.detail-value.material-patito,
+.detail-value.material-gema,
+.detail-value.material-hacker {
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid #0f3460;
+  transition: all 0.3s ease;
+}
+
+.detail-value.material-normal {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #ffffff !important;
+}
+
+.detail-value.material-todos {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #35cf35 !important;
+}
+
+.detail-value.material-variantes {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #C9BD00 !important;
+}
+
+.detail-value.material-oro {
+  background: #FFD700 !important;
+  border-color: #FFD700 !important;
+  color: #000000 !important;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.detail-value.material-gomita {
+  background: linear-gradient(90deg, #4CAF50, #FF69B4) !important;
+  border-color: #4CAF50 !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.15);
+}
+
+.detail-value.material-galaxia {
+  background: linear-gradient(90deg, #1a237e, #4a148c) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-holofoil {
+  background: linear-gradient(90deg, #d490f4, #60f76d) !important;
+  border-color: #4a148c !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-cúbico {
+  background: linear-gradient(90deg, #20092b, #481062) !important;
+  border-color: #4a148c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-patito {
+  background: linear-gradient(90deg, #0a6dc4, #bb04bb) !important;
+  border-color: #e80be1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-gema {
+  background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
+  border-color: #d3d3d3 !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+/* 🔵 Hover effect para los badges de material */
+.detail-value.material-normal:hover,
+.detail-value.material-oro:hover,
+.detail-value.material-gomita:hover,
+.detail-value.material-galaxia:hover,
+.detail-value.material-holofoil:hover,
+.detail-value.material-cúbico:hover,
+.detail-value.material-hacker:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.detail-value.material-oro:hover {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+.detail-value.material-gomita:hover {
+  box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+}
+
+.detail-value.material-galaxia:hover {
+  box-shadow: 0 0 30px rgba(26, 35, 126, 0.4);
+}
+
+.detail-value.material-holofoil:hover {
+  box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
+}
+
+.detail-value.material-cúbico:hover {
+  box-shadow: 0 0 30px rgba(212, 144, 244, 0.4);
+}
+
+.detail-value.material-hacker:hover {
+  box-shadow: 0 0 30px rgba(19, 92, 1, 0.626);
+}
+
+/* 🔵 RESPONSIVE */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 220px;
+  }
+  
+  .admin-main {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    flex-direction: column;
+  }
+  
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 2px solid #0f3460;
+  }
+  
+  .sidebar-logo {
+    padding: 16px 20px;
+  }
+  
+  .sidebar-nav ul li {
+    padding: 10px 20px;
+  }
+  
+  .sidebar-footer {
+    padding: 12px 20px;
+  }
+  
+  .admin-main {
+    padding: 16px;
+  }
+  
+  .admin-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .admin-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtros-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .filtro-select {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .btn-agregar-admin {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .admin-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .td-acciones {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .btn-editar,
+  .btn-eliminar {
+    padding: 2px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .admin-table-footer {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-admin {
+    max-width: 95%;
+  }
+}
+
+/* 🔵 Icono de imagen en la barra lateral */
+.sidebar-nav .nav-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(53, 207, 53, 0.3));
+  flex-shrink: 0;
+}
+
+/* 🔵 Ajuste para que la imagen se vea bien en hover */
+.sidebar-nav ul li:hover .nav-icon-img {
+  filter: drop-shadow(0 0 6px rgba(53, 207, 53, 0.5));
+}
+
+/* 🔵 Ajuste para el estado activo */
+.sidebar-nav ul li.active .nav-icon-img {
+  filter: drop-shadow(0 0 8px rgba(53, 207, 53, 0.6));
+}

@@ -1,0 +1,753 @@
+/* 🔵 ESTILOS GLOBALES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1a1a2e;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.dominados-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 15px;
+  overflow-x: hidden;
+}
+
+.dominados-container h1 {
+  text-align: center;
+  color: #35cf35;
+  margin-bottom: 12px;
+  font-size: 4.5rem;
+  text-shadow: 0 0 10px rgba(38, 167, 21, 0.5);
+}
+
+/* 🔵 Filtros */
+.dominados-container .filtros {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.dominados-container .filtros select {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #35cf35;
+  background: #16213e;
+  color: #35cf35;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+/* 🔵 Estilo para el filtro "Por Orden" */
+.dominados-container .filtro-orden {
+  border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
+  min-width: 180px !important;
+}
+
+.dominados-container .filtro-orden:focus {
+  border-color: #9c27b0 !important;
+  color: #9c27b0 !important;
+  box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+}
+
+.dominados-container .filtro-orden option {
+  background: #16213e;
+  color: #9c27b0;
+}
+
+.dominados-container .filtros button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  background: #35cf35;
+  color: #fff;
+  font-size: 1.0rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dominados-container .filtros button:hover {
+  background: #2db82d;
+  transform: scale(1.05);
+}
+
+/* 🔵 INFO DE DOMINADOS */
+.dominados-container .dominados-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 0 10px 25px 10px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  gap: 8px;
+}
+
+.dominados-container .dominados-info-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dominados-container .dominados-icon {
+  font-size: 1.8rem;
+}
+
+.dominados-container .dominados-text {
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.dominados-container .dominados-cantidad {
+  color: #FFD700;
+  font-size: 1.6rem;
+  font-weight: bold;
+  background: rgba(255, 215, 0, 0.15);
+  padding: 2px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.dominados-container .dominados-barra {
+  width: 100%;
+  max-width: 500px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dominados-container .dominados-llenado {
+  height: 100%;
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  border-radius: 5px;
+  transition: width 0.8s ease;
+}
+
+.dominados-container .dominados-porcentaje {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* 🔵 Grid de sprits */
+.dominados-container .sprits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* 🔵 Cards de Sprits */
+.dominados-container .sprit-card {
+  perspective: 1000px;
+  min-height: 315px;
+  border-radius: 12px;
+  border: 3px solid #0f3460;
+  background: #16213e;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.dominados-container .sprit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(255, 215, 0, 0.1);
+}
+
+/* 🔵 Card dominada - Borde dorado */
+.dominados-container .sprit-card.dominado-general {
+  border-color: #FFD700 !important;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.dominados-container .sprit-card.dominado-general:hover {
+  box-shadow: 0 5px 40px rgba(255, 215, 0, 0.4);
+}
+
+.sprit-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+}
+
+/* 🔵 Imagen - Front */
+.sprit-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #16213e;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sprit-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  transition: transform 0.3s ease;
+}
+
+.sprit-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #666;
+  background: #16213e;
+}
+
+/* 🔵 Rareza y check */
+.sprit-rareza-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px 4px 10px;
+  min-height: 28px;
+  background: #16213e;
+  flex-shrink: 0;
+}
+
+/* 🔵 Badge de Nivel de Espíritu */
+.nivel-badge {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  background: #1a4a1a;
+  color: #8bc34a;
+  border: 1px solid #2e7d32;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* 🔵 Icono de dominado */
+.dominados-container .dominado-icon {
+  font-size: 1rem;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+  animation: pulseDominado 2s ease-in-out infinite;
+}
+
+@keyframes pulseDominado {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+}
+
+.rareza-badge {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rareza-badge.común {
+  color: #b0b0b0;
+  border-color: #808080;
+}
+
+.rareza-badge.raro {
+  color: #64b5f6;
+  border-color: #2196f3;
+}
+
+.rareza-badge.épico {
+  color: #ce93d8;
+  border-color: #9c27b0;
+}
+
+.rareza-badge.legendario {
+  color: #ffb74d;
+  border-color: #ff6f00;
+}
+
+.rareza-badge.mítico {
+  color: #ffcdd2;
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.3);
+}
+
+/* 🔵 Nombre del sprit */
+.sprit-nombre {
+  padding: 6px 10px 10px 10px;
+  text-align: center;
+  background: #16213e;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 85px;
+}
+
+.sprit-nombre h4 {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+  display: inline-block;
+  text-align: center;
+  width: auto;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* 🔵 BADGE DE NOMBRE DEL SPRIT (según material) */
+.sprit-card-front .nombre-material-normal,
+.sprit-card-front .nombre-material-oro,
+.sprit-card-front .nombre-material-gomita,
+.sprit-card-front .nombre-material-galaxia {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px !important;
+  font-weight: bold !important;
+  letter-spacing: 0.5px;
+  border: 2px solid #0f3460;
+  transition: all 0.3s ease;
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.5;
+  min-height: 55px;
+  height: auto;
+  overflow: visible;
+}
+
+.sprit-card-front .nombre-material-normal {
+  background: #0f3460 !important;
+  border-color: #0f3460 !important;
+  color: #ffffff !important;
+}
+
+.sprit-card-front .nombre-material-oro {
+  background: #FFD700 !important;
+  border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.sprit-card-front .nombre-material-gomita {
+  background: linear-gradient(90deg, #4CAF50, #FF69B4);
+  border-color: #4CAF50;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+.sprit-card-front .nombre-material-galaxia {
+  background: linear-gradient(90deg, #1a237e, #4a148c);
+  border-color: #4a148c;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.3);
+}
+
+/* 🔵 Estado de carga y error */
+.loading, .error, .no-results {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #f44336;
+}
+
+/* 🔵 Responsive */
+@media (max-width: 768px) {
+  .dominados-container .dominados-info {
+    padding: 12px 15px;
+    margin: 0 5px 20px 5px;
+  }
+  
+  .dominados-container .dominados-text {
+    font-size: 0.85rem;
+  }
+  
+  .dominados-container .dominados-cantidad {
+    font-size: 1.2rem;
+    padding: 2px 12px;
+  }
+  
+  .dominados-container .dominados-icon {
+    font-size: 1.4rem;
+  }
+  
+  .dominados-container .sprits-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  
+  .sprit-card {
+    min-height: 240px;
+  }
+  
+  .sprit-card-inner {
+    min-height: 240px;
+  }
+  
+  .sprit-nombre {
+    min-height: 38px;
+    padding: 4px 8px 8px 8px;
+  }
+
+  .sprit-nombre h4 {
+    font-size: 0.75rem;
+    max-height: 2rem;
+  }
+
+  .rareza-badge {
+    font-size: 7px;
+    padding: 2px 6px;
+  }
+
+  .nivel-badge {
+    font-size: 7px;
+    padding: 2px 6px;
+  }
+
+  .nombre-material-normal,
+  .nombre-material-oro,
+  .nombre-material-gomita,
+  .nombre-material-galaxia {
+    font-size: 0.75rem !important;
+  }
+
+  .sprit-rareza-wrapper {
+    padding: 4px 6px 2px 6px;
+    min-height: 22px;
+    gap: 4px;
+  }
+
+  .dominados-container .dominado-icon {
+    font-size: 0.8rem;
+  }
+
+  .dominados-container .filtro-orden {
+    min-width: 150px !important;
+  }
+}
+
+/* 🔵 Botón para volver al inicio */
+.dominados-container .filtros-botones {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dominados-container .btn-volver {
+  padding: 10px 10px !important;
+  border: 2px solid #0f3460;
+  border-radius: 8px;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
+  font-size: 1.2rem;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dominados-container .btn-volver:hover {
+  border-color: #35cf35;
+  background: rgba(53, 207, 53, 0.1);
+  transform: scale(1.05);
+}
+
+.dominados-container .btn-volver:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .dominados-container .filtros-botones {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dominados-container .btn-volver {
+    padding: 10px 16px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 1rem;
+  }
+}
+
+/* 🔵 CORONA SOBRE LA IMAGEN - IGUAL QUE EN SPRITSLIST */
+.dominados-container .corona-overlay {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  animation: fadeInCorona 0.4s ease;
+}
+
+.dominados-container .corona-dominada {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.9));
+  animation: pulseCorona 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseCorona {
+  0%, 100% {
+    transform: scale(1) rotate(-2deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+}
+
+@keyframes fadeInCorona {
+  from {
+    opacity: 0;
+    transform: scale(0.3) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* 🔵 Ajuste para el wrapper de imagen - Asegurar que sea relative para la corona */
+.dominados-container .sprit-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #16213e;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative; /* 🔵 IMPORTANTE: Para que la corona se posicione correctamente */
+}
+
+/* 🔵 Ajuste responsive de la corona */
+@media (max-width: 768px) {
+  .dominados-container .corona-dominada {
+    font-size: 1.4rem;
+  }
+  
+  .dominados-container .corona-overlay {
+    top: 4px;
+  }
+}
+
+/* 🔵 BOTÓN RESETEAR DOMINADO */
+.dominados-container .btn-reset-dominado {
+  padding: 10px 18px !important;
+  border: none;
+  border-radius: 8px;
+  background: rgba(53, 207, 53, 0.15) !important;
+  color: #35cf35 !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dominados-container .btn-reset-dominado:hover {
+  background: #e74c3c;
+  transform: scale(1.05);
+}
+
+/* 🔵 MODAL DE RESET */
+.dominados-container .modal-reset {
+  max-width: 450px;
+}
+
+.dominados-container .modal-descripcion {
+  color: #bbb;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.dominados-container .modal-descripcion code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #ffb74d;
+  font-size: 0.85rem;
+}
+
+.dominados-container .modal-descripcion strong {
+  color: #fff;
+}
+
+/* 🔵 Formulario de reset */
+.dominados-container .reset-form .form-group {
+  margin-bottom: 15px;
+}
+
+.dominados-container .reset-form .form-group label {
+  display: block;
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.dominados-container .reset-form .form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #0f3460;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.dominados-container .reset-form .form-group input:focus {
+  outline: none;
+  border-color: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+.dominados-container .reset-form .form-hint {
+  background: rgba(15, 52, 96, 0.3);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.dominados-container .reset-form .form-hint p {
+  color: #aaa;
+  font-size: 13px;
+  margin: 5px 0;
+}
+
+.dominados-container .reset-form .form-hint strong {
+  color: #fff;
+}
+
+/* 🔵 Botón de búsqueda en el modal */
+.dominados-container .btn-reset-buscar {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  background: #ff6b6b;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dominados-container .btn-reset-buscar:hover {
+  background: #e74c3c;
+  transform: scale(1.05);
+}
+
+/* 🔵 Modal de confirmación de reset */
+.dominados-container .modal-confirm-reset {
+  max-width: 420px;
+}
+
+.dominados-container .confirm-reset-info {
+  text-align: center;
+}
+
+.dominados-container .confirm-reset-info p {
+  color: #bbb;
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+.dominados-container .confirm-reset-info p strong {
+  color: #fff;
+}
+
+.dominados-container .confirm-reset-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(15, 52, 96, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 10px 0;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.dominados-container .confirm-reset-details span {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.dominados-container .confirm-reset-warning {
+  color: #ff6b6b !important;
+  font-weight: bold;
+  font-size: 1.05rem !important;
+}
+
+.dominados-container .confirm-reset-subtext {
+  color: #888 !important;
+  font-size: 0.85rem !important;
+}
+
+/* 🔵 Botón de confirmar reset */
+.dominados-container .btn-reset-confirmar {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  background: #e74c3c;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dominados-container .btn-reset-confirmar:hover:not(:disabled) {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+.dominados-container .btn-reset-confirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 🔵 Responsive para el nuevo botón */
+@media (max-width: 768px) {
+  .dominados-container .btn-reset-dominado {
+    font-size: 0.85rem;
+    padding: 8px 14px;
+  }
+  
+  .dominados-container .modal-reset,
+  .dominados-container .modal-confirm-reset {
+    max-width: 95%;
+  }
+}

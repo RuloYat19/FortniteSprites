@@ -1,6 +1,5 @@
-from app.database import SessionLocal, engine
-from app.models import Sprit, Material, Nombre
-from app.database import Base
+from app.database import SessionLocal, engine, Base
+from app.models import Sprit, CantidadPolvoEspirituExtraer, Material, NombreSprit, OrdenDefault, OrdenRareza
 
 # Datos de Sprits
 sprits_data = [
@@ -14,6 +13,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -26,6 +26,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -38,6 +39,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500, # Confirmado
         "polvoAlInvocar": 100
     },
@@ -50,6 +52,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -62,6 +65,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -74,6 +78,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -86,6 +91,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550, # Confirmado
         "polvoAlInvocar": 3000
     },
@@ -98,7 +104,8 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
-        "polvoAlExtraer": 600,
+        "nivelEspiritu": 1,
+        "polvoAlExtraer": 600, #Confirmado
         "polvoAlInvocar": 5000
     },
     {
@@ -110,7 +117,8 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
-        "polvoAlExtraer": 600,
+        "nivelEspiritu": 1,
+        "polvoAlExtraer": 600, # Confirmado
         "polvoAlInvocar": 5000
     },
     {
@@ -122,6 +130,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
@@ -134,6 +143,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 100
     },
@@ -146,6 +156,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 3000
     },
@@ -158,6 +169,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 3000
     },
@@ -170,6 +182,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 5000
     },
@@ -182,6 +195,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
@@ -196,6 +210,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -208,6 +223,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -220,6 +236,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -232,6 +249,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -244,6 +262,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -256,6 +275,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -268,6 +288,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -280,6 +301,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -292,6 +314,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -304,6 +327,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -316,6 +340,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -328,6 +353,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -340,6 +366,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -352,6 +379,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -364,6 +392,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -378,6 +407,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -390,6 +420,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -402,6 +433,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -414,6 +446,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -426,6 +459,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -438,6 +472,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -450,6 +485,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -462,6 +498,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -474,6 +511,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -486,6 +524,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -498,6 +537,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -510,6 +550,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -522,6 +563,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -534,6 +576,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -546,6 +589,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -560,6 +604,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -572,6 +617,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -584,6 +630,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -596,6 +643,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -608,6 +656,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -620,6 +669,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -632,6 +682,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -644,6 +695,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -656,6 +708,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -668,6 +721,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -680,6 +734,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 500,
         "polvoAlInvocar": 4000
     },
@@ -692,6 +747,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -704,6 +760,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 550,
         "polvoAlInvocar": 6000
     },
@@ -716,6 +773,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 600,
         "polvoAlInvocar": 10000
     },
@@ -728,6 +786,7 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 15000
     },
@@ -742,37 +801,204 @@ sprits_data = [
         "estaDominado": False,
         "estaEnInventario": False,
         "estaDesbloqueado": False,
+        "nivelEspiritu": 1,
         "polvoAlExtraer": 650,
         "polvoAlInvocar": 7500
     },
 ]
 
-# Datos de Materiales
-materiales_data = [
-    {"numeroOrden": 1, "nombreMaterial": "Normal"},
-    {"numeroOrden": 2, "nombreMaterial": "Oro"},
-    {"numeroOrden": 3, "nombreMaterial": "Gomita"},
-    {"numeroOrden": 4, "nombreMaterial": "Galaxia"},
+# Datos de CantidadPolvoEspiritu
+cantidad_polvo_data = [
+    # Raro
+    {
+        "numeroOrden": 1,
+        "rareza": "Raro", 
+        "nivelEspiritu": 1, 
+        "cantidad": 500
+    },
+    {
+        "numeroOrden": 2,
+        "rareza": "Raro", 
+        "nivelEspiritu": 2, 
+        "cantidad": 625
+    },
+    {
+        "numeroOrden": 3,
+        "rareza": "Raro", 
+        "nivelEspiritu": 3, 
+        "cantidad": 750
+    },
+    {
+        "numeroOrden": 4,
+        "rareza": "Raro", 
+        "nivelEspiritu": 4, 
+        "cantidad": 875
+    },
+    {
+        "numeroOrden": 5,
+        "rareza": "Raro", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1000
+    },
+    # Épico
+    {
+        "numeroOrden": 6,
+        "rareza": "Épico", 
+        "nivelEspiritu": 1, 
+        "cantidad": 550
+    },
+    {
+        "numeroOrden": 7,
+        "rareza": "Épico", 
+        "nivelEspiritu": 2, 
+        "cantidad": 700
+    },
+    {
+        "numeroOrden": 8,
+        "rareza": "Épico", 
+        "nivelEspiritu": 3, 
+        "cantidad": 825
+    },
+    {
+        "numeroOrden": 9,
+        "rareza": "Épico", 
+        "nivelEspiritu": 4, 
+        "cantidad": 950
+    },
+    {
+        "numeroOrden": 10,
+        "rareza": "Épico", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1100
+    },
+    # Legendario
+    {
+        "numeroOrden": 11,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 1, 
+        "cantidad": 600
+    },
+    {
+        "numeroOrden": 12,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 2, 
+        "cantidad": 750
+    },
+    {
+        "numeroOrden": 13,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 3, 
+        "cantidad": 900
+    },
+    {
+        "numeroOrden": 14,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 4, 
+        "cantidad": 1050
+    },
+    {
+        "numeroOrden": 15,
+        "rareza": "Legendario", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1200
+    },
+    # Mítico
+    {
+        "numeroOrden": 16,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 1, 
+        "cantidad": 650
+    },
+    {
+        "numeroOrden": 17,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 2, 
+        "cantidad": 800
+    },
+    {
+        "numeroOrden": 18,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 3, 
+        "cantidad": 975
+    },
+    {
+        "numeroOrden": 19,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 4, 
+        "cantidad": 1150
+    },
+    {
+        "numeroOrden": 20,
+        "rareza": "Mítico", 
+        "nivelEspiritu": 5, 
+        "cantidad": 1300
+    },
 ]
 
-# Datos de Nombres (Sprits)
+materiales_data = [
+    {"numeroOrden": 1, "nombre": "Normal"},
+    {"numeroOrden": 2, "nombre": "Oro"},
+    {"numeroOrden": 3, "nombre": "Gomita"},
+    {"numeroOrden": 4, "nombre": "Galaxia"},
+    {"numeroOrden": 5, "nombre": "Holofoil"},
+]
+
 nombres_data = [
-    {"numeroOrden": 1, "nombreSprite": "Espíritu de Agua"},
-    {"numeroOrden": 2, "nombreSprite": "Espíritu de Tierra"},
-    {"numeroOrden": 3, "nombreSprite": "Espíritu de Fuego"},
-    {"numeroOrden": 4, "nombreSprite": "Espíritu Pato"},
-    {"numeroOrden": 5, "nombreSprite": "Espíritu Fantasmal"},
-    {"numeroOrden": 6, "nombreSprite": "Espíritu Demoníaco"},
-    {"numeroOrden": 7, "nombreSprite": "Espíritu Rey"},
-    {"numeroOrden": 8, "nombreSprite": "Espíritu Dormilón"},
-    {"numeroOrden": 9, "nombreSprite": "Espíritu Punk"},
-    {"numeroOrden": 10, "nombreSprite": "Espíritu del Punto Cero"},
-    {"numeroOrden": 11, "nombreSprite": "Espíritu de Pez"},
-    {"numeroOrden": 12, "nombreSprite": "Espíritu Goleador"},
-    {"numeroOrden": 13, "nombreSprite": "Espíritu de Aura"},
-    {"numeroOrden": 14, "nombreSprite": "Espíritu Jefe"},
-    {"numeroOrden": 15, "nombreSprite": "Espíritu Parca"},
-    {"numeroOrden": 16, "nombreSprite": "Cacahuate Tostado"},
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
+]
+
+
+orden_defaults_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 5, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 6, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 7, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 8, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 9, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 10, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 11, "nombre": "Cacahuate Tostado"},
+    {"numeroOrden": 12, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 13, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 14, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 15, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 16, "nombre": "Espíritu Parca"}
+]
+
+orden_rarezas_data = [
+    {"numeroOrden": 1, "nombre": "Espíritu de Agua"},
+    {"numeroOrden": 2, "nombre": "Espíritu de Tierra"},
+    {"numeroOrden": 3, "nombre": "Espíritu de Fuego"},
+    {"numeroOrden": 4, "nombre": "Espíritu de Pez"},
+    {"numeroOrden": 5, "nombre": "Espíritu Pato"},
+    {"numeroOrden": 6, "nombre": "Espíritu Fantasmal"},
+    {"numeroOrden": 7, "nombre": "Espíritu Demoníaco"},
+    {"numeroOrden": 8, "nombre": "Espíritu Rey"},
+    {"numeroOrden": 9, "nombre": "Espíritu Goleador"},
+    {"numeroOrden": 10, "nombre": "Espíritu de Aura"},
+    {"numeroOrden": 11, "nombre": "Espíritu Dormilón"},
+    {"numeroOrden": 12, "nombre": "Espíritu Punk"},
+    {"numeroOrden": 13, "nombre": "Espíritu Jefe"},
+    {"numeroOrden": 14, "nombre": "Espíritu Parca"},
+    {"numeroOrden": 15, "nombre": "Espíritu del Punto Cero"},
+    {"numeroOrden": 16, "nombre": "Cacahuate Tostado"}
 ]
 
 def seed_database():
@@ -781,30 +1007,71 @@ def seed_database():
     
     db = SessionLocal()
     try:
-        # Verificar si ya hay datos
-        existing = db.query(Sprit).first()
-        if existing:
+        # Verificar si ya hay datos de Spites en la Base de Datos
+        existenSpritesEnDB = db.query(Sprit).first()
+        if existenSpritesEnDB:
             print("La base de datos ya tiene sprits.")
-            
-        # Insertar Sprits
-        for sprit_data in sprits_data:
-            sprit = Sprit(**sprit_data)
-            db.add(sprit)
-        
-        db.commit()
-        print(f"{len(sprits_data)} sprits insertados con éxito :D")
+        else: 
+            # Insertar Sprits
+            for sprit_data in sprits_data:
+                sprit = Sprit(**sprit_data)
+                db.add(sprit)
+            print(f"{len(sprits_data)} sprites insertados con éxito :D")
 
-        # Insertar Materiales
-        for material_data in materiales_data:
-            material = Material(**material_data)
-            db.add(material)
-        print(f"{len(materiales_data)} materiales insertados con éxito :D")
+        # Verificar si ya hay datos de CantidadPolvoEspiritu en la Base de Datos
+        existenCantidadPolvoEspirituEnDB = db.query(CantidadPolvoEspiritu).first()
+        if existenCantidadPolvoEspirituEnDB:
+            print("La base de datos ya tiene Cantidad de Polvo de Espíritu.")
+        else: 
+            # Insertar Cantidades de Polvo
+            for cantidad_data in cantidad_polvo_data:
+                cantidad = CantidadPolvoEspiritu(**cantidad_data)
+                db.add(cantidad)
+            print(f"{len(cantidad_polvo_data)} cantidades de Polvo de Espíritu insertadas con éxito :D")
+
+        # Verificar si ya hay datos de Material en la Base de Datos
+        existenMateriales = db.query(Material).first()
+        if existenMateriales:
+            print("La base de datos ya tiene Materiales.")
+        else: 
+            # Insertar Materiales
+            for material_data in materiales_data:
+                material = Material(**material_data)
+                db.add(material)
+            print(f"{len(materiales_data)} materiales insertadas con éxito :D")
+
+        # Verificar si ya hay datos de Nombres de Sprites en la Base de Datos
+        existenNombresSprites = db.query(NombreSprit).first()
+        if existenNombresSprites:
+            print("La base de datos ya tiene Nombres de Sprites.")
+        else: 
+            # Insertar Nombres de Sprites
+            for nombre_data in nombres_data:
+                nombre = NombreSprit(**nombre_data)
+                db.add(nombre)
+            print(f"{len(nombres_data)} nombres de Sprites insertadas con éxito :D")
+
+        # Verificar si ya hay datos en Orden Default en la Base de Datos
+        existenOrdenDefault = db.query(OrdenDefault).first()
+        if existenOrdenDefault:
+            print("La base de datos ya tiene datos en Orden Default.")
+        else: 
+            # Insertar datos del Orden Default
+            for orden_default_data in orden_defaults_data:
+                orden = OrdenDefault(**orden_default_data)
+                db.add(orden)
+            print(f"{len(orden_defaults_data)} cantidad de datos insertadas en Orden Default con éxito :D")
         
-        # Insertar Nombres
-        for nombre_data in nombres_data:
-            nombre = Nombre(**nombre_data)
-            db.add(nombre)
-        print(f"{len(nombres_data)} nombres de sprits insertados con éxito :D")
+        # Verificar si ya hay datos en Orden Rareza en la Base de Datos
+        existenOrdenRareza = db.query(OrdenRareza).first()
+        if existenOrdenRareza:
+            print("La base de datos ya tiene datos en Orden Rareza.")
+        else: 
+            # Insertar datos del Orden Rareza
+            for orden_rareza_data in orden_rarezas_data:
+                orden = OrdenRareza(**orden_rareza_data)
+                db.add(orden)
+            print(f"{len(orden_rarezas_data)} cantidad de datos insertadas en Orden Rareza con éxito :D")
         
         db.commit()
         print("Seed completado exitosamente")

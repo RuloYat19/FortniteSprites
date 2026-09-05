@@ -72,11 +72,26 @@ docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U
 docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/001_tablas.sql
 
 # 7. Verificar que las tablas se crearon
+# Tabla de Sprites
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'sprits' ORDER BY ORDINAL_POSITION"
 
-docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'materiales' ORDER BY ORDINAL_POSITION"
+# Tabla de Cantidad de Polvo de Espíritu
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'cantidadPolvoEspiritu' ORDER BY ORDINAL_POSITION"
 
-docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'nombres' ORDER BY ORDINAL_POSITION"
+# Tabla de Material
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'material' ORDER BY ORDINAL_POSITION"
+
+# Tabla de Nombres de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'nombresSprites' ORDER BY ORDINAL_POSITION"
+
+# Tabla de Orden Default
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ordenDefault' ORDER BY ORDINAL_POSITION"
+
+# Tabla de Orden Default
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ordenRareza' ORDER BY ORDINAL_POSITION"
+
+# Tabla de Método de Subida de Nivel para los Espíritus
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'metodoSubidaNivel' ORDER BY ORDINAL_POSITION"
 
 # 6. Ejecutar el seed
 docker exec -it backend_fortnite_sprits python -m app.seed
@@ -95,4 +110,108 @@ docker compose stop
 
 # Para iniciar de nuevo después de stop
 docker compose start
+```
+
+## Para eliminar una tabla de la base de datos
+```bash
+# Tabla de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE sprits;"
+
+# Tabla de Cantidad de Polvo de Espíritu
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE cantidadPolvoEspiritu;"
+
+# Tabla de Materiales
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE material;"
+
+# Tabla de Nombres de Sprites
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE nombresSprites;"
+
+# Tabla de Orden Default
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenDefault;"
+
+# Tabla de Orden Rareza
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE ordenRareza;"
+
+# Tabla de Método de Subida de Nivel para los Espíritus
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE metodoSubidaNivel;"
+```
+
+## Para ejecutar el backup completo
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/002_backup_completo.sql
+```
+
+## Para ejecutar el archivo auxiliar SQL para aplicar algún cambio a base de datos
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB < database/003_auxiliar.sql
+```
+
+## Para ver los logs del Backend
+``` bash
+sudo docker compose logs backend --tail 50
+```
+
+## Para reiniciar el Backend
+``` bash
+sudo docker compose restart backend
+```
+
+## Para ver que se está ejecutando en determinado puerto
+``` bash
+sudo lsof -i :1433
+sudo lsof -i :1434
+```
+
+## Detener SQL Server en WSL
+``` bash
+# Detener SQL Server en WSL
+sudo systemctl stop mssql-server
+
+# Verificar que se detuvo
+sudo systemctl status mssql-server
+```
+
+## Para eliminar archivos ":Zone.Identifier"
+``` bash
+find . -name "*:Zone.Identifier" -type f -delete
+```
+
+## Para iniciar sesión en GitHub
+``` bash
+git config --global user.name "Raúl Emanuel Yat Cancinos"
+git config --global user.email "3535811510101@ingenieria.usac.edu.gt"
+```
+
+## Para verificar datos de una tabla
+### Ver los primeros 10
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "
+SELECT TOP 10 
+    id,
+    numeroOrden,
+    temporada,
+    material,
+    rareza,
+    nivelEspiritu,
+    cantidad,
+    created_at
+FROM cantidadPolvoEspirituExtraer
+ORDER BY id;
+"
+```
+
+### Ver todos los registros
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "
+SELECT 
+    id,
+    numeroOrden,
+    temporada,
+    material,
+    rareza,
+    nivelEspiritu,
+    cantidad
+FROM cantidadPolvoEspirituExtraer
+ORDER BY temporada, material, rareza, nivelEspiritu;
+" -W -s ","
 ```
