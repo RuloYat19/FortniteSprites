@@ -19,7 +19,7 @@ function SpritsList() {
     material: '',
     nombre: '',
     orden: 'default',
-    temporada: '',
+    temporada: 'C7T4',
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -918,7 +918,7 @@ function SpritsList() {
       material: '',
       nombre: '',
       orden: 'default',
-      temporada: '',
+      temporada: 'C7T4',
     });
   };
 
@@ -1266,7 +1266,9 @@ function SpritsList() {
                       👑
                     </span>
                   )}
-                  <h4 className={`nombre-material-${sprit.material.toLowerCase()}`}>
+                  <h4 className={`nombre-material-${sprit.material.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')}`}>
                     {sprit.nombre}
                   </h4>
                   <span 
@@ -1290,7 +1292,9 @@ function SpritsList() {
                   )}
                   <div className="detail-item">
                     <span className="detail-label">📦 Material:</span>
-                    <span className={`detail-value material-${sprit.material.toLowerCase()}`}>
+                    <span className={`detail-value material-${sprit.material.toLowerCase()
+                      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                      .replace(/\s+/g, '-')}`}>
                       {sprit.material}
                     </span>
                   </div>
