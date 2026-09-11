@@ -695,6 +695,68 @@ body {
   }
 }
 
+/* 🔵 SPRIT NO DISPONIBLE - Card en escala de grises */
+.sprit-card.no-disponible {
+  filter: grayscale(0.9) brightness(0.7);
+  opacity: 0.85;
+}
+
+.sprit-card.no-disponible:hover {
+  filter: grayscale(0.7) brightness(0.85);
+  opacity: 1;
+}
+
+/* 🔵 Overlay del badge "No Disponible" */
+.no-disponible-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.no-disponible-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ff3333;
+  background: rgba(0, 0, 0, 0.75);
+  border: 2px solid #ff3333;
+  border-radius: 6px;
+  box-shadow: 
+    0 0 12px rgba(255, 51, 51, 0.6),
+    inset 0 0 8px rgba(255, 51, 51, 0.2);
+  text-shadow: 0 0 6px rgba(255, 51, 51, 0.8);
+  white-space: nowrap;
+  animation: pulseNoDisponible 2s ease-in-out infinite;
+}
+
+@keyframes pulseNoDisponible {
+  0%, 100% {
+    box-shadow: 
+      0 0 12px rgba(255, 51, 51, 0.6),
+      inset 0 0 8px rgba(255, 51, 51, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(255, 51, 51, 0.9),
+      inset 0 0 12px rgba(255, 51, 51, 0.4);
+  }
+}
+
+/* 🔵 Responsive para móviles */
+@media (max-width: 768px) {
+  .no-disponible-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    letter-spacing: 0.5px;
+  }
+}
+
 /* 🔵 Nombre del sprit */
 .sprit-card-front .sprit-nombre {
   padding: 6px 10px 10px 10px;

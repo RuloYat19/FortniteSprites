@@ -1223,7 +1223,7 @@ function SpritsList() {
         {spritsOrdenados.map((sprit) => (
           <div 
             key={sprit.id} 
-            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
+            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${!sprit.estaEnElJuego ? 'no-disponible' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
           >
             <div className="sprit-card-inner">
               <div className="sprit-card-front">
@@ -1247,6 +1247,12 @@ function SpritsList() {
                     </div>
                   )}
                   
+                  {!sprit.estaEnElJuego && (
+                    <div className="no-disponible-overlay">
+                      <span className="no-disponible-badge">No Disponible</span>
+                    </div>
+                  )}
+
                   {sprit.estaDominado && (
                     <div className="corona-overlay">
                       <span className="corona-dominada">👑</span>
