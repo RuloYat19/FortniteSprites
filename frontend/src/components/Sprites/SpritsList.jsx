@@ -124,9 +124,11 @@ function SpritsList() {
   // 🔵 Cargar nombres y materiales para los filtros
   const cargarFiltros = async () => {
     try {
+      const temporada = filtros.temporada || 'C7T4';
+      
       const [nombresRes, materialesRes] = await Promise.all([
-        nombresSpritesService.getAll(),
-        materialesService.getAll()
+        nombresSpritesService.getAll({ temporada }),
+        materialesService.getAll({ temporada })
       ]);
 
       const nombresOrdenados = nombresRes.data
@@ -274,48 +276,29 @@ function SpritsList() {
       .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
   };
 
-  const obtenerPolvoAlExtraer = async (rareza, nivelEspiritu) => {
-    if (!rareza || !nivelEspiritu) return 0;
+  const obtenerPolvoAlExtraer = async (material, rareza, nivelEspiritu, temporada) => {
+    if (!material || !rareza || !nivelEspiritu) return 0;
     
-    const clave = `${rareza}-${nivelEspiritu}`;
+    const clave = `${material}-${rareza}-${nivelEspiritu}`;
     
     if (cantidadesPolvo[clave] !== undefined) {
       return cantidadesPolvo[clave];
     }
     
     try {
-      const response = await cantidadPolvoExtraerService.getByCombinacion(rareza, nivelEspiritu);
+      const response = await cantidadPolvoExtraerService.getByCombinacionConFallback(
+        material, 
+        rareza, 
+        nivelEspiritu,
+        temporada || filtros.temporada
+      );
       const cantidad = response.data?.cantidad || 0;
       
-      setCantidadesPolvo(prev => ({
-        ...prev,
-        [clave]: cantidad
-      }));
-      
+      setCantidadesPolvo(prev => ({ ...prev, [clave]: cantidad }));
       return cantidad;
     } catch (error) {
-      console.error(`Error al obtener polvo para ${rareza} - Nivel ${nivelEspiritu}:`, error);
+      console.error(`Error al obtener polvo para ${material} - ${rareza} - Nivel ${nivelEspiritu}:`, error);
       return 0;
-    }
-  };
-
-  const actualizarPolvoAlExtraer = async (spritId, rareza, nivelEspiritu) => {
-    if (!rareza || !nivelEspiritu) return;
-    
-    const polvo = await obtenerPolvoAlExtraer(rareza, nivelEspiritu);
-    
-    setSprits(prevSprits => 
-      prevSprits.map(sprit => 
-        sprit.id === spritId 
-          ? { ...sprit, polvoAlExtraer: polvo }
-          : sprit
-      )
-    );
-    
-    try {
-      await spritsService.update(spritId, { polvoAlExtraer: polvo });
-    } catch (error) {
-      console.error('Error al actualizar polvoAlExtraer en el backend:', error);
     }
   };
 
@@ -379,6 +362,7 @@ function SpritsList() {
   useEffect(() => {
     if (filtros.temporada) {
       cargarSprits();
+      cargarFiltros();
     }
   }, [filtros.temporada]);
 
@@ -394,7 +378,7 @@ function SpritsList() {
   useEffect(() => {
     const cargarPolvoEdicion = async () => {
       if (showEditModal && editSprit.rareza && editSprit.nivelEspiritu) {
-        const polvo = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        const polvo = await obtenerPolvoAlExtraer(editSprit.material, editSprit.rareza, parseInt(editSprit.nivelEspiritu))
         if (polvo > 0) {
           setEditSprit(prev => ({
             ...prev,
@@ -409,16 +393,13 @@ function SpritsList() {
   useEffect(() => {
     const cargarPolvos = async () => {
       if (newSprit.rareza && newSprit.nivelEspiritu && !editando) {
-        // Polvo al Extraer
         const polvoExtraer = await obtenerPolvoAlExtraer(
+          newSprit.material, 
           newSprit.rareza, 
           parseInt(newSprit.nivelEspiritu)
         );
         if (polvoExtraer > 0) {
-          setNewSprit(prev => ({
-            ...prev,
-            polvoAlExtraer: polvoExtraer.toString()
-          }));
+          setNewSprit(prev => ({ ...prev, polvoAlExtraer: polvoExtraer.toString() }));
         }
       }
       
@@ -445,6 +426,7 @@ function SpritsList() {
         // Polvo al Extraer (si tiene rareza y nivel)
         if (editSprit.rareza && editSprit.nivelEspiritu) {
           const polvoExtraer = await obtenerPolvoAlExtraer(
+            editSprit.material,
             editSprit.rareza, 
             parseInt(editSprit.nivelEspiritu)
           );
@@ -531,7 +513,7 @@ function SpritsList() {
       const spritActual = sprits.find(s => s.id === id);
       
       if (spritActual?.estaDominado) {
-        const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+        const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, 1);
 
         setSprits(prevSprits => 
           prevSprits.map(sprit => 
@@ -555,9 +537,9 @@ function SpritsList() {
       
       let nuevoPolvo = spritActual.polvoAlExtraer || 0;
       if (!nuevoEstadoInventario) {
-        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, 1);
       } else if (spritActual.nivelEspiritu) {
-        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, spritActual.nivelEspiritu);
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, spritActual.nivelEspiritu);
       }
       
       setSprits(prevSprits => 
@@ -606,7 +588,7 @@ function SpritsList() {
       const nuevoEstadoDominado = !spritActual.estaDominado;
       const nuevoNivel = nuevoEstadoDominado ? 5 : 1;
       
-      const nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, nuevoNivel);
+      const nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, nuevoNivel);
       
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
@@ -703,14 +685,20 @@ function SpritsList() {
         updated.polvoAlInvocar = '';
       }
       
-      if (name === 'rareza' || name === 'nivelEspiritu') {
+      // 🔵 Calcular polvo al extraer (necesita material + rareza + nivel)
+      if (name === 'material' || name === 'rareza' || name === 'nivelEspiritu') {
+        const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
-        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
-        if (rareza && nivel) {
-          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        const nivel = name === 'nivelEspiritu' 
+          ? parseInt(value) 
+          : parseInt(updated.nivelEspiritu);
+        
+        if (material && rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(material, rareza, nivel);
         }
       }
       
+      // 🔵 Calcular polvo al invocar (necesita material + rareza)
       if (name === 'material' || name === 'rareza') {
         const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
@@ -736,7 +724,7 @@ function SpritsList() {
       
       // Calcular polvo al extraer si es necesario
       if (editSprit.rareza && editSprit.nivelEspiritu) {
-        const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.material, editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
         }
@@ -826,11 +814,15 @@ function SpritsList() {
         updated.polvoAlInvocar = '';
       }
       
-      if (name === 'rareza' || name === 'nivelEspiritu') {
+      if (name === 'material' || name === 'rareza' || name === 'nivelEspiritu') {
+        const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
-        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
-        if (rareza && nivel) {
-          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        const nivel = name === 'nivelEspiritu' 
+          ? parseInt(value) 
+          : parseInt(updated.nivelEspiritu);
+        
+        if (material && rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(material, rareza, nivel);
         }
       }
       
@@ -859,7 +851,7 @@ function SpritsList() {
       
       // Calcular polvo al extraer si es necesario
       if (newSprit.rareza && newSprit.nivelEspiritu) {
-        const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
+        const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.material, newSprit.rareza, parseInt(newSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
         }
@@ -963,7 +955,7 @@ function SpritsList() {
       polvoExtraerRes.data
         .filter(item => item.temporada === temporada)
         .forEach(item => {
-          const clave = `${item.rareza}-${item.nivelEspiritu}`;
+          const clave = `${item.material}-${item.rareza}-${item.nivelEspiritu}`;
           polvoExtraerMap[clave] = item.cantidad;
         });
       setOpcionesPolvoExtraer(polvoExtraerMap);
@@ -997,10 +989,30 @@ function SpritsList() {
     }
   }, [showEditModal, editSprit.temporada]);
 
-  const calcularPolvoExtraer = (rareza, nivel) => {
-    if (!rareza || !nivel) return '';
-    const clave = `${rareza}-${nivel}`;
-    return opcionesPolvoExtraer[clave] || '';
+  const calcularPolvoExtraer = (material, rareza, nivel) => {
+    if (!material || !rareza || !nivel) return '';
+    
+    // 🔵 1° Material específico
+    let clave = `${material}-${rareza}-${nivel}`;
+    if (opcionesPolvoExtraer[clave] !== undefined) {
+      return opcionesPolvoExtraer[clave];
+    }
+    
+    // 🔵 2° Variantes (si no es Normal)
+    if (material !== 'Normal') {
+      clave = `Variantes-${rareza}-${nivel}`;
+      if (opcionesPolvoExtraer[clave] !== undefined) {
+        return opcionesPolvoExtraer[clave];
+      }
+    }
+    
+    // 🔵 3° Todos Los Materiales
+    clave = `Todos Los Materiales-${rareza}-${nivel}`;
+    if (opcionesPolvoExtraer[clave] !== undefined) {
+      return opcionesPolvoExtraer[clave];
+    }
+    
+    return '';
   };
 
   const calcularPolvoInvocar = (material, rareza) => {
@@ -1076,8 +1088,8 @@ function SpritsList() {
           className="filtro-nombres"
         >
           <option value="">Todos los nombres</option>
-          {nombresDisponibles.map((nombre) => (
-            <option key={nombre} value={nombre}>
+          {nombresDisponibles.map((nombre, index) => (
+            <option key={`${nombre}-${index}`} value={nombre}>
               {nombre}
             </option>
           ))}
@@ -1093,8 +1105,8 @@ function SpritsList() {
         
         <select name="material" value={filtros.material} onChange={handleFiltroChange}>
           <option value="">Todos los materiales</option>
-          {materialesDisponibles.map((material) => (
-            <option key={material} value={material}>
+          {materialesDisponibles.map((material, index) => (
+            <option key={`${material}-${index}`} value={material}>
               {material}
             </option>
           ))}
