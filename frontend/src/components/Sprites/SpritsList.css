@@ -293,7 +293,7 @@ body {
 /* 🔵 Cards de Sprits */
 .sprits-container .sprit-card {
   perspective: 1000px;
-  min-height: 315px;
+  min-height: 320px;
   border-radius: 12px;
   border: 3px solid #0f3460;
   background: #16213e;
@@ -478,9 +478,11 @@ body {
 .detail-value.material-gomita,
 .detail-value.material-galaxia,
 .detail-value.material-holofoil,
-.detail-value.material-cúbico,
+.detail-value.material-cubico,
 .detail-value.material-patito,
-.detail-value.material-gema{
+.detail-value.material-gema,
+.detail-value.material-hacker,
+.detail-value.material-hacker-de-botin{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -524,7 +526,7 @@ body {
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
-.detail-value.material-cúbico {
+.detail-value.material-cubico {
   background: linear-gradient(90deg, #20092b, #481062) !important;
   border-color: #4a148c !important;
   color: #ffffff !important;
@@ -542,6 +544,20 @@ body {
   background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
   border-color: #d3d3d3 !important;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-hacker-de-botin {
+  background: #862ED8 !important;
+  border-color: #862ED8 !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -679,6 +695,68 @@ body {
   }
 }
 
+/* 🔵 SPRIT NO DISPONIBLE - Card en escala de grises */
+.sprit-card.no-disponible {
+  filter: grayscale(0.9) brightness(0.7);
+  opacity: 0.85;
+}
+
+.sprit-card.no-disponible:hover {
+  filter: grayscale(0.7) brightness(0.85);
+  opacity: 1;
+}
+
+/* 🔵 Overlay del badge "No Disponible" */
+.no-disponible-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.no-disponible-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ff3333;
+  background: rgba(0, 0, 0, 0.75);
+  border: 2px solid #ff3333;
+  border-radius: 6px;
+  box-shadow: 
+    0 0 12px rgba(255, 51, 51, 0.6),
+    inset 0 0 8px rgba(255, 51, 51, 0.2);
+  text-shadow: 0 0 6px rgba(255, 51, 51, 0.8);
+  white-space: nowrap;
+  animation: pulseNoDisponible 2s ease-in-out infinite;
+}
+
+@keyframes pulseNoDisponible {
+  0%, 100% {
+    box-shadow: 
+      0 0 12px rgba(255, 51, 51, 0.6),
+      inset 0 0 8px rgba(255, 51, 51, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(255, 51, 51, 0.9),
+      inset 0 0 12px rgba(255, 51, 51, 0.4);
+  }
+}
+
+/* 🔵 Responsive para móviles */
+@media (max-width: 768px) {
+  .no-disponible-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    letter-spacing: 0.5px;
+  }
+}
+
 /* 🔵 Nombre del sprit */
 .sprit-card-front .sprit-nombre {
   padding: 6px 10px 10px 10px;
@@ -715,9 +793,11 @@ body {
 .sprit-card-front .nombre-material-gomita,
 .sprit-card-front .nombre-material-galaxia,
 .sprit-card-front .nombre-material-holofoil,
-.sprit-card-front .nombre-material-cúbico,
+.sprit-card-front .nombre-material-cubico,
 .sprit-card-front .nombre-material-patito,
-.sprit-card-front .nombre-material-gema {
+.sprit-card-front .nombre-material-gema,
+.sprit-card-front .nombre-material-hacker,
+.sprit-card-front .nombre-material-hacker-de-botin {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -772,7 +852,7 @@ body {
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
-.sprit-card-front .nombre-material-cúbico {
+.sprit-card-front .nombre-material-cubico {
   background: linear-gradient(90deg, #20092b, #481062) !important;
   border-color: #4a148c !important;
   color: #ffffff !important;
@@ -785,10 +865,25 @@ body {
   color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
+
 .sprit-card-front .nombre-material-gema {
   background: linear-gradient(90deg, #ffffff, #d3d3d3) !important;
   border-color: #d3d3d3 !important;
   color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-hacker {
+  background: linear-gradient(90deg, #07100C, #507441) !important;
+  border-color: #1a1a2e !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-hacker-de-botin {
+  background: #862ED8 !important;
+  border-color: #862ED8 !important;
+  color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
@@ -876,7 +971,7 @@ body {
   }
   
   .sprit-card {
-    min-height: 240px;
+    min-height: 245px;
   }
   
   .sprit-card-inner,

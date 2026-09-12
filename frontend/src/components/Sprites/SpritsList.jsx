@@ -19,7 +19,7 @@ function SpritsList() {
     material: '',
     nombre: '',
     orden: 'default',
-    temporada: '',
+    temporada: 'C7T4',
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -96,7 +96,8 @@ function SpritsList() {
 
       const defaultObj = {};
       defaultRes.data.forEach(item => {
-        defaultObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        defaultObj[clave] = item.numeroOrden;
       });
 
       const rarezaObj = {};
@@ -106,7 +107,8 @@ function SpritsList() {
 
       const materialObj = {};
       materialRes.data.forEach(item => {
-        materialObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        materialObj[clave] = item.numeroOrden;
       });
 
       setOrdenDefault(defaultObj);
@@ -122,17 +124,20 @@ function SpritsList() {
   // 🔵 Cargar nombres y materiales para los filtros
   const cargarFiltros = async () => {
     try {
+      const temporada = filtros.temporada || 'C7T4';
+      
       const [nombresRes, materialesRes] = await Promise.all([
-        nombresSpritesService.getAll(),
-        materialesService.getAll()
+        nombresSpritesService.getAll({ temporada }),
+        materialesService.getAll({ temporada })
       ]);
 
-      // 🔵 ORDENAR POR numeroOrden (si existe) o por ID
       const nombresOrdenados = nombresRes.data
         .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
       
-      const materiales = materialesRes.data.map(item => item.nombre);
+      const materiales = materialesRes.data
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
+        .map(item => item.nombre);
 
       setNombresDisponibles(nombresOrdenados);
       setMaterialesDisponibles(materiales);
@@ -147,48 +152,41 @@ function SpritsList() {
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
 
-    const obtenerOrdenDefault = (sprit) => {
-      const nombreA = ordenDefault[sprit.nombre] || 999;
-      const materialA = ordenMaterial[sprit.material] || 999;
-      return { nombreA, materialA };
+    // 🔵 Función para obtener el orden del material según la temporada del sprit
+    const obtenerOrdenMaterial = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.material}`;
+      return ordenMaterial[clave] ?? 999;
+    };
+
+    // 🔵 Función para obtener el orden del nombre según la temporada del sprit
+    const obtenerOrdenNombre = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.nombre}`;
+      return ordenDefault[clave] ?? 999;
     };
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          const ordenA = ordenMaterial[a.material] || 999;
-          const ordenB = ordenMaterial[b.material] || 999;
+          const ordenA = obtenerOrdenMaterial(a);
+          const ordenB = obtenerOrdenMaterial(b);
           if (ordenA !== ordenB) return ordenA - ordenB;
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           return nombreA - nombreB;
         });
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          const rarezaA = ordenRareza[a.nombre] || 999;
-          const rarezaB = ordenRareza[b.nombre] || 999;
+          const rarezaA = ordenRareza[a.nombre] ?? 999;
+          const rarezaB = ordenRareza[b.nombre] ?? 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
       
-      {/*case 'no-inventario':
-        return [...spritsList].sort((a, b) => {
-          if (a.estaEnInventario !== b.estaEnInventario) {
-            return a.estaEnInventario ? 1 : -1;
-          }
-          
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
-        });*/}
-
       case 'no-dominado':
         return [...spritsList].sort((a, b) => {
           if (a.estaDominado !== b.estaDominado) {
@@ -201,13 +199,13 @@ function SpritsList() {
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
           
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
 
       case 'invocar-mayor':
@@ -220,16 +218,17 @@ function SpritsList() {
             const polvoA = a.polvoAlInvocar || 0;
             const polvoB = b.polvoAlInvocar || 0;
             if (polvoA !== polvoB) {
-              return polvoB - polvoA; // Mayor a menor
+              return polvoB - polvoA;
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
 
       case 'invocar-menor':
@@ -242,26 +241,30 @@ function SpritsList() {
             const polvoA = a.polvoAlInvocar || 0;
             const polvoB = b.polvoAlInvocar || 0;
             if (polvoA !== polvoB) {
-              return polvoA - polvoB; // Menor a mayor
+              return polvoA - polvoB;
             }
           }
           
-          const ordenA = obtenerOrdenDefault(a);
-          const ordenB = obtenerOrdenDefault(b);
-          if (ordenA.nombreA !== ordenB.nombreA) {
-            return ordenA.nombreA - ordenB.nombreA;
-          }
-          return ordenA.materialA - ordenB.materialA;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+          
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
         
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          // 🔵 PRIMERO: Ordenar por nombre según la temporada del sprit
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           if (nombreA !== nombreB) return nombreA - nombreB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          
+          // 🔵 SEGUNDO: Ordenar por material según la temporada del sprit
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
     }
@@ -273,48 +276,29 @@ function SpritsList() {
       .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
   };
 
-  const obtenerPolvoAlExtraer = async (rareza, nivelEspiritu) => {
-    if (!rareza || !nivelEspiritu) return 0;
+  const obtenerPolvoAlExtraer = async (material, rareza, nivelEspiritu, temporada) => {
+    if (!material || !rareza || !nivelEspiritu) return 0;
     
-    const clave = `${rareza}-${nivelEspiritu}`;
+    const clave = `${material}-${rareza}-${nivelEspiritu}`;
     
     if (cantidadesPolvo[clave] !== undefined) {
       return cantidadesPolvo[clave];
     }
     
     try {
-      const response = await cantidadPolvoExtraerService.getByCombinacion(rareza, nivelEspiritu);
+      const response = await cantidadPolvoExtraerService.getByCombinacionConFallback(
+        material, 
+        rareza, 
+        nivelEspiritu,
+        temporada || filtros.temporada
+      );
       const cantidad = response.data?.cantidad || 0;
       
-      setCantidadesPolvo(prev => ({
-        ...prev,
-        [clave]: cantidad
-      }));
-      
+      setCantidadesPolvo(prev => ({ ...prev, [clave]: cantidad }));
       return cantidad;
     } catch (error) {
-      console.error(`Error al obtener polvo para ${rareza} - Nivel ${nivelEspiritu}:`, error);
+      console.error(`Error al obtener polvo para ${material} - ${rareza} - Nivel ${nivelEspiritu}:`, error);
       return 0;
-    }
-  };
-
-  const actualizarPolvoAlExtraer = async (spritId, rareza, nivelEspiritu) => {
-    if (!rareza || !nivelEspiritu) return;
-    
-    const polvo = await obtenerPolvoAlExtraer(rareza, nivelEspiritu);
-    
-    setSprits(prevSprits => 
-      prevSprits.map(sprit => 
-        sprit.id === spritId 
-          ? { ...sprit, polvoAlExtraer: polvo }
-          : sprit
-      )
-    );
-    
-    try {
-      await spritsService.update(spritId, { polvoAlExtraer: polvo });
-    } catch (error) {
-      console.error('Error al actualizar polvoAlExtraer en el backend:', error);
     }
   };
 
@@ -374,6 +358,14 @@ function SpritsList() {
     return { completados, total, porcentaje };
   };
 
+  // 🔵 EFECTO - Recargar filtros y órdenes al cambiar temporada
+  useEffect(() => {
+    if (filtros.temporada) {
+      cargarSprits();
+      cargarFiltros();
+    }
+  }, [filtros.temporada]);
+
   // 🔵 EFECTO PRINCIPAL - Cargar sprits, órdenes, filtros y métodos
   useEffect(() => {
     cargarSprits();
@@ -386,7 +378,7 @@ function SpritsList() {
   useEffect(() => {
     const cargarPolvoEdicion = async () => {
       if (showEditModal && editSprit.rareza && editSprit.nivelEspiritu) {
-        const polvo = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        const polvo = await obtenerPolvoAlExtraer(editSprit.material, editSprit.rareza, parseInt(editSprit.nivelEspiritu))
         if (polvo > 0) {
           setEditSprit(prev => ({
             ...prev,
@@ -401,16 +393,13 @@ function SpritsList() {
   useEffect(() => {
     const cargarPolvos = async () => {
       if (newSprit.rareza && newSprit.nivelEspiritu && !editando) {
-        // Polvo al Extraer
         const polvoExtraer = await obtenerPolvoAlExtraer(
+          newSprit.material, 
           newSprit.rareza, 
           parseInt(newSprit.nivelEspiritu)
         );
         if (polvoExtraer > 0) {
-          setNewSprit(prev => ({
-            ...prev,
-            polvoAlExtraer: polvoExtraer.toString()
-          }));
+          setNewSprit(prev => ({ ...prev, polvoAlExtraer: polvoExtraer.toString() }));
         }
       }
       
@@ -437,6 +426,7 @@ function SpritsList() {
         // Polvo al Extraer (si tiene rareza y nivel)
         if (editSprit.rareza && editSprit.nivelEspiritu) {
           const polvoExtraer = await obtenerPolvoAlExtraer(
+            editSprit.material,
             editSprit.rareza, 
             parseInt(editSprit.nivelEspiritu)
           );
@@ -523,7 +513,7 @@ function SpritsList() {
       const spritActual = sprits.find(s => s.id === id);
       
       if (spritActual?.estaDominado) {
-        const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+        const polvoNivel1 = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, 1);
 
         setSprits(prevSprits => 
           prevSprits.map(sprit => 
@@ -547,9 +537,9 @@ function SpritsList() {
       
       let nuevoPolvo = spritActual.polvoAlExtraer || 0;
       if (!nuevoEstadoInventario) {
-        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, 1);
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, 1);
       } else if (spritActual.nivelEspiritu) {
-        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, spritActual.nivelEspiritu);
+        nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, spritActual.nivelEspiritu);
       }
       
       setSprits(prevSprits => 
@@ -598,7 +588,7 @@ function SpritsList() {
       const nuevoEstadoDominado = !spritActual.estaDominado;
       const nuevoNivel = nuevoEstadoDominado ? 5 : 1;
       
-      const nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.rareza, nuevoNivel);
+      const nuevoPolvo = await obtenerPolvoAlExtraer(spritActual.material, spritActual.rareza, nuevoNivel);
       
       setSprits(prevSprits => 
         prevSprits.map(sprit => 
@@ -695,14 +685,20 @@ function SpritsList() {
         updated.polvoAlInvocar = '';
       }
       
-      if (name === 'rareza' || name === 'nivelEspiritu') {
+      // 🔵 Calcular polvo al extraer (necesita material + rareza + nivel)
+      if (name === 'material' || name === 'rareza' || name === 'nivelEspiritu') {
+        const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
-        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
-        if (rareza && nivel) {
-          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        const nivel = name === 'nivelEspiritu' 
+          ? parseInt(value) 
+          : parseInt(updated.nivelEspiritu);
+        
+        if (material && rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(material, rareza, nivel);
         }
       }
       
+      // 🔵 Calcular polvo al invocar (necesita material + rareza)
       if (name === 'material' || name === 'rareza') {
         const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
@@ -728,7 +724,7 @@ function SpritsList() {
       
       // Calcular polvo al extraer si es necesario
       if (editSprit.rareza && editSprit.nivelEspiritu) {
-        const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.rareza, parseInt(editSprit.nivelEspiritu));
+        const polvoCalculado = await obtenerPolvoAlExtraer(editSprit.material, editSprit.rareza, parseInt(editSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
         }
@@ -818,11 +814,15 @@ function SpritsList() {
         updated.polvoAlInvocar = '';
       }
       
-      if (name === 'rareza' || name === 'nivelEspiritu') {
+      if (name === 'material' || name === 'rareza' || name === 'nivelEspiritu') {
+        const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
-        const nivel = name === 'nivelEspiritu' ? parseInt(value) : parseInt(updated.nivelEspiritu);
-        if (rareza && nivel) {
-          updated.polvoAlExtraer = calcularPolvoExtraer(rareza, nivel);
+        const nivel = name === 'nivelEspiritu' 
+          ? parseInt(value) 
+          : parseInt(updated.nivelEspiritu);
+        
+        if (material && rareza && nivel) {
+          updated.polvoAlExtraer = calcularPolvoExtraer(material, rareza, nivel);
         }
       }
       
@@ -851,13 +851,12 @@ function SpritsList() {
       
       // Calcular polvo al extraer si es necesario
       if (newSprit.rareza && newSprit.nivelEspiritu) {
-        const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.rareza, parseInt(newSprit.nivelEspiritu));
+        const polvoCalculado = await obtenerPolvoAlExtraer(newSprit.material, newSprit.rareza, parseInt(newSprit.nivelEspiritu));
         if (polvoCalculado > 0) {
           polvoAlExtraer = polvoCalculado;
         }
       }
       
-      // 🔵 NUEVO: Calcular polvo al invocar si es necesario
       if (newSprit.material && newSprit.rareza) {
         const polvoCalculado = await obtenerPolvoAlInvocar(newSprit.material, newSprit.rareza);
         if (polvoCalculado > 0) {
@@ -874,14 +873,14 @@ function SpritsList() {
         nombreArchivoImagen: newSprit.nombreArchivoImagen || null,
         nivelEspiritu: nivel,
         polvoAlExtraer: polvoAlExtraer,
-        polvoAlInvocar: polvoAlInvocar,  // 🔵 Incluir polvo al invocar
+        polvoAlInvocar: polvoAlInvocar,
         yaFueDominado: false,
         estaDominado: false,
         estaEnInventario: false,
         estaDesbloqueado: false,
-        metodoSubidaNivel: editSprit.metodoSubidaNivel || null,
-        temporada: editSprit.temporada || null,
-        estaEnElJuego: editSprit.estaEnElJuego !== undefined ? editSprit.estaEnElJuego : true
+        metodoSubidaNivel: newSprit.metodoSubidaNivel || null,
+        temporada: newSprit.temporada || null,
+        estaEnElJuego: newSprit.estaEnElJuego !== undefined ? newSprit.estaEnElJuego : true
       };
 
       await spritsService.create(data);
@@ -896,11 +895,13 @@ function SpritsList() {
     }
   };
 
-  const handleFiltroChange = (e) => {
-    setFiltros({
-      ...filtros,
-      [e.target.name]: e.target.value
-    });
+  const handleFiltroChange = async (e) => {
+    const { name, value } = e.target;
+    
+    setFiltros(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const limpiarFiltros = () => {
@@ -909,7 +910,7 @@ function SpritsList() {
       material: '',
       nombre: '',
       orden: 'default',
-      temporada: '',
+      temporada: 'C7T4',
     });
   };
 
@@ -954,7 +955,7 @@ function SpritsList() {
       polvoExtraerRes.data
         .filter(item => item.temporada === temporada)
         .forEach(item => {
-          const clave = `${item.rareza}-${item.nivelEspiritu}`;
+          const clave = `${item.material}-${item.rareza}-${item.nivelEspiritu}`;
           polvoExtraerMap[clave] = item.cantidad;
         });
       setOpcionesPolvoExtraer(polvoExtraerMap);
@@ -988,10 +989,30 @@ function SpritsList() {
     }
   }, [showEditModal, editSprit.temporada]);
 
-  const calcularPolvoExtraer = (rareza, nivel) => {
-    if (!rareza || !nivel) return '';
-    const clave = `${rareza}-${nivel}`;
-    return opcionesPolvoExtraer[clave] || '';
+  const calcularPolvoExtraer = (material, rareza, nivel) => {
+    if (!material || !rareza || !nivel) return '';
+    
+    // 🔵 1° Material específico
+    let clave = `${material}-${rareza}-${nivel}`;
+    if (opcionesPolvoExtraer[clave] !== undefined) {
+      return opcionesPolvoExtraer[clave];
+    }
+    
+    // 🔵 2° Variantes (si no es Normal)
+    if (material !== 'Normal') {
+      clave = `Variantes-${rareza}-${nivel}`;
+      if (opcionesPolvoExtraer[clave] !== undefined) {
+        return opcionesPolvoExtraer[clave];
+      }
+    }
+    
+    // 🔵 3° Todos Los Materiales
+    clave = `Todos Los Materiales-${rareza}-${nivel}`;
+    if (opcionesPolvoExtraer[clave] !== undefined) {
+      return opcionesPolvoExtraer[clave];
+    }
+    
+    return '';
   };
 
   const calcularPolvoInvocar = (material, rareza) => {
@@ -1067,8 +1088,8 @@ function SpritsList() {
           className="filtro-nombres"
         >
           <option value="">Todos los nombres</option>
-          {nombresDisponibles.map((nombre) => (
-            <option key={nombre} value={nombre}>
+          {nombresDisponibles.map((nombre, index) => (
+            <option key={`${nombre}-${index}`} value={nombre}>
               {nombre}
             </option>
           ))}
@@ -1084,8 +1105,8 @@ function SpritsList() {
         
         <select name="material" value={filtros.material} onChange={handleFiltroChange}>
           <option value="">Todos los materiales</option>
-          {materialesDisponibles.map((material) => (
-            <option key={material} value={material}>
+          {materialesDisponibles.map((material, index) => (
+            <option key={`${material}-${index}`} value={material}>
               {material}
             </option>
           ))}
@@ -1202,7 +1223,7 @@ function SpritsList() {
         {spritsOrdenados.map((sprit) => (
           <div 
             key={sprit.id} 
-            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
+            className={`sprit-card ${sprit.estaEnInventario ? 'inventario' : ''} ${sprit.estaDominado ? 'dominado' : ''} ${!sprit.estaEnElJuego ? 'no-disponible' : ''} ${flippedCards[sprit.id] ? 'flipped' : ''}`}
           >
             <div className="sprit-card-inner">
               <div className="sprit-card-front">
@@ -1226,6 +1247,12 @@ function SpritsList() {
                     </div>
                   )}
                   
+                  {!sprit.estaEnElJuego && (
+                    <div className="no-disponible-overlay">
+                      <span className="no-disponible-badge">No Disponible</span>
+                    </div>
+                  )}
+
                   {sprit.estaDominado && (
                     <div className="corona-overlay">
                       <span className="corona-dominada">👑</span>
@@ -1257,7 +1284,9 @@ function SpritsList() {
                       👑
                     </span>
                   )}
-                  <h4 className={`nombre-material-${sprit.material.toLowerCase()}`}>
+                  <h4 className={`nombre-material-${sprit.material.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')}`}>
                     {sprit.nombre}
                   </h4>
                   <span 
@@ -1281,7 +1310,9 @@ function SpritsList() {
                   )}
                   <div className="detail-item">
                     <span className="detail-label">📦 Material:</span>
-                    <span className={`detail-value material-${sprit.material.toLowerCase()}`}>
+                    <span className={`detail-value material-${sprit.material.toLowerCase()
+                      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                      .replace(/\s+/g, '-')}`}>
                       {sprit.material}
                     </span>
                   </div>

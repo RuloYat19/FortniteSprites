@@ -74,7 +74,7 @@ def get_cantidad_by_id(
 # ============================================
 @router.get("/buscar/", response_model=Optional[schemas.CantidadPolvoExtraerResponse])
 def get_cantidad_by_combinacion(
-    material: str = Query(..., description="Material del sprit"),  # 🔵 NUEVO
+    material: str = Query(..., description="Material del sprit"),
     rareza: str = Query(..., description="Rareza del sprit"),
     nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
     temporada: Optional[str] = Query(None, description="Temporada (ej: C7T3)")
@@ -84,7 +84,7 @@ def get_cantidad_by_combinacion(
     de material, rareza y nivel de espíritu.
     """
     query = db.query(models.CantidadPolvoEspirituExtraer).filter(
-        models.CantidadPolvoEspirituExtraer.material == material,  # 🔵 NUEVO
+        models.CantidadPolvoEspirituExtraer.material == material,
         models.CantidadPolvoEspirituExtraer.rareza == rareza,
         models.CantidadPolvoEspirituExtraer.nivelEspiritu == nivel_espiritu
     )
@@ -464,3 +464,44 @@ def delete_cantidades_by_orden(
     db.commit()
     
     return None
+
+@router.get("/buscar-con-fallback/", response_model=Optional[schemas.CantidadPolvoExtraerResponse])
+def get_cantidad_con_fallback(
+    db: Session = Depends(get_db),
+    material: str = Query(..., description="Material del sprit"),
+    rareza: str = Query(..., description="Rareza del sprit"),
+    nivel_espiritu: int = Query(..., description="Nivel del espíritu (1-5)"),
+    temporada: Optional[str] = Query(None, description="Temporada (ej: C7T3)")
+):
+    """
+    Busca el polvo al extraer con fallback en cascada:
+    1. Material específico
+    2. 'Variantes' (si el material no es 'Normal')
+    3. 'Todos Los Materiales'
+    """
+    # 🔵 Helper para buscar
+    def buscar(material_buscar):
+        q = db.query(models.CantidadPolvoEspirituExtraer).filter(
+            models.CantidadPolvoEspirituExtraer.material == material_buscar,
+            models.CantidadPolvoEspirituExtraer.rareza == rareza,
+            models.CantidadPolvoEspirituExtraer.nivelEspiritu == nivel_espiritu
+        )
+        if temporada:
+            q = q.filter(models.CantidadPolvoEspirituExtraer.temporada == temporada)
+        return q.first()
+    
+    # 1° Material específico
+    cantidad = buscar(material)
+    
+    # 2° Variantes (si no es Normal)
+    if not cantidad and material != 'Normal':
+        cantidad = buscar('Variantes')
+    
+    # 3° Todos Los Materiales
+    if not cantidad:
+        cantidad = buscar('Todos Los Materiales')
+    
+    if not cantidad:
+        return None  # 🔵 Devolver None en vez de 404
+    
+    return cantidad
