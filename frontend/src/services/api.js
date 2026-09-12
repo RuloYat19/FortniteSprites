@@ -24,17 +24,24 @@ export const spritsService = {
 export const cantidadPolvoExtraerService = {
   getAll: () => axios.get(`${API_URL}/cantidad-polvo-extraer`),
   getById: (id) => axios.get(`${API_URL}/cantidad-polvo-extraer/${id}`),
-  getByCombinacion: (rareza, nivelEspiritu) => 
+  getByCombinacion: (material, rareza, nivelEspiritu) =>
     axios.get(`${API_URL}/cantidad-polvo-extraer/buscar/`, { 
-      params: { rareza, nivel_espiritu: nivelEspiritu } 
+      params: { material, rareza, nivel_espiritu: nivelEspiritu }
     }),
   create: (data) => axios.post(`${API_URL}/cantidad-polvo-extraer`, data),
   update: (id, data) => axios.put(`${API_URL}/cantidad-polvo-extraer/${id}`, data),
   delete: (id) => axios.delete(`${API_URL}/cantidad-polvo-extraer/${id}`),
+  getByCombinacionConFallback: (material, rareza, nivelEspiritu, temporada) =>
+  axios.get(`${API_URL}/cantidad-polvo-extraer/buscar-con-fallback/`, { 
+    params: { material, rareza, nivel_espiritu: nivelEspiritu, ...(temporada && { temporada })} 
+  }),
 };
 
 export const cantidadPolvoInvocarService = {
-  getAll: () => axios.get(`${API_URL}/cantidad-polvo-invocar`),
+  getAll: (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return axios.get(`${API_URL}/cantidad-polvo-invocar${queryString ? `?${queryString}` : ''}`);
+  },
   getById: (id) => axios.get(`${API_URL}/cantidad-polvo-invocar/${id}`),
   getByCombinacion: (material, rareza) => 
     axios.get(`${API_URL}/cantidad-polvo-invocar/buscar/`, { 
@@ -48,7 +55,10 @@ export const cantidadPolvoInvocarService = {
 };
 
 export const materialesService = {
-  getAll: () => axios.get(`${API_URL}/materiales`),
+  getAll: (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return axios.get(`${API_URL}/materiales${queryString ? `?${queryString}` : ''}`);
+  },
   getById: (id) => axios.get(`${API_URL}/materiales/${id}`),
   getByNombre: (nombre) => axios.get(`${API_URL}/materiales/nombre/${nombre}`),
   create: (data) => axios.post(`${API_URL}/materiales`, data),
@@ -57,7 +67,10 @@ export const materialesService = {
 };
 
 export const nombresSpritesService = {
-  getAll: () => axios.get(`${API_URL}/nombres-sprites`),
+  getAll: (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return axios.get(`${API_URL}/nombres-sprites${queryString ? `?${queryString}` : ''}`);
+  },
   getById: (id) => axios.get(`${API_URL}/nombres-sprites/${id}`),
   getByNombre: (nombre) => axios.get(`${API_URL}/nombres-sprites/nombre/${nombre}`),
   existe: (nombre) => axios.get(`${API_URL}/nombres-sprites/existe/${nombre}`),

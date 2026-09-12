@@ -11,7 +11,7 @@ function MaterialesAdmin() {
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
     nombre: '',
-    temporada: '',
+    temporada: 'C7T4',
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -76,7 +76,7 @@ function MaterialesAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       nombre: '',
-      temporada: '',
+      temporada: 'C7T4',
     });
   };
 
@@ -234,6 +234,8 @@ function MaterialesAdmin() {
         return 'material-patito';
       case 'gema':
         return 'material-gema';
+      case 'hacker':
+        return 'material-hacker';
       default:
         return 'material-normal';
     }

@@ -1,5 +1,3 @@
-// frontend/src/components/Administrador/Administrador.jsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PolvoEspirituAdmin from './PolvoEspirituAdmin';
@@ -8,7 +6,8 @@ import MaterialesAdmin from './MaterialesAdmin';
 import NombresSpritesAdmin from './NombresSpritesAdmin';
 import OrdenesAdmin from './OrdenesAdmin';
 import BackupAdmin from './BackupAdmin';
-import MetodosSubidaNivelAdmin from './MetodosSubidaNivelAdmin'; // 🔵 NUEVO
+import MetodosSubidaNivelAdmin from './MetodosSubidaNivelAdmin';
+import NoDisponiblesAdmin from './NoDisponiblesAdmin';
 import './Administrador.css';
 
 function Administrador() {
@@ -30,6 +29,8 @@ function Administrador() {
         return <OrdenesAdmin />;
       case 'metodos-subida':
         return <MetodosSubidaNivelAdmin />;
+      case 'no-disponibles':
+        return <NoDisponiblesAdmin />;
       case 'backup':
         return <BackupAdmin />;
       default:
@@ -102,13 +103,22 @@ function Administrador() {
                 <span>Órdenes</span>
               </li>
 
-              {/* 🔵 Métodos de Subida de Nivel - NUEVO */}
+              {/* 🔵 Métodos de Subida de Nivel */}
               <li 
                 className={seccionActiva === 'metodos-subida' ? 'active' : ''}
                 onClick={() => setSeccionActiva('metodos-subida')}
               >
                 <span className="nav-icon">📈</span>
                 <span>Métodos de Subida</span>
+              </li>
+
+              {/* 🔵 No Disponibles */}
+              <li 
+                className={seccionActiva === 'no-disponibles' ? 'active' : ''}
+                onClick={() => setSeccionActiva('no-disponibles')}
+              >
+                <span className="nav-icon">🚫</span>
+                <span>No Disponibles</span>
               </li>
 
               {/* 🔵 Backup */}
