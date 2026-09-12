@@ -115,13 +115,14 @@ def create_material(
     """
     # Verificar si ya existe un material con el mismo nombre
     existing = db.query(models.Material).filter(
-        models.Material.nombre == material.nombre
+        models.Material.nombre == material.nombre,
+        models.Material.temporada == material.temporada
     ).first()
     
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ya existe un material con el nombre '{material.nombre}'"
+            detail=f"Ya existe un material con el nombre '{material.nombre}' y con la temporada '{material.temporada}'"
         )
     
     # 🔵 Verificar combinación (numeroOrden, temporada)

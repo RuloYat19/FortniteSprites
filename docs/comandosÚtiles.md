@@ -181,3 +181,37 @@ find . -name "*:Zone.Identifier" -type f -delete
 git config --global user.name "Raúl Emanuel Yat Cancinos"
 git config --global user.email "3535811510101@ingenieria.usac.edu.gt"
 ```
+
+## Para verificar datos de una tabla
+### Ver los primeros 10
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "
+SELECT TOP 10 
+    id,
+    numeroOrden,
+    temporada,
+    material,
+    rareza,
+    nivelEspiritu,
+    cantidad,
+    created_at
+FROM cantidadPolvoEspirituExtraer
+ORDER BY id;
+"
+```
+
+### Ver todos los registros
+``` bash
+docker exec -i db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "
+SELECT 
+    id,
+    numeroOrden,
+    temporada,
+    material,
+    rareza,
+    nivelEspiritu,
+    cantidad
+FROM cantidadPolvoEspirituExtraer
+ORDER BY temporada, material, rareza, nivelEspiritu;
+" -W -s ","
+```
