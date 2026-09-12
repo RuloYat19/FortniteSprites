@@ -19,7 +19,7 @@ function CalculadoraPolvoEspiritu() {
     material: '',
     nombre: '',
     orden: 'default',
-    temporada: ''  // 🔵 NUEVO
+    temporada: 'C7T4'
   });
   
   // 🔵 Estado para los sprits seleccionados
@@ -48,7 +48,8 @@ function CalculadoraPolvoEspiritu() {
 
       const defaultObj = {};
       defaultRes.data.forEach(item => {
-        defaultObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        defaultObj[clave] = item.numeroOrden;
       });
 
       const rarezaObj = {};
@@ -58,7 +59,8 @@ function CalculadoraPolvoEspiritu() {
 
       const materialObj = {};
       materialRes.data.forEach(item => {
-        materialObj[item.nombre] = item.numeroOrden;
+        const clave = item.temporada ? `${item.temporada}-${item.nombre}` : item.nombre;
+        materialObj[clave] = item.numeroOrden;
       });
 
       setOrdenDefault(defaultObj);
@@ -74,16 +76,20 @@ function CalculadoraPolvoEspiritu() {
   // 🔵 Cargar nombres y materiales para los filtros
   const cargarFiltros = async () => {
     try {
+      const temporada = filtros.temporada || 'C7T4';
+
       const [nombresRes, materialesRes] = await Promise.all([
-        nombresSpritesService.getAll(),
-        materialesService.getAll()
+        nombresSpritesService.getAll({ temporada }),
+        materialesService.getAll({ temporada })
       ]);
 
       const nombresOrdenados = nombresRes.data
         .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
         .map(item => item.nombre);
       
-      const materiales = materialesRes.data.map(item => item.nombre);
+      const materiales = materialesRes.data
+        .sort((a, b) => (a.numeroOrden || a.id) - (b.numeroOrden || b.id))
+        .map(item => item.nombre);
 
       setNombresDisponibles(nombresOrdenados);
       setMaterialesDisponibles(materiales);
@@ -98,30 +104,38 @@ function CalculadoraPolvoEspiritu() {
   const ordenarSprits = (spritsList) => {
     const orden = filtros.orden || 'default';
 
-    const obtenerOrdenDefault = (sprit) => {
-      const nombreA = ordenDefault[sprit.nombre] || 999;
-      const materialA = ordenMaterial[sprit.material] || 999;
-      return { nombreA, materialA };
+    // 🔵 Función para obtener el orden del nombre según la temporada del sprit
+    const obtenerOrdenNombre = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.nombre}`;
+      return ordenDefault[clave] ?? 999;
+    };
+
+    // 🔵 Función para obtener el orden del material según la temporada del sprit
+    const obtenerOrdenMaterial = (sprit) => {
+      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const clave = `${temporadaSprit}-${sprit.material}`;
+      return ordenMaterial[clave] ?? 999;
     };
     
     switch(orden) {
       case 'material':
         return [...spritsList].sort((a, b) => {
-          const ordenA = ordenMaterial[a.material] || 999;
-          const ordenB = ordenMaterial[b.material] || 999;
+          const ordenA = obtenerOrdenMaterial(a);
+          const ordenB = obtenerOrdenMaterial(b);
           if (ordenA !== ordenB) return ordenA - ordenB;
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           return nombreA - nombreB;
         });
       
       case 'rareza':
         return [...spritsList].sort((a, b) => {
-          const rarezaA = ordenRareza[a.nombre] || 999;
-          const rarezaB = ordenRareza[b.nombre] || 999;
+          const rarezaA = ordenRareza[a.nombre] ?? 999;
+          const rarezaB = ordenRareza[b.nombre] ?? 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
 
@@ -134,28 +148,35 @@ function CalculadoraPolvoEspiritu() {
             return seleccionadoA ? -1 : 1;
           }
           
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           if (nombreA !== nombreB) {
             return nombreA - nombreB;
           }
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
 
       case 'default':
       default:
         return [...spritsList].sort((a, b) => {
-          const nombreA = ordenDefault[a.nombre] || 999;
-          const nombreB = ordenDefault[b.nombre] || 999;
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
           if (nombreA !== nombreB) return nombreA - nombreB;
-          const materialA = ordenMaterial[a.material] || 999;
-          const materialB = ordenMaterial[b.material] || 999;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
         });
     }
   };
+
+  useEffect(() => {
+    if (filtros.temporada) {
+      cargarSprits();
+      cargarFiltros();
+    }
+  }, [filtros.temporada]);
 
   useEffect(() => {
     cargarSprits();
@@ -215,7 +236,7 @@ function CalculadoraPolvoEspiritu() {
       material: '',
       nombre: '',
       orden: 'default',
-      temporada: ''  // 🔵 NUEVO
+      temporada: 'C7T4'
     });
   };
 
@@ -291,8 +312,8 @@ function CalculadoraPolvoEspiritu() {
           onChange={handleFiltroChange}
         >
           <option value="">Todos los nombres</option>
-          {nombresDisponibles.map((nombre) => (
-            <option key={nombre} value={nombre}>
+          {nombresDisponibles.map((nombre, index) => (
+            <option key={`${nombre}-${index}`} value={nombre}>
               {nombre}
             </option>
           ))}
@@ -310,8 +331,8 @@ function CalculadoraPolvoEspiritu() {
         {/* 🔵 FILTRO DE MATERIALES - DINÁMICO */}
         <select name="material" value={filtros.material} onChange={handleFiltroChange}>
           <option value="">Todos los materiales</option>
-          {materialesDisponibles.map((material) => (
-            <option key={material} value={material}>
+          {materialesDisponibles.map((material, index) => (
+            <option key={`${material}-${index}`} value={material}>
               {material}
             </option>
           ))}
@@ -359,7 +380,7 @@ function CalculadoraPolvoEspiritu() {
         {spritsOrdenados.map((sprit) => (
           <div 
             key={sprit.id} 
-            className={`sprit-card ${spritsSeleccionados[sprit.id] ? 'seleccionado' : ''}`}
+            className={`sprit-card ${spritsSeleccionados[sprit.id] ? 'seleccionado' : ''} ${!sprit.estaEnElJuego ? 'no-disponible' : ''}`}
             onClick={() => toggleSeleccion(sprit.id)}
           >
             <div className="sprit-card-inner">
@@ -378,6 +399,12 @@ function CalculadoraPolvoEspiritu() {
                   ) : (
                     <div className="sprit-img-placeholder">
                       🖼️ Sin imagen
+                    </div>
+                  )}
+
+                  {!sprit.estaEnElJuego && (
+                    <div className="no-disponible-overlay">
+                      <span className="no-disponible-badge">No Disponible</span>
                     </div>
                   )}
                 </div>
