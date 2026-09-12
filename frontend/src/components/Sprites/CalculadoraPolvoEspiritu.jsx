@@ -422,7 +422,9 @@ function CalculadoraPolvoEspiritu() {
                 </div>
 
                 <div className="sprit-nombre">
-                  <h4 className={`nombre-material-${sprit.material.toLowerCase()}`}>
+                  <h4 className={`nombre-material-${sprit.material.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')}`}>
                     {sprit.nombre}
                   </h4>
                 </div>
