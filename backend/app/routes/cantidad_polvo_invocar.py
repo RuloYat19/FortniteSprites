@@ -71,6 +71,7 @@ def get_cantidad_by_id(
 # ============================================
 @router.get("/buscar/", response_model=Optional[schemas.CantidadPolvoInvocarResponse])
 def get_cantidad_by_combinacion(
+    db: Session = Depends(get_db),
     material: str = Query(..., description="Material del sprit"),
     rareza: str = Query(..., description="Rareza del sprit"),
     temporada: Optional[str] = Query(None, description="Temporada (ej: C7T3)")
