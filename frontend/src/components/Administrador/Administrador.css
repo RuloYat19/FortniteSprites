@@ -486,7 +486,9 @@
 .detail-value.material-cúbico,
 .detail-value.material-patito,
 .detail-value.material-gema,
-.detail-value.material-hacker {
+.detail-value.material-hacker,
+.detail-value.material-hacker-de-botin,
+.detail-value.material-cazarrecompensas {
   display: inline-block;
   padding: 4px 16px;
   border-radius: 20px;
@@ -569,6 +571,21 @@
   color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
+
+.detail-value.material-hacker-de-botin {
+  background: #862ED8 !important;
+  border-color: #862ED8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-cazarrecompensas {
+  background: #d82ed2 !important;
+  border-color: #d82ed2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
 
 /* 🔵 Hover effect para los badges de material */
 .detail-value.material-normal:hover,

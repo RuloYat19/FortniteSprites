@@ -236,6 +236,10 @@ function MaterialesAdmin() {
         return 'material-gema';
       case 'hacker':
         return 'material-hacker';
+      case 'hacker de botín':
+        return 'material-hacker-de-botin';
+      case 'cazarrecompensas':
+        return 'material-cazarrecompensas';
       default:
         return 'material-normal';
     }

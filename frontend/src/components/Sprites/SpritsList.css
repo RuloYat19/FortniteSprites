@@ -482,7 +482,8 @@ body {
 .detail-value.material-patito,
 .detail-value.material-gema,
 .detail-value.material-hacker,
-.detail-value.material-hacker-de-botin{
+.detail-value.material-hacker-de-botin,
+.detail-value.material-cazarrecompensas{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -557,6 +558,13 @@ body {
 .detail-value.material-hacker-de-botin {
   background: #862ED8 !important;
   border-color: #862ED8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-cazarrecompensas {
+  background: #d82ed2 !important;
+  border-color: #d82ed2 !important;
   color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
@@ -797,7 +805,8 @@ body {
 .sprit-card-front .nombre-material-patito,
 .sprit-card-front .nombre-material-gema,
 .sprit-card-front .nombre-material-hacker,
-.sprit-card-front .nombre-material-hacker-de-botin {
+.sprit-card-front .nombre-material-hacker-de-botin,
+.sprit-card-front .nombre-material-cazarrecompensas {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -883,6 +892,13 @@ body {
 .sprit-card-front .nombre-material-hacker-de-botin {
   background: #862ED8 !important;
   border-color: #862ED8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-cazarrecompensas {
+  background: #d82ed2 !important;
+  border-color: #d82ed2 !important;
   color: #ffffff !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }

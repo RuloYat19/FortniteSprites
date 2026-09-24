@@ -370,6 +370,37 @@ function PolvoInvocarAdmin() {
   const totalRegistros = cantidades.length;
   const totalFiltrados = datosFiltrados.length;
 
+  // 🔵 Función para obtener la clase CSS del material
+  const getMaterialClass = (nombre) => {
+    const nombreLower = nombre.toLowerCase();
+    switch(nombreLower) {
+      case 'normal':
+        return 'material-normal';
+      case 'oro':
+        return 'material-oro';
+      case 'gomita':
+        return 'material-gomita';
+      case 'galaxia':
+        return 'material-galaxia';
+      case 'holofoil':
+        return 'material-holofoil';
+      case 'cúbico':
+        return 'material-cúbico';
+      case 'patito':
+        return 'material-patito';
+      case 'gema':
+        return 'material-gema';
+      case 'hacker':
+        return 'material-hacker';
+      case 'hacker de botín':
+        return 'material-hacker-de-botín';
+      case 'cazarrecompensas':
+        return 'material-cazarrecompensas';
+      default:
+        return 'material-normal';
+    }
+  };
+
   if (loading) return <div className="loading">Cargando datos...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -509,7 +540,9 @@ function PolvoInvocarAdmin() {
                     </span>
                   </td>
                   <td>
-                    <span className={`detail-value material-${item.material.toLowerCase()}`}>
+                    <span className={`detail-value material-${item.material.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')}`}>
                       {item.material}
                     </span>
                   </td>
