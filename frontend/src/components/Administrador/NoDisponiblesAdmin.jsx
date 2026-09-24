@@ -525,7 +525,9 @@ function NoDisponiblesAdmin() {
                     </span>
                   </td>
                   <td>
-                    <span className={`detail-value material-${item.material?.toLowerCase() || 'normal'}`}>
+                    <span className={`detail-value material-${item.material.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')}`}>
                       {item.material || 'N/A'}
                     </span>
                   </td>
