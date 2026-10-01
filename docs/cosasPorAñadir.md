@@ -1,5 +1,6 @@
 ## Cosas por Añadir al Programa
 ### Cosas que Editar
+- Los No Disponibles hacer que no cuenten para el polvo -> Inventario Sprites
 
 ### Cosas Nuevas para Añadir
 - Filtro de los que ya salieron y los que no -> Inventario Sprites, Dominados y Calculadora
