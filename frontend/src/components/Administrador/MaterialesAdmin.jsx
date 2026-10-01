@@ -240,6 +240,8 @@ function MaterialesAdmin() {
         return 'material-hacker-de-botin';
       case 'cazarrecompensas':
         return 'material-cazarrecompensas';
+      case 'dulce o truco':
+        return 'material-dulce-o-truco';
       default:
         return 'material-normal';
     }

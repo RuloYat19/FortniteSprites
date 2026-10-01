@@ -488,7 +488,8 @@
 .detail-value.material-gema,
 .detail-value.material-hacker,
 .detail-value.material-hacker-de-botin,
-.detail-value.material-cazarrecompensas {
+.detail-value.material-cazarrecompensas,
+.detail-value.material-dulce-o-truco {
   display: inline-block;
   padding: 4px 16px;
   border-radius: 20px;
@@ -583,6 +584,13 @@
   background: #d82ed2 !important;
   border-color: #d82ed2 !important;
   color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.detail-value.material-dulce-o-truco {
+  background: linear-gradient(90deg, #fece12, #de381d, #fece12, #de381d) !important;
+  border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
 
