@@ -768,9 +768,7 @@ function SpritsList() {
     }
   };
 
-  const abrirAddModal = () => {
-    const temporadaDefault = opcionesTemporada.length > 0 ? opcionesTemporada[0] : '';
-    
+  const abrirAddModal = () => {    
     setNewSprit({
       nombre: '',
       rareza: '',
@@ -780,7 +778,7 @@ function SpritsList() {
       polvoAlExtraer: '',
       polvoAlInvocar: '',
       metodoSubidaNivel: '',
-      temporada: temporadaDefault,
+      temporada: 'C7T4',
       estaEnElJuego: true
     });
     setShowAddModal(true);
