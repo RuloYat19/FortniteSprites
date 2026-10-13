@@ -322,7 +322,7 @@ function Dominados() {
 
   return (
     <div className="dominados-container">
-      <h1>Sprits Dominados</h1>
+      <h1>Sprites Dominados</h1>
       
       <div className="filtros">
         {/* 🔵 NUEVO FILTRO DE TEMPORADA */}
@@ -426,7 +426,7 @@ function Dominados() {
           </button>
           <button 
             className="btn-volver"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/sprites')}
             title="Volver al inicio"
           >
             ←
@@ -439,7 +439,7 @@ function Dominados() {
         <div className="dominados-info-content">
           <span className="dominados-icon">👑</span>
           <span className="dominados-text">
-            Sprits Dominados:
+            Sprites Dominados:
           </span>
           <span className="dominados-cantidad">
             {totalDominados}/{totalSprits}
@@ -577,7 +577,7 @@ function Dominados() {
                 <div className="sprit-image-wrapper">
                   {sprit.nombreArchivoImagen ? (
                     <img 
-                      src={sprit.nombreArchivoImagen} 
+                      src={"." + sprit.nombreArchivoImagen} 
                       alt={sprit.nombre}
                       className="sprit-img"
                       onError={(e) => {

@@ -4,27 +4,27 @@ import './Inicio.css';
 function Inicio({ onNavigate }) {
   const cards = [
     {
-      id: 'administrador',
-      titulo: 'Módulo de Administrador',
-      imagen: './imagenesSprites/administradorSprites.png',
+      id: 'battle_royale',
+      titulo: 'Battle Royale',
+      imagen: './imagenesGeneral/LogoFortnite.png',
       descripcion: 'Gestión de Ciertos Datos de los Sprites'
     },
     {
-      id: 'dominados',
-      titulo: 'Lista de Dominados',
-      imagen: './imagenesSprites/dominado.png',
+      id: 'droid_tycoon',
+      titulo: 'Droid Tycoon',
+      imagen: './imagenesGeneral/LogoDroidTycoon.png',
       descripcion: 'Control de Sprites que ya se han dominado'
     },
     {
-      id: 'lista',
-      titulo: 'Lista de Sprites',
-      imagen: './imagenesSprites/puntoCeroGalaxia.png',
+      id: 'sprites',
+      titulo: 'Sprites',
+      imagen: './imagenesGeneral/dominado.png',
       descripcion: 'Explora y gestiona tu colección de sprits'
     },
     {
-      id: 'calculo',
-      titulo: 'Cálculo de Polvo de Espíritu',
-      imagen: './imagenesSprites/polvoEspiritu.png',
+      id: 'notas',
+      titulo: 'Notas',
+      imagen: './imagenesGeneral/Notas.png',
       descripcion: 'Calcula el polvo necesario para invocar sprits'
     }
   ];
@@ -37,7 +37,7 @@ function Inicio({ onNavigate }) {
 
   return (
     <div className="inicio-container">
-      <h1>Sprits de Fortnite</h1>
+      <h1>Programas de Fortnite</h1>
       
       <div className="inicio-cards">
         {cards.map((card) => (
