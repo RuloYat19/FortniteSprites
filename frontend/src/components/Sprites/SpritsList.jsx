@@ -1505,7 +1505,7 @@ function SpritsList() {
                   <input
                     type="text"
                     name="nombreArchivoImagen"
-                    placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
+                    placeholder="Ej: ../imagenesSprites/puntoCeroGalaxia.jpg"
                     value={newSprit.nombreArchivoImagen}
                     onChange={handleAddChange}
                   />
@@ -1544,7 +1544,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1573,7 +1573,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1782,7 +1782,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1811,7 +1811,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />

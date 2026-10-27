@@ -556,7 +556,7 @@ function PolvoInvocarAdmin() {
                       {item.cantidad.toLocaleString()}
                     </span>
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       className="polvo-icon-admin-small"
                     />
