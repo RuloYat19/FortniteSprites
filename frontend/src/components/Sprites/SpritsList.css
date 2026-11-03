@@ -484,7 +484,9 @@ body {
 .detail-value.material-hacker,
 .detail-value.material-hacker-de-botin,
 .detail-value.material-cazarrecompensas,
-.detail-value.material-dulce-o-truco{
+.detail-value.material-dulce-o-truco,
+.detail-value.material-afortunado,
+.detail-value.material-maldito{
   display: inline-block;
   padding: 2px 12px;
   border-radius: 20px;
@@ -573,6 +575,20 @@ body {
 .detail-value.material-dulce-o-truco {
   background: linear-gradient(90deg, #fece12, #de381d, #fece12, #de381d) !important;
   border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-afortunado {
+  background: linear-gradient(90deg, #540609, #EAAE87, #540609) !important;
+  border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.detail-value.material-maldito {
+  background: linear-gradient(90deg, #6C514A, #764B43, #77744B, #437A67, #386D64, #437A67, #77744B, #764B43, #6C514A) !important;
+  border-color: #6C514A !important;
   color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }
@@ -815,7 +831,9 @@ body {
 .sprit-card-front .nombre-material-hacker,
 .sprit-card-front .nombre-material-hacker-de-botin,
 .sprit-card-front .nombre-material-cazarrecompensas,
-.sprit-card-front .nombre-material-dulce-o-truco {
+.sprit-card-front .nombre-material-dulce-o-truco,
+.sprit-card-front .nombre-material-afortunado,
+.sprit-card-front .nombre-material-maldito {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -915,6 +933,20 @@ body {
 .sprit-card-front .nombre-material-dulce-o-truco {
   background: linear-gradient(90deg, #fece12, #de381d, #fece12, #de381d) !important;
   border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-afortunado {
+  background: linear-gradient(90deg, #540609, #EAAE87, #540609) !important;
+  border-color: #1a1a2e !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
+}
+
+.sprit-card-front .nombre-material-maldito {
+  background: linear-gradient(90deg, #6C514A, #764B43, #77744B, #437A67, #386D64, #437A67, #77744B, #764B43, #6C514A) !important;
+  border-color: #6C514A !important;
   color: #1a1a2e !important;
   box-shadow: 0 0 20px rgba(26, 35, 126, 0.2);
 }

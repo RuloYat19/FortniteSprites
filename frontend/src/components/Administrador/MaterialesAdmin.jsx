@@ -242,6 +242,10 @@ function MaterialesAdmin() {
         return 'material-cazarrecompensas';
       case 'dulce o truco':
         return 'material-dulce-o-truco';
+      case 'afortunado':
+        return 'material-afortunado';
+        case 'maldito':
+        return 'material-maldito';
       default:
         return 'material-normal';
     }
