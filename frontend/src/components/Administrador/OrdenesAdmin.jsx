@@ -503,9 +503,14 @@ function OrdenesAdmin() {
         nombre: item.nombre
       });
 
-      // 2. Actualizar los demás elementos de forma SECUENCIAL (uno por uno)
-      // para evitar que la base de datos rechace peticiones concurrentes por duplicidad.
-      for (const el of elementosTemporada) {
+      // 2. Actualizar los demás elementos de forma secuencial.
+      // Al subir, recorrer de mayor a menor libera cada posición antes de ocuparla;
+      // al bajar, el orden ascendente hace lo mismo en la dirección contraria.
+      const elementosAjustar = direccion === 'arriba'
+        ? [...elementosTemporada].reverse()
+        : elementosTemporada;
+
+      for (const el of elementosAjustar) {
         if (el.id === item.id) continue;
 
         let nOrden = el.numeroOrden;
