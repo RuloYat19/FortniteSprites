@@ -307,9 +307,15 @@ function Dominados() {
   // 🔵 Aplicar el ordenamiento a los sprits filtrados
   const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
 
-  // 🔵 Contar cuántos sprits están dominados (yaFueDominado = true)
-  const totalDominados = sprits.filter(s => s.yaFueDominado).length;
-  const totalSprits = sprits.length;
+// 🔵 Lista base para estadísticas de dominados según la temporada seleccionada en el filtro
+  const spritsParaEstadisticasDominados = sprits.filter(sprit => {
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
+    return true;
+  });
+
+  // 🔵 Contar cuántos sprits están dominados basándose en la temporada activa
+  const totalDominados = spritsParaEstadisticasDominados.filter(s => s.yaFueDominado).length;
+  const totalSprits = spritsParaEstadisticasDominados.length;
   const porcentajeDominados = totalSprits > 0 ? (totalDominados / totalSprits) * 100 : 0;
 
   if (loading) return <div className="loading">Cargando sprits...</div>;

@@ -272,7 +272,7 @@ function SpritsList() {
   };
 
   const calcularPolvoNecesario = () => {
-    return sprits
+    return spritsParaEstadisticas
       .filter(sprit => !sprit.estaEnInventario)
       .reduce((total, sprit) => total + (sprit.polvoAlInvocar || 0), 0);
   };
@@ -352,9 +352,15 @@ function SpritsList() {
     }
   };
 
+  // 🔵 Lista base para estadísticas (progresos y polvo) según la temporada seleccionada en el filtro
+  const spritsParaEstadisticas = sprits.filter(sprit => {
+    if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
+    return true;
+  });
+
   const calcularProgreso = (condicion) => {
-    const total = sprits.length;
-    const completados = sprits.filter(condicion).length;
+    const total = spritsParaEstadisticas.length;
+    const completados = spritsParaEstadisticas.filter(condicion).length;
     const porcentaje = total > 0 ? (completados / total) * 100 : 0;
     return { completados, total, porcentaje };
   };
