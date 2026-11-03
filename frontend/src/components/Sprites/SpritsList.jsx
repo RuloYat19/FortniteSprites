@@ -768,9 +768,7 @@ function SpritsList() {
     }
   };
 
-  const abrirAddModal = () => {
-    const temporadaDefault = opcionesTemporada.length > 0 ? opcionesTemporada[0] : '';
-    
+  const abrirAddModal = () => {    
     setNewSprit({
       nombre: '',
       rareza: '',
@@ -780,7 +778,7 @@ function SpritsList() {
       polvoAlExtraer: '',
       polvoAlInvocar: '',
       metodoSubidaNivel: '',
-      temporada: temporadaDefault,
+      temporada: 'C7T4',
       estaEnElJuego: true
     });
     setShowAddModal(true);
@@ -1121,7 +1119,7 @@ function SpritsList() {
           </button>
           <button 
             className="btn-volver"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/sprites')}
             title="Volver al inicio"
           >
             ←
@@ -1132,7 +1130,7 @@ function SpritsList() {
       <div className="polvo-info">
         <div className="polvo-info-content">
           <img 
-            src="./imagenesSprites/polvoEspiritu.png" 
+            src="../imagenesSprites/polvoEspiritu.png" 
             alt="Polvo de Espíritu"
             className="polvo-info-icon"
           />
@@ -1231,12 +1229,15 @@ function SpritsList() {
                   className="sprit-image-wrapper"
                   onClick={() => handleImageClick(sprit.id)}
                 >
+                  
                   {sprit.nombreArchivoImagen ? (
+                    
                     <img 
-                      src={sprit.nombreArchivoImagen} 
+                      src={"." + sprit.nombreArchivoImagen} 
                       alt={sprit.nombre}
                       className="sprit-img"
                       onError={(e) => {
+                        console.log(sprit.nombreArchivoImagen)
                         e.target.onerror = null;
                         e.target.src = 'https://via.placeholder.com/200/16213e/ffffff?text=Sin+imagen';
                       }}
@@ -1318,7 +1319,7 @@ function SpritsList() {
                   </div>
                   <div className="detail-item">
                     <img
-                      src="./imagenesSprites/polvoEspiritu.png"
+                      src="../imagenesSprites/polvoEspiritu.png"
                       alt="Polvo al extraer"
                       className="polvo-icon-small"
                     />
@@ -1327,7 +1328,7 @@ function SpritsList() {
                   </div>
                   <div className="detail-item">
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo al invocar"
                       className="polvo-icon-small"
                     />
@@ -1504,7 +1505,7 @@ function SpritsList() {
                   <input
                     type="text"
                     name="nombreArchivoImagen"
-                    placeholder="Ej: ./imagenesSprites/puntoCeroGalaxia.jpg"
+                    placeholder="Ej: ../imagenesSprites/puntoCeroGalaxia.jpg"
                     value={newSprit.nombreArchivoImagen}
                     onChange={handleAddChange}
                   />
@@ -1543,7 +1544,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1572,7 +1573,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1781,7 +1782,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />
@@ -1810,7 +1811,7 @@ function SpritsList() {
                       }}
                     />
                     <img 
-                      src="./imagenesSprites/polvoEspiritu.png" 
+                      src="../imagenesSprites/polvoEspiritu.png" 
                       alt="Polvo"
                       style={{ width: '24px', height: '24px' }}
                     />

@@ -136,7 +136,7 @@ function Administrador() {
         <div className="sidebar-footer">
           <button 
             className="btn-volver-sidebar"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/sprites')}
           >
             ← Regresar a Inicio
           </button>

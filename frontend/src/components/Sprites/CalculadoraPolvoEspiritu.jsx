@@ -347,7 +347,7 @@ function CalculadoraPolvoEspiritu() {
           </button>
           <button 
             className="btn-volver"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/sprites')}
             title="Volver al inicio"
           >
             ←
@@ -359,7 +359,7 @@ function CalculadoraPolvoEspiritu() {
       <div className="polvo-info">
         <div className="polvo-info-content">
           <img 
-            src="./imagenesSprites/polvoEspiritu.png" 
+            src="../imagenesSprites/polvoEspiritu.png" 
             alt="Polvo de Espíritu"
             className="polvo-info-icon"
           />
@@ -388,7 +388,7 @@ function CalculadoraPolvoEspiritu() {
                 <div className="sprit-image-wrapper">
                   {sprit.nombreArchivoImagen ? (
                     <img 
-                      src={sprit.nombreArchivoImagen} 
+                      src={"." + sprit.nombreArchivoImagen} 
                       alt={sprit.nombre}
                       className="sprit-img"
                       onError={(e) => {
