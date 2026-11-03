@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { spritsService, materialesService, nombresSpritesService, metodoSubidaNivelService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function NoDisponiblesAdmin() {
   const [sprits, setSprits] = useState([]);
@@ -12,7 +14,7 @@ function NoDisponiblesAdmin() {
   const [filtros, setFiltros] = useState({
     nombre: '',
     rareza: '',
-    temporada: 'C7T4'
+    temporada: temporadaActual
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -23,7 +25,7 @@ function NoDisponiblesAdmin() {
     nombre: '',
     rareza: '',
     material: '',
-    temporada: 'C7T4',
+    temporada: temporadaActual,
     metodoSubidaNivel: '',
     nombreArchivoImagen: '',
     nivelEspiritu: 1,
@@ -58,7 +60,6 @@ function NoDisponiblesAdmin() {
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
 
   const rarezas = ['Raro', 'Épico', 'Legendario', 'Mítico'];
-  const temporadas = ['C7T3', 'C7T4'];
   const niveles = [1, 2, 3, 4, 5];
 
   useEffect(() => {
@@ -179,7 +180,7 @@ function NoDisponiblesAdmin() {
         setFiltros({
         nombre: '',
         rareza: '',
-        temporada: 'C7T4'
+        temporada: temporadaActual
         });
     };
 
@@ -249,7 +250,7 @@ function NoDisponiblesAdmin() {
       nombre: sprit.nombre,
       rareza: sprit.rareza,
       material: sprit.material || '',
-      temporada: sprit.temporada || 'C7T4',
+      temporada: sprit.temporada || temporadaActual,
       metodoSubidaNivel: sprit.metodoSubidaNivel || '',
       nombreArchivoImagen: sprit.nombreArchivoImagen || '',
       nivelEspiritu: sprit.nivelEspiritu || 1,
@@ -266,7 +267,7 @@ function NoDisponiblesAdmin() {
       nombre: '',
       rareza: '',
       material: '',
-      temporada: 'C7T4',
+      temporada: temporadaActual,
       metodoSubidaNivel: '',
       nombreArchivoImagen: '',
       nivelEspiritu: 1,
@@ -286,7 +287,7 @@ function NoDisponiblesAdmin() {
       nombre: registro.nombre,
       rareza: registro.rareza,
       material: registro.material || '',
-      temporada: registro.temporada || 'C7T4',
+      temporada: registro.temporada || temporadaActual,
       metodoSubidaNivel: registro.metodoSubidaNivel || '',
       nombreArchivoImagen: registro.nombreArchivoImagen || '',
       nivelEspiritu: registro.nivelEspiritu || 1,
@@ -306,7 +307,7 @@ function NoDisponiblesAdmin() {
       nombre: '',
       rareza: '',
       material: '',
-      temporada: 'C7T4',
+      temporada: temporadaActual,
       metodoSubidaNivel: '',
       nombreArchivoImagen: '',
       nivelEspiritu: 1,

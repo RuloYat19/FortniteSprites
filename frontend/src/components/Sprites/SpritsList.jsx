@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { spritsService, cantidadPolvoExtraerService, cantidadPolvoInvocarService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService, metodoSubidaNivelService } from '../../services/api';
 import './SpritsList.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function SpritsList() {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ function SpritsList() {
     material: '',
     nombre: '',
     orden: 'default',
-    temporada: 'C7T4',
+    temporada: temporadaActual,
   });
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -75,7 +77,6 @@ function SpritsList() {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [spritAEliminar, setSpritAEliminar] = useState(null);
 
-  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);
   const [opcionesNombres, setOpcionesNombres] = useState([]);
   const [opcionesMateriales, setOpcionesMateriales] = useState([]);
   const [opcionesPolvoExtraer, setOpcionesPolvoExtraer] = useState({});
@@ -124,7 +125,7 @@ function SpritsList() {
   // 🔵 Cargar nombres y materiales para los filtros
   const cargarFiltros = async () => {
     try {
-      const temporada = filtros.temporada || 'C7T4';
+      const temporada = filtros.temporada || temporadaActual;
       
       const [nombresRes, materialesRes] = await Promise.all([
         nombresSpritesService.getAll({ temporada }),
@@ -154,14 +155,14 @@ function SpritsList() {
 
     // 🔵 Función para obtener el orden del material según la temporada del sprit
     const obtenerOrdenMaterial = (sprit) => {
-      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const temporadaSprit = sprit.temporada || filtros.temporada || temporadaActual;
       const clave = `${temporadaSprit}-${sprit.material}`;
       return ordenMaterial[clave] ?? 999;
     };
 
     // 🔵 Función para obtener el orden del nombre según la temporada del sprit
     const obtenerOrdenNombre = (sprit) => {
-      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const temporadaSprit = sprit.temporada || filtros.temporada || temporadaActual;
       const clave = `${temporadaSprit}-${sprit.nombre}`;
       return ordenDefault[clave] ?? 999;
     };
@@ -778,7 +779,7 @@ function SpritsList() {
       polvoAlExtraer: '',
       polvoAlInvocar: '',
       metodoSubidaNivel: '',
-      temporada: 'C7T4',
+      temporada: temporadaActual,
       estaEnElJuego: true
     });
     setShowAddModal(true);
@@ -908,7 +909,7 @@ function SpritsList() {
       material: '',
       nombre: '',
       orden: 'default',
-      temporada: 'C7T4',
+      temporada: temporadaActual,
     });
   };
 
@@ -1059,7 +1060,7 @@ function SpritsList() {
           }}
         >
           <option value="">Todas las temporadas</option>
-          {opcionesTemporada.map(temp => (
+          {temporadas.map(temp => (
             <option key={temp} value={temp}>{temp}</option>
           ))}
         </select>
@@ -1416,7 +1417,7 @@ function SpritsList() {
                     }}
                   >
                     <option value="">Seleccionar temporada</option>
-                    {opcionesTemporada.map(temp => (
+                    {temporadas.map(temp => (
                       <option key={temp} value={temp}>{temp}</option>
                     ))}
                   </select>
@@ -1657,7 +1658,7 @@ function SpritsList() {
                     }}
                   >
                     <option value="">Seleccionar temporada</option>
-                    {opcionesTemporada.map(temp => (
+                    {temporadas.map(temp => (
                       <option key={temp} value={temp}>{temp}</option>
                     ))}
                   </select>

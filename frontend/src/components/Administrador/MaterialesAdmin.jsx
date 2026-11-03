@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { materialesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function MaterialesAdmin() {
   const [materiales, setMateriales] = useState([]);
@@ -11,7 +13,7 @@ function MaterialesAdmin() {
   // 🔵 Filtros
   const [filtros, setFiltros] = useState({
     nombre: '',
-    temporada: 'C7T4',
+    temporada: temporadaActual,
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -33,8 +35,6 @@ function MaterialesAdmin() {
   });
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
-
-  const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarMateriales();
@@ -76,7 +76,7 @@ function MaterialesAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       nombre: '',
-      temporada: 'C7T4',
+      temporada: temporadaActual,
     });
   };
 

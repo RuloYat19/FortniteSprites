@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ordenDefaultService, ordenRarezaService, nombresSpritesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function OrdenesAdmin() {
   // 🔵 Estado para la pestaña activa
@@ -20,7 +22,7 @@ function OrdenesAdmin() {
   // 🔵 Filtros (independientes del formulario)
   const [filtros, setFiltros] = useState({
     nombre: '',
-    temporada: 'C7T4'
+    temporada: temporadaActual
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -57,9 +59,6 @@ function OrdenesAdmin() {
   
   // 🔵 Estado para datos completos con temporada (para filtros)
   const [nombresConTemporada, setNombresConTemporada] = useState([]);
-
-  // 🔵 Temporadas disponibles
-  const temporadas = ['C7T3', 'C7T4'];
 
   // 🔵 Cargar datos según la pestaña activa
   useEffect(() => {
@@ -193,7 +192,7 @@ function OrdenesAdmin() {
   const limpiarFiltros = () => {
     setFiltros({
       nombre: '',
-      temporada: 'C7T4'
+      temporada: temporadaActual
     });
   };
 

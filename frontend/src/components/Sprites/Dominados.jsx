@@ -1,15 +1,11 @@
 // frontend/src/components/Dominados.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  spritsService, 
-  ordenDefaultService, 
-  ordenRarezaService, 
-  materialesService, 
-  nombresSpritesService 
-} from '../../services/api';
+import { spritsService, ordenDefaultService, ordenRarezaService, materialesService, nombresSpritesService } from '../../services/api';
 import './Dominados.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function Dominados() {
   const navigate = useNavigate();
@@ -22,7 +18,7 @@ function Dominados() {
     nombre: '',
     orden: 'default',
     yaFueDominado: '',
-    temporada: 'C7T4'
+    temporada: temporadaActual
   });
 
   // 🔵 ESTADOS PARA LOS ÓRDENES
@@ -35,7 +31,6 @@ function Dominados() {
   const [nombresDisponibles, setNombresDisponibles] = useState([]);
   const [materialesDisponibles, setMaterialesDisponibles] = useState([]);
   const [filtrosCargados, setFiltrosCargados] = useState(false);
-  const [opcionesTemporada, setOpcionesTemporada] = useState(['C7T3', 'C7T4']);  // 🔵 NUEVO
 
   // 🔵 Estado para el modal de resetear dominado
   const [showResetModal, setShowResetModal] = useState(false);
@@ -94,7 +89,7 @@ function Dominados() {
   // 🔵 Cargar nombres y materiales para los filtros
   const cargarFiltros = async () => {
     try {
-      const temporada = filtros.temporada || 'C7T4';
+      const temporada = filtros.temporada || temporadaActual;
 
       const [nombresRes, materialesRes] = await Promise.all([
         nombresSpritesService.getAll({ temporada }),
@@ -124,14 +119,14 @@ function Dominados() {
 
     // 🔵 Función para obtener el orden del nombre según la temporada del sprit
     const obtenerOrdenNombre = (sprit) => {
-      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const temporadaSprit = sprit.temporada || filtros.temporada || temporadaActual;
       const clave = `${temporadaSprit}-${sprit.nombre}`;
       return ordenDefault[clave] ?? 999;
     };
 
     // 🔵 Función para obtener el orden del material según la temporada del sprit
     const obtenerOrdenMaterial = (sprit) => {
-      const temporadaSprit = sprit.temporada || filtros.temporada || 'C7T4';
+      const temporadaSprit = sprit.temporada || filtros.temporada || temporadaActual;
       const clave = `${temporadaSprit}-${sprit.material}`;
       return ordenMaterial[clave] ?? 999;
     };
@@ -210,7 +205,7 @@ function Dominados() {
       nombre: '',
       orden: 'default',
       yaFueDominado: '',
-      temporada: 'C7T4'
+      temporada: temporadaActual
     });
   };
 
@@ -342,7 +337,7 @@ function Dominados() {
           }}
         >
           <option value="">Todas las temporadas</option>
-          {opcionesTemporada.map(temp => (
+          {temporadas.map(temp => (
             <option key={temp} value={temp}>{temp}</option>
           ))}
         </select>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { cantidadPolvoExtraerService, spritsService, materialesService } from '../../services/api';
 import './Administrador.css';
 import ConfirmModal from '../ConfirmModal';
+const temporadaActual = import.meta.env.VITE_TEMPORADA_ACTUAL;
+const temporadas = JSON.parse(import.meta.env.VITE_TEMPORADAS || "[]");
 
 function PolvoEspirituAdmin() {
   const [cantidades, setCantidades] = useState([]);
@@ -16,7 +18,7 @@ function PolvoEspirituAdmin() {
     material: '',
     rareza: '',
     nivelEspiritu: '',
-    temporada: 'C7T4'
+    temporada: temporadaActual
   });
 
   // 🔵 Estado para el modal de crear/editar
@@ -60,7 +62,6 @@ function PolvoEspirituAdmin() {
 
   // 🔵 Niveles y Temporadas disponibles
   const niveles = [1, 2, 3, 4, 5];
-  const temporadas = ['C7T3', 'C7T4'];
 
   useEffect(() => {
     cargarCantidades();
@@ -224,7 +225,7 @@ function PolvoEspirituAdmin() {
       material: '',
       rareza: '',
       nivelEspiritu: '',
-      temporada: 'C7T4'
+      temporada: temporadaActual
     });
   };
 
