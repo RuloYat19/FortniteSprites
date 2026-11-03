@@ -117,8 +117,11 @@ docker compose start
 # Tabla de Sprites
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE sprits;"
 
-# Tabla de Cantidad de Polvo de Espíritu
-docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE cantidadPolvoEspiritu;"
+# Tabla de Cantidad de Polvo de Espíritu al Extraer
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE cantidadPolvoEspirituExtraer;"
+
+# Tabla de Cantidad de Polvo de Espíritu al Invocar
+docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE cantidadPolvoEspirituInvocar;"
 
 # Tabla de Materiales
 docker exec -it db_fortnite_sprits /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -d FORTNITEDB -Q "DROP TABLE material;"
