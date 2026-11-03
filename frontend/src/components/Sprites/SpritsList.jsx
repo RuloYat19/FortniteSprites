@@ -355,6 +355,7 @@ function SpritsList() {
   // 🔵 Lista base para estadísticas (progresos y polvo) según la temporada seleccionada en el filtro
   const spritsParaEstadisticas = sprits.filter(sprit => {
     if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
+    if (sprit.estaEnElJuego === false) return false;
     return true;
   });
 

@@ -307,9 +307,10 @@ function Dominados() {
   // 🔵 Aplicar el ordenamiento a los sprits filtrados
   const spritsOrdenados = ordenesCargados ? ordenarSprits(spritsFiltrados) : spritsFiltrados;
 
-// 🔵 Lista base para estadísticas de dominados según la temporada seleccionada en el filtro
+  // 🔵 Lista base para estadísticas de dominados según la temporada seleccionada en el filtro
   const spritsParaEstadisticasDominados = sprits.filter(sprit => {
     if (filtros.temporada && sprit.temporada !== filtros.temporada) return false;
+    if (sprit.estaEnElJuego === false) return false;
     return true;
   });
 
