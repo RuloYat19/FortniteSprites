@@ -60,6 +60,14 @@ function OrdenesAdmin() {
   // 🔵 Estado para datos completos con temporada (para filtros)
   const [nombresConTemporada, setNombresConTemporada] = useState([]);
 
+  // 🔵 Estado para el modal de mover posiciones
+  const [showMoverModal, setShowMoverModal] = useState(false);
+  const [moverData, setMoverData] = useState({
+    item: null,
+    direccion: null,
+    cantidad: ''
+  });
+
   // 🔵 Cargar datos según la pestaña activa
   useEffect(() => {
     if (tabActiva === 'default') {
@@ -431,6 +439,119 @@ function OrdenesAdmin() {
     }
   };
 
+  // 🔵 Abrir modal para mover posiciones
+  const abrirMoverModal = (item, direccion) => {
+    setMoverData({
+      item,
+      direccion,
+      cantidad: '1'
+    });
+    setShowMoverModal(true);
+  };
+
+  const cerrarMoverModal = () => {
+    setShowMoverModal(false);
+    setMoverData({ item: null, direccion: null, cantidad: '' });
+  };
+
+  // 🔵 Ejecutar el reordenamiento de posiciones
+  const ejecutarMovimiento = async () => {
+    const { item, direccion, cantidad } = moverData;
+    const numPosiciones = parseInt(cantidad);
+
+    if (!numPosiciones || numPosiciones <= 0) {
+      mostrarConfirmacion('⚠️ Valor inválido', 'Ingresa un número válido de posiciones mayor a 0', 'warning');
+      return;
+    }
+
+    const datos = getDatos();
+    const ordenActual = item.numeroOrden;
+    let nuevoOrden;
+
+    if (direccion === 'arriba') {
+      nuevoOrden = ordenActual - numPosiciones;
+    } else {
+      nuevoOrden = ordenActual + numPosiciones;
+    }
+
+    // Validar límites
+    const minOrden = 1;
+    const maxOrden = datos.length;
+
+    if (nuevoOrden < minOrden) nuevoOrden = minOrden;
+    if (nuevoOrden > maxOrden) nuevoOrden = maxOrden;
+
+    if (nuevoOrden === ordenActual) {
+      cerrarMoverModal();
+      return;
+    }
+
+    const servicio = getServicio();
+
+    try {
+      const elementosTemporada = datos
+        .filter(d => d.temporada === item.temporada)
+        .sort((a, b) => a.numeroOrden - b.numeroOrden);
+      
+      // Usamos un número temporal seguro (el total de elementos + 1) para no romper validaciones del backend
+      const TEMP_ORDEN = maxOrden + 1;
+
+      // 1. Mover primero el elemento principal al número temporal para liberar su espacio
+      await servicio.update(item.id, {
+        numeroOrden: TEMP_ORDEN,
+        temporada: item.temporada,
+        nombre: item.nombre
+      });
+
+      // 2. Actualizar los demás elementos de forma SECUENCIAL (uno por uno)
+      // para evitar que la base de datos rechace peticiones concurrentes por duplicidad.
+      for (const el of elementosTemporada) {
+        if (el.id === item.id) continue;
+
+        let nOrden = el.numeroOrden;
+        if (direccion === 'abajo') {
+          // Si bajamos, los que están entre el antiguo y el nuevo suben 1 posición (restan 1)
+          if (el.numeroOrden > ordenActual && el.numeroOrden <= nuevoOrden) {
+            nOrden = el.numeroOrden - 1;
+          }
+        } else if (direccion === 'arriba') {
+          // Si subimos, los que están entre el nuevo y el antiguo bajan 1 posición (suman 1)
+          if (el.numeroOrden >= nuevoOrden && el.numeroOrden < ordenActual) {
+            nOrden = el.numeroOrden + 1;
+          }
+        }
+
+        if (nOrden !== el.numeroOrden) {
+          await servicio.update(el.id, {
+            numeroOrden: nOrden,
+            temporada: el.temporada,
+            nombre: el.nombre
+          });
+        }
+      }
+
+      // 3. Colocar el elemento principal en su posición definitiva
+      await servicio.update(item.id, {
+        numeroOrden: nuevoOrden,
+        temporada: item.temporada,
+        nombre: item.nombre
+      });
+
+      mostrarConfirmacion('✅ Reordenado', `El espíritu se movió ${numPosiciones} posiciones hacia ${direccion}`, 'success');
+      cerrarMoverModal();
+
+      // Recargar la tabla según la pestaña activa
+      if (tabActiva === 'default') {
+        cargarOrdenDefault();
+      } else {
+        cargarOrdenRareza();
+      }
+    } catch (err) {
+      console.error('Error al reordenar:', err);
+      mostrarConfirmacion('❌ Error', err.response?.data?.detail || 'Error al mover las posiciones', 'error');
+    }
+  };
+
   // 🔵 Filtrar datos
   const datosFiltrados = getDatos().filter(item => {
     if (filtros.nombre && !item.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
@@ -592,6 +713,22 @@ function OrdenesAdmin() {
                     </span>
                   </td>
                   <td className="td-acciones">
+                    <button 
+                      className="btn-editar"
+                      onClick={() => abrirMoverModal(item, 'arriba')}
+                      title="Mover hacia arriba"
+                      //style={{ background: '#008cff', marginRight: '4px' }}
+                    >
+                      ⬆️
+                    </button>
+                    <button 
+                      className="btn-editar"
+                      onClick={() => abrirMoverModal(item, 'abajo')}
+                      title="Mover hacia abajo"
+                     //style={{ background: '#008cff', marginRight: '4px' }}
+                    >
+                      ⬇️
+                    </button>
                     <button 
                       className="btn-editar"
                       onClick={() => abrirEditarModal(item)}
@@ -785,6 +922,56 @@ function OrdenesAdmin() {
         onConfirm={eliminarRegistro}
         showCancelButton={true}
       />
+
+      {/* 🔵 MODAL PARA MOVER POSICIONES */}
+      {showMoverModal && (
+        <div className="modal-overlay" onClick={cerrarMoverModal}>
+          <div className="modal-content modal-admin" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h2>
+                {moverData.direccion === 'arriba' ? '⬆️ Mover Hacia Arriba' : '⬇️ Mover Hacia Abajo'}
+              </h2>
+              <button className="modal-close" onClick={cerrarMoverModal}>✕</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="admin-form">
+                <p style={{ color: '#ccc', marginBottom: '15px' }}>
+                  Espíritu seleccionado: <strong style={{ color: '#35cf35' }}>{moverData.item?.nombre}</strong> (Orden actual: {moverData.item?.numeroOrden})
+                </p>
+                <div className="form-group">
+                  <label>¿Cuántas posiciones deseas moverlo? *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Ej: 15"
+                    value={moverData.cantidad}
+                    onChange={(e) => setMoverData({ ...moverData, cantidad: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #0f3460',
+                      borderRadius: '6px',
+                      background: '#1a1a2e',
+                      color: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn-cancelar" onClick={cerrarMoverModal}>
+                Cancelar
+              </button>
+              <button className="btn-guardar" onClick={ejecutarMovimiento}>
+                🚀 Aplicar Movimiento
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
