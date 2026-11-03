@@ -780,11 +780,11 @@ function SpritsList() {
       nombre: '',
       rareza: '',
       material: '',
-      nombreArchivoImagen: '',
-      nivelEspiritu: '',
+      nombreArchivoImagen: './imagenesSprites/',
+      nivelEspiritu: 1,
       polvoAlExtraer: '',
       polvoAlInvocar: '',
-      metodoSubidaNivel: '',
+      metodoSubidaNivel: 'Se sube de nivel abriendo contenedores',
       temporada: temporadaActual,
       estaEnElJuego: true
     });
@@ -803,6 +803,50 @@ function SpritsList() {
       polvoAlInvocar: ''
     });
     setAgregando(false);
+  };
+
+  const normalizarNombreSprite = (nombre) => {
+    if (!nombre) return '';
+
+    // 1. Eliminar "Espíritu de " o "Espíritu " al inicio (sin importar mayúsculas/minúsculas o tildes)
+    let limpio = nombre.replace(/^Espíritu\s+(de\s+)?/i, '').trim();
+
+    // 2. Separar las palabras por espacios
+    const palabras = limpio.split(/\s+/);
+
+    if (palabras.length === 0) return '';
+
+    // 3. Convertir a formato camelCase
+    let resultado = palabras[0].toLowerCase(); // La primera palabra en minúscula
+    for (let i = 1; i < palabras.length; i++) {
+      const palabra = palabras[i];
+      if (palabra.length > 0) {
+        // Las siguientes palabras con la primera letra en mayúscula y el resto en minúscula
+        resultado += palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase();
+      }
+    }
+
+    return resultado;
+  };
+
+  const formatearPascalCase = (nombre) => {
+    if (!nombre) return '';
+
+    // 1. Limpiar espacios múltiples y dividir por espacios
+    const palabras = nombre.trim().split(/\s+/);
+
+    if (palabras.length === 0) return '';
+
+    // 2. Procesar cada palabra: primera letra en mayúscula y el resto en minúscula (o respetar si ya traía mayúsculas)
+    let resultado = '';
+    for (let i = 0; i < palabras.length; i++) {
+      const palabra = palabras[i];
+      if (palabra.length > 0) {
+        resultado += palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase();
+      }
+    }
+
+    return resultado;
   };
 
   const handleAddChange = (e) => {
@@ -834,8 +878,11 @@ function SpritsList() {
       if (name === 'material' || name === 'rareza') {
         const material = name === 'material' ? value : updated.material;
         const rareza = name === 'rareza' ? value : updated.rareza;
+        const nombre = name === 'nombre' ? value : updated.nombre;
         if (material && rareza) {
           updated.polvoAlInvocar = calcularPolvoInvocar(material, rareza);
+          const rutaCompletaConDatos = normalizarNombreSprite(nombre) + formatearPascalCase(material) + ".png";
+          updated.nombreArchivoImagen += rutaCompletaConDatos;
         }
       }
       
