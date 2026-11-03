@@ -241,7 +241,7 @@ function PolvoInvocarAdmin() {
     setFormData({
       id: null,
       numeroOrden: obtenerSiguienteNumeroOrden().toString(),
-      temporada: '',
+      temporada: temporadaActual,
       material: '',
       rareza: '',
       cantidad: ''

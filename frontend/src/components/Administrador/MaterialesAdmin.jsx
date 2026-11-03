@@ -103,7 +103,7 @@ function MaterialesAdmin() {
     setFormData({
       id: null,
       numeroOrden: siguienteNumero.toString(),
-      temporada: '',
+      temporada: temporadaActual,
       nombre: '',
     });
     setEditando(false);

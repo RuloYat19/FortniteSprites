@@ -251,7 +251,7 @@ function PolvoEspirituAdmin() {
     setFormData({
       id: null,
       numeroOrden: obtenerSiguienteNumeroOrden().toString(),
-      temporada: '',
+      temporada: temporadaActual,
       material: '',
       rareza: '',
       nivelEspiritu: '',
