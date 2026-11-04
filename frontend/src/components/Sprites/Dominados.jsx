@@ -16,7 +16,7 @@ function Dominados() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default',
+    orden: 'disponibles',
     yaFueDominado: '',
     temporada: temporadaActual
   });
@@ -147,6 +147,26 @@ function Dominados() {
           const rarezaA = ordenRareza[a.nombre] ?? 999;
           const rarezaB = ordenRareza[b.nombre] ?? 999;
           if (rarezaA !== rarezaB) return rarezaA - rarezaB;
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
+        });
+      
+      case 'disponibles':
+        return [...spritsList].sort((a, b) => {
+          const disponibleA = a.estaEnElJuego !== false ? true : false;
+          const disponibleB = b.estaEnElJuego !== false ? true : false;
+
+          // Primero los que están disponibles (true antes que false)
+          if (disponibleA !== disponibleB) {
+            return disponibleA ? -1 : 1;
+          }
+
+          // Si tienen la misma disponibilidad, se ordenan por su orden default
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+
           const materialA = obtenerOrdenMaterial(a);
           const materialB = obtenerOrdenMaterial(b);
           return materialA - materialB;
@@ -380,6 +400,7 @@ function Dominados() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
+          <option value="disponibles">Por Orden (Disponibles)</option>
         </select>
 
         {/* 🔵 FILTRO DE NOMBRES - DINÁMICO */}

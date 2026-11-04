@@ -20,7 +20,7 @@ function SpritsList() {
     rareza: '', 
     material: '',
     nombre: '',
-    orden: 'default',
+    orden: 'disponibles',
     temporada: temporadaActual,
   });
   const [flippedCards, setFlippedCards] = useState({});
@@ -176,6 +176,26 @@ function SpritsList() {
           const nombreA = obtenerOrdenNombre(a);
           const nombreB = obtenerOrdenNombre(b);
           return nombreA - nombreB;
+        });
+      
+      case 'disponibles':
+        return [...spritsList].sort((a, b) => {
+          const disponibleA = a.estaEnElJuego !== false ? true : false;
+          const disponibleB = b.estaEnElJuego !== false ? true : false;
+
+          // Primero los que están disponibles (true antes que false)
+          if (disponibleA !== disponibleB) {
+            return disponibleA ? -1 : 1;
+          }
+
+          // Si tienen la misma disponibilidad, se ordenan por su orden default
+          const nombreA = obtenerOrdenNombre(a);
+          const nombreB = obtenerOrdenNombre(b);
+          if (nombreA !== nombreB) return nombreA - nombreB;
+
+          const materialA = obtenerOrdenMaterial(a);
+          const materialB = obtenerOrdenMaterial(b);
+          return materialA - materialB;
         });
       
       case 'rareza':
@@ -1128,6 +1148,7 @@ function SpritsList() {
           <option value="default">Por Orden (Default)</option>
           <option value="material">Por Orden (Material)</option>
           <option value="rareza">Por Orden (Rareza)</option>
+          <option value="disponibles">Por Orden (Disponibles)</option>
           {/*<option value="no-inventario">Faltan en Inventario</option>*/}
           <option value="no-dominado">Faltan por Dominar</option>
           <option value="invocar-mayor">Mayor a Menor en Invocar</option>
