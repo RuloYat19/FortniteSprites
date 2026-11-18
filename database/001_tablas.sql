@@ -231,6 +231,312 @@ BEGIN
 END
 GO
 
+-- ================================================================================================
+
+-- ================================================
+-- TABLA: Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'droide')
+BEGIN
+    CREATE TABLE droide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        clase VARCHAR(50) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        estaImpecable BIT DEFAULT 0,
+        estaEnScourgedex BIT DEFAULT 0,
+        nombreArchivoImagen VARCHAR(255) NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_droides_nombre ON droide(nombre);
+    CREATE INDEX idx_droides_clase ON droide(clase);
+    CREATE INDEX idx_droides_rareza ON droide(rareza);
+
+    PRINT '✅ Tabla droide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla droide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Material de Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'materialDroide')
+BEGIN
+    CREATE TABLE materialDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        droide_id INT NOT NULL,
+        numeroOrden INT NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        multiplicador INT NOT NULL,
+        estaEnInventario BIT DEFAULT 0,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+        CONSTRAINT FK_materialDroide_droide FOREIGN KEY (droide_id) REFERENCES droide(id) ON DELETE CASCADE
+    );
+    
+    CREATE INDEX idx_materialDroide_nombreDroide ON materialDroide(nombreDroide);
+    CREATE INDEX idx_materialDroide_material ON materialDroide(material);
+    
+    PRINT '✅ Tabla materialDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla materialDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Nombre de Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombreDroide')
+BEGIN
+    CREATE TABLE nombreDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    CREATE INDEX idx_nombreDroide_nombre ON nombreDroide(nombre);
+    
+    PRINT '✅ Tabla nombreDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla nombreDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Rareza de Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'rarezaDroide')
+BEGIN
+    CREATE TABLE rarezaDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombre VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    CREATE INDEX idx_rarezaDroide_nombre ON rarezaDroide(nombre);
+    
+    PRINT '✅ Tabla rarezaDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla rarezaDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Creditos por Segundo
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'creditosPorSegundo')
+BEGIN
+    CREATE TABLE creditosPorSegundo (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombreDroide VARCHAR(50) NOT NULL,
+        cantidadPredeterminada INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_creditosPorSegundo_nombreDroide ON creditosPorSegundo(nombreDroide);
+    
+    PRINT '✅ Tabla creditosPorSegundo creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla creditosPorSegundo ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Chips al Vender a X Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'chipsVentaDroide')
+BEGIN
+    CREATE TABLE chipsVentaDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        cantidad INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_chipsVentaDroide_rareza ON chipsVentaDroide(rareza);
+    CREATE INDEX idx_chipsVentaDroide_material ON chipsVentaDroide(material);
+    
+    PRINT '✅ Tabla chipsVentaDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla chipsVentaDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Kyber para Activar un Droide
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'kyberActivarDroide')
+BEGIN
+    CREATE TABLE kyberActivarDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        cantidad INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_kyberActivarDroide_rareza ON kyberActivarDroide(rareza);
+    
+    PRINT '✅ Tabla kyberActivarDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla kyberActivarDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Ventajas de los Droides
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ventajaDroide')
+BEGIN
+    CREATE TABLE ventajaDroide (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        nombreVentaja VARCHAR(50) NOT NULL,
+        nombreDroide VARCHAR(50) NOT NULL,
+        rareza VARCHAR(50) NOT NULL,
+        descripción VARCHAR(275) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+    
+    CREATE INDEX idx_ventajaDroide_nombreVentaja ON ventajaDroide(nombreVentaja);
+    CREATE INDEX idx_ventajaDroide_nombreDroide ON ventajaDroide(nombreDroide);
+    CREATE INDEX idx_ventajaDroide_rareza ON ventajaDroide(rareza);
+    CREATE INDEX idx_ventajaDroide_descripción ON ventajaDroide(descripción);
+    
+    PRINT '✅ Tabla ventajaDroide creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla ventajaDroide ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Renacimientos
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'renacimiento')
+BEGIN
+    CREATE TABLE renacimiento (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        ciclo INT NOT NULL,
+        numeroOrden INT NOT NULL,
+        cantidadCreditos INT NOT NULL,
+        droide1 VARCHAR(50) NOT NULL,
+        material1 VARCHAR(50) NOT NULL,
+        sePuedeVenderDroide1 BIT DEFAULT 0,
+        droide2 VARCHAR(50) NOT NULL,
+        material2 VARCHAR(50) NOT NULL,
+        sePuedeVenderDroide2 BIT DEFAULT 0,
+        droide3 VARCHAR(50) NOT NULL,
+        material3 VARCHAR(50) NOT NULL,
+        sePuedeVenderDroide3 BIT DEFAULT 0,
+        cantidadCristalesNovaRenacimiento INT NOT NULL,
+        cantidadCristalesNovaSuperRenacimiento INT NOT NULL,
+        cantidadAumentadaCreditos INT NOT NULL,
+        cantidadAumentadaXP INT NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_renacimiento_droide1 ON renacimiento(droide1);
+    CREATE INDEX idx_renacimiento_material1 ON renacimiento(material1);
+    CREATE INDEX idx_renacimiento_droide2 ON renacimiento(droide2);
+    CREATE INDEX idx_renacimiento_material2 ON renacimiento(material2);
+    CREATE INDEX idx_renacimiento_droide3 ON renacimiento(droide3);
+    CREATE INDEX idx_renacimiento_material3 ON renacimiento(material3);
+    
+    PRINT '✅ Tabla renacimiento creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla renacimiento ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Fusiones
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fusion')
+BEGIN
+    CREATE TABLE fusion (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        droide1 VARCHAR(50) NOT NULL,
+        droide2 VARCHAR(50) NOT NULL,
+        droide3 VARCHAR(50) NOT NULL,
+        droideResultante VARCHAR(50) NOT NULL,
+        rarezaResultante VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_fusion_droide1 ON fusion(droide1);
+    CREATE INDEX idx_fusion_droide2 ON fusion(droide2);
+    CREATE INDEX idx_fusion_droide3 ON fusion(droide3);
+    CREATE INDEX idx_fusion_droideResultante ON fusion(droideResultante);
+    CREATE INDEX idx_fusion_rarezaResultante ON fusion(rarezaResultante);
+    
+    PRINT '✅ Tabla fusion creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla fusion ya existe';
+END
+GO
+
+-- ================================================
+-- TABLA: Reglas de fusión
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'reglaFusion')
+BEGIN
+    CREATE TABLE reglaFusion (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        descripcion VARCHAR(350) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_reglaFusion_descripcion ON reglaFusion(descripcion);
+    
+    PRINT '✅ Tabla reglaFusion creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla reglasFusion ya existe';
+END
+GO
+
+-- ================================================================================================
+
 -- ================================================
 -- VERIFICAR TABLAS CREADAS
 -- ================================================
