@@ -275,11 +275,11 @@ BEGIN
         multiplicador INT NOT NULL,
         estaEnInventario BIT DEFAULT 0,
         created_at DATETIME DEFAULT GETDATE(),
-        updated_at DATETIME NULL
+        updated_at DATETIME NULL,
         CONSTRAINT FK_materialDroide_droide FOREIGN KEY (droide_id) REFERENCES droide(id) ON DELETE CASCADE
     );
     
-    CREATE INDEX idx_materialDroide_nombreDroide ON materialDroide(nombreDroide);
+    CREATE INDEX idx_materialDroide_droide_id ON materialDroide(droide_id);
     CREATE INDEX idx_materialDroide_material ON materialDroide(material);
     
     PRINT '✅ Tabla materialDroide creada';
@@ -531,7 +531,7 @@ BEGIN
 END
 ELSE
 BEGIN
-    PRINT '⚠️ Tabla reglasFusion ya existe';
+    PRINT '⚠️ Tabla reglaFusion ya existe';
 END
 GO
 

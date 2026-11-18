@@ -16,10 +16,11 @@
 ### Ventana de Administrador
 Descripción: Controlar datos de los droides
 - Nombres
+- Rarezas
 - Materiales
+- Créditos por Segundo
 - Chips
 - Kyber
-- Ciclos *
 - Backup
 
 ### Ventana de Inventario o de Base
@@ -32,13 +33,15 @@ Descripción: Droides que tengo en la base funcionando o descansando
 Descripción: Información general sobre ventajas y ciclos de renacimiento en forma de tarjetas
 
 - Ventajas
-    - Información general
-    - Droides icónicos
+    - Ventajas generales
+    - Ventajas icónicas
 
 - Renacimientos
     - Ciclos
+    - Busqueda de Droide
 
 - Fusiones
+    - Reglas de Fusiones
 
 ### Ventana de Droidex y Scourgedex
 Descripción: Conteo de como va el Droidex y Scourgedex
@@ -46,4 +49,4 @@ Descripción: Conteo de como va el Droidex y Scourgedex
 - Droidex - Materiales y Perfectos
 - Scourgedex
 
-### Ventana de Tienda Nova
+### Ventana de Tienda Nova (Veremos)

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
 from app.routes.sprites import sprits, cantidad_polvo_extraer, cantidad_polvo_invocar, material, nombres_sprites, orden_default, orden_rareza, backup, metodo_subida_nivel
+from app.routes import droidTycoon
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)
@@ -37,6 +38,8 @@ app.include_router(orden_default.router)
 app.include_router(orden_rareza.router)
 app.include_router(backup.router)
 app.include_router(metodo_subida_nivel.router)
+for router in droidTycoon.routers:
+    app.include_router(router)
 
 @app.get("/")
 def root():
@@ -46,6 +49,7 @@ def root():
         "status": "running",
         "endpoints": {
             "sprits": "/api/sprits",
+            "droides": "/api/droides",
             "docs": "/docs"
         }
     }
