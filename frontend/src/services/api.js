@@ -30,6 +30,24 @@ export const droidesService = {
   delete: (id) => api.delete(`/droides/${id}`),
 };
 
+export const fusionesService = {
+  getAll: (params = {}) => api.get('/fusiones/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/fusiones/', data),
+  update: (id, data) => api.put(`/fusiones/${id}`, data),
+  delete: (id) => api.delete(`/fusiones/${id}`),
+};
+
+export const reglasFusionService = {
+  getAll: (params = {}) => api.get('/reglas-fusion/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/reglas-fusion/', data),
+  update: (id, data) => api.put(`/reglas-fusion/${id}`, data),
+  delete: (id) => api.delete(`/reglas-fusion/${id}`),
+};
+
 export const materialDroidTycoonService = {
   getAll: (params = {}) => api.get('/materiales-droid-tycoon/', {
     params: { limit: 1000, ...params },

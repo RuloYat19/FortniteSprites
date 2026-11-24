@@ -41,6 +41,7 @@ Descripción: Información general sobre ventajas y ciclos de renacimiento en fo
     - Busqueda de Droide
 
 - Fusiones
+    - Recetas de Fusiones
     - Reglas de Fusiones
 
 ### Ventana de Droidex y Scourgedex

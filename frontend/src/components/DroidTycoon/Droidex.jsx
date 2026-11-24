@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../ConfirmModal';
 import {
   droidesService,
+  fusionesService,
   materialDroidTycoonService,
   materialesDroideService,
   nombresDroidesService,
   rarezasDroidesService,
 } from '../../services/api';
+import ComboboxFiltrable from './ComboboxFiltrable';
 import iconoAstromecanico from '../../../imagenesDroides/iconoAstromecanico.png';
 import iconoBatalla from '../../../imagenesDroides/iconoBatalla.png';
 import iconoProtocolo from '../../../imagenesDroides/iconoProtocolo.png';
@@ -101,6 +103,28 @@ function ImagenDroide({ droide }) {
   );
 }
 
+function ImagenDroideFusion({ etiqueta, nombre, droide }) {
+  const [imagenFallida, setImagenFallida] = useState(false);
+  const url = obtenerUrlImagen(droide?.nombreArchivoImagen);
+
+  return (
+    <div className="droidex-fusion-modal-droid">
+      <small>{etiqueta}</small>
+      {url && !imagenFallida ? (
+        <img
+          src={url}
+          alt={nombre}
+          loading="lazy"
+          onError={() => setImagenFallida(true)}
+        />
+      ) : (
+        <span className="droidex-fusion-modal-fallback" aria-hidden="true">🤖</span>
+      )}
+      <strong>{nombre}</strong>
+    </div>
+  );
+}
+
 function Droidex() {
   const navigate = useNavigate();
   const [droides, setDroides] = useState([]);
@@ -108,6 +132,11 @@ function Droidex() {
   const [materialesAsignados, setMaterialesAsignados] = useState([]);
   const [nombresDisponibles, setNombresDisponibles] = useState([]);
   const [rarezasDisponibles, setRarezasDisponibles] = useState([]);
+  const [recetasFusion, setRecetasFusion] = useState([]);
+  const [cargandoRecetasFusion, setCargandoRecetasFusion] = useState(true);
+  const [errorRecetasFusion, setErrorRecetasFusion] = useState('');
+  const [intentoRecargarRecetas, setIntentoRecargarRecetas] = useState(0);
+  const [droideRecetaAbierta, setDroideRecetaAbierta] = useState(null);
   const [seccionActiva, setSeccionActiva] = useState('droidex');
   const [busqueda, setBusqueda] = useState('');
   const [rarezaFiltro, setRarezaFiltro] = useState('');
@@ -170,6 +199,39 @@ function Droidex() {
     };
   }, []);
 
+  useEffect(() => {
+    let componenteActivo = true;
+
+    cargarTodosLosRegistros(fusionesService.getAll)
+      .then((registros) => {
+        if (componenteActivo) setRecetasFusion(registros);
+      })
+      .catch((requestError) => {
+        console.error('Error al cargar las recetas de fusión de Droidex:', requestError);
+        if (componenteActivo) {
+          setErrorRecetasFusion('No se pudieron cargar las recetas de fusión.');
+        }
+      })
+      .finally(() => {
+        if (componenteActivo) setCargandoRecetasFusion(false);
+      });
+
+    return () => {
+      componenteActivo = false;
+    };
+  }, [intentoRecargarRecetas]);
+
+  useEffect(() => {
+    if (!droideRecetaAbierta) return undefined;
+
+    const cerrarConEscape = (event) => {
+      if (event.key === 'Escape') setDroideRecetaAbierta(null);
+    };
+
+    window.addEventListener('keydown', cerrarConEscape);
+    return () => window.removeEventListener('keydown', cerrarConEscape);
+  }, [droideRecetaAbierta]);
+
   const materialesOrdenados = useMemo(
     () => [...materialesDisponibles].sort((a, b) => a.numeroOrden - b.numeroOrden),
     [materialesDisponibles],
@@ -184,6 +246,54 @@ function Droidex() {
     () => [...rarezasDisponibles].sort((a, b) => a.numeroOrden - b.numeroOrden),
     [rarezasDisponibles],
   );
+
+  const nombreOpciones = useMemo(() => {
+    const opciones = nombresOrdenados.map((registro) => ({
+      id: `nombre-${registro.id}`,
+      value: registro.nombre,
+      label: registro.nombre,
+    }));
+    if (droideEditando && !opciones.some((opcion) => opcion.value === droideEditando.nombre)) {
+      opciones.push({
+        id: `nombre-actual-${droideEditando.id}`,
+        value: droideEditando.nombre,
+        label: droideEditando.nombre,
+      });
+    }
+    return opciones;
+  }, [droideEditando, nombresOrdenados]);
+
+  const claseOpciones = useMemo(() => {
+    const opciones = CLASES_DROIDTYCOON.map((clase) => ({
+      id: `clase-${clase}`,
+      value: clase,
+      label: clase,
+    }));
+    if (droideEditando && !opciones.some((opcion) => opcion.value === droideEditando.clase)) {
+      opciones.push({
+        id: `clase-actual-${droideEditando.id}`,
+        value: droideEditando.clase,
+        label: droideEditando.clase,
+      });
+    }
+    return opciones;
+  }, [droideEditando]);
+
+  const rarezaOpciones = useMemo(() => {
+    const opciones = rarezasOrdenadas.map((registro) => ({
+      id: `rareza-${registro.id}`,
+      value: registro.nombre,
+      label: registro.nombre,
+    }));
+    if (droideEditando && !opciones.some((opcion) => opcion.value === droideEditando.rareza)) {
+      opciones.push({
+        id: `rareza-actual-${droideEditando.id}`,
+        value: droideEditando.rareza,
+        label: droideEditando.rareza,
+      });
+    }
+    return opciones;
+  }, [droideEditando, rarezasOrdenadas]);
 
   const obtenerMaterialesVisibles = (rareza) => materialesOrdenados.filter((material) => {
     const esIconico = normalizarTexto(rareza) === 'iconico';
@@ -209,6 +319,33 @@ function Droidex() {
       return coincideTexto && coincideRareza && coincideSeccion;
     });
   }, [busqueda, droides, rarezaFiltro, seccionActiva]);
+
+  const recetasPorDroideResultante = useMemo(() => {
+    const recetasOrdenadas = [...recetasFusion].sort(
+      (a, b) => a.numeroOrden - b.numeroOrden || a.id - b.id,
+    );
+
+    return recetasOrdenadas.reduce((recetas, receta) => {
+      const nombreNormalizado = normalizarTexto(receta.droideResultante.trim());
+      const actuales = recetas.get(nombreNormalizado) || [];
+      recetas.set(nombreNormalizado, [...actuales, receta]);
+      return recetas;
+    }, new Map());
+  }, [recetasFusion]);
+
+  const droidesPorNombreNormalizado = useMemo(
+    () => new Map(droides.map((droide) => [
+      normalizarTexto(droide.nombre.trim()),
+      droide,
+    ])),
+    [droides],
+  );
+
+  const recetasDroideSeleccionado = droideRecetaAbierta
+    ? recetasPorDroideResultante.get(
+      normalizarTexto(droideRecetaAbierta.nombre.trim()),
+    ) || []
+    : [];
 
   const totales = useMemo(
     () => ({
@@ -284,15 +421,27 @@ function Droidex() {
     }
   };
 
-  const manejarCambioNuevoDroide = (event) => {
-    const { name, value, type, checked } = event.target;
+  const actualizarCampoNuevoDroide = (name, value, type = 'text', checked = false) => {
     setNuevoDroide((actual) => ({
       ...actual,
       [name]: type === 'checkbox' ? checked : value,
-      ...(name === 'nombre' && value
-        ? { nombreArchivoImagen: `./imagenesDroides/${normalizarNombreDroide(value)}.png` }
+      ...(name === 'nombre'
+        ? {
+          nombreArchivoImagen: value
+            ? `./imagenesDroides/${normalizarNombreDroide(value)}.png`
+            : '',
+        }
         : {}),
     }));
+  };
+
+  const manejarCambioNuevoDroide = (event) => {
+    const { name, value, type, checked } = event.target;
+    actualizarCampoNuevoDroide(name, value, type, checked);
+  };
+
+  const manejarCambioComboboxDroide = (name, option) => {
+    actualizarCampoNuevoDroide(name, option?.value || '');
   };
 
   const limpiarFiltros = () => {
@@ -331,6 +480,15 @@ function Droidex() {
 
   const guardarNuevoDroide = async (event) => {
     event.preventDefault();
+    if (
+      !nombreOpciones.some((opcion) => opcion.value === nuevoDroide.nombre)
+      || !claseOpciones.some((opcion) => opcion.value === nuevoDroide.clase)
+      || !rarezaOpciones.some((opcion) => opcion.value === nuevoDroide.rareza)
+    ) {
+      setErrorFormulario('Selecciona un nombre, clase y rareza de las opciones disponibles.');
+      return;
+    }
+
     setCreandoDroide(true);
     setErrorFormulario('');
     setError('');
@@ -537,8 +695,11 @@ function Droidex() {
           </div>
         ) : (
           <section className="droidex-grid" aria-label="Droides">
-            {droidesFiltrados.map((droide) => (
-              <article className="droidex-card" key={droide.id}>
+            {droidesFiltrados.map((droide) => {
+              const recetaAbierta = droideRecetaAbierta?.id === droide.id;
+
+              return (
+                <article className="droidex-card" key={droide.id}>
                 <div className="droidex-card-visual">
                   <ImagenDroide droide={droide} />
                   {ICONOS_CLASE_DROIDTYCOON[droide.clase] && (
@@ -549,9 +710,20 @@ function Droidex() {
                     />
                   )}
                   {droide.esDroideFusion && (
-                    <span className="droidex-fusion-badge" aria-label="Droide de fusión">
+                    <button
+                      type="button"
+                      className="droidex-fusion-badge"
+                      aria-label={recetaAbierta
+                        ? `Ocultar receta de fusión de ${droide.nombre}`
+                        : `Mostrar receta de fusión de ${droide.nombre}`}
+                      aria-expanded={recetaAbierta}
+                      title={recetaAbierta ? 'Ocultar receta de fusión' : 'Mostrar receta de fusión'}
+                      onClick={() => setDroideRecetaAbierta((actual) => (
+                        actual?.id === droide.id ? null : droide
+                      ))}
+                    >
                       F
-                    </span>
+                    </button>
                   )}
                   <button
                     type="button"
@@ -626,8 +798,87 @@ function Droidex() {
                   </div>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </section>
+        )}
+
+        {droideRecetaAbierta && (
+          <div
+            className="droidex-modal-overlay"
+            onClick={() => setDroideRecetaAbierta(null)}
+          >
+            <section
+              className="droidex-fusion-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="droidex-fusion-modal-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <header className="droidex-fusion-modal-header">
+                <div>
+                  <p className="droidex-eyebrow">Receta de fusión</p>
+                  <h2 id="droidex-fusion-modal-title">{droideRecetaAbierta.nombre}</h2>
+                </div>
+                <button
+                  type="button"
+                  className="droidex-modal-close"
+                  onClick={() => setDroideRecetaAbierta(null)}
+                  aria-label="Cerrar receta"
+                >
+                  ×
+                </button>
+              </header>
+
+              {cargandoRecetasFusion ? (
+                <div className="droidex-message" role="status">Cargando receta...</div>
+              ) : errorRecetasFusion ? (
+                <div className="droidex-error" role="alert">
+                  <span>{errorRecetasFusion}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCargandoRecetasFusion(true);
+                      setErrorRecetasFusion('');
+                      setIntentoRecargarRecetas((intento) => intento + 1);
+                    }}
+                  >
+                    Reintentar
+                  </button>
+                </div>
+              ) : recetasDroideSeleccionado.length > 0 ? (
+                <div className="droidex-fusion-modal-recipes">
+                  {recetasDroideSeleccionado.map((receta) => (
+                    <section className="droidex-fusion-modal-entry" key={receta.id}>
+                      {recetasDroideSeleccionado.length > 1 && (
+                        <h3>Receta #{receta.numeroOrden}</h3>
+                      )}
+                      <div className="droidex-fusion-modal-components">
+                        <ImagenDroideFusion
+                          nombre={receta.droide1}
+                          droide={droidesPorNombreNormalizado.get(normalizarTexto(receta.droide1.trim()))}
+                        />
+                        <span className="droidex-fusion-modal-plus" aria-hidden="true">+</span>
+                        <ImagenDroideFusion
+                          nombre={receta.droide2}
+                          droide={droidesPorNombreNormalizado.get(normalizarTexto(receta.droide2.trim()))}
+                        />
+                        <span className="droidex-fusion-modal-plus" aria-hidden="true">+</span>
+                        <ImagenDroideFusion
+                          nombre={receta.droide3}
+                          droide={droidesPorNombreNormalizado.get(normalizarTexto(receta.droide3.trim()))}
+                        />
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              ) : (
+                <div className="droidex-message">
+                  No se encontró una receta para este droide.
+                </div>
+              )}
+            </section>
+          </div>
         )}
 
         {modalAbierto && (
@@ -664,61 +915,30 @@ function Droidex() {
                 <p className="droidex-form-error" role="alert">{errorFormulario}</p>
               )}
 
-              <label>
-                Nombre *
-                <select
-                  name="nombre"
-                  value={nuevoDroide.nombre}
-                  onChange={manejarCambioNuevoDroide}
-                  required
-                >
-                  <option value="" disabled>
-                    {nombresOrdenados.length ? 'Selecciona un nombre' : 'No hay nombres registrados'}
-                  </option>
-                  {nombresOrdenados.map((registro) => (
-                    <option key={registro.id} value={registro.nombre}>
-                      {registro.nombre}
-                    </option>
-                  ))}
-                  {droideEditando && !nombresOrdenados.some(
-                    (registro) => registro.nombre === droideEditando.nombre,
-                  ) && (
-                    <option value={droideEditando.nombre}>{droideEditando.nombre}</option>
-                  )}
-                </select>
-              </label>
-              <label>
-                Clase *
-                <select
-                  name="clase"
-                  value={nuevoDroide.clase}
-                  onChange={manejarCambioNuevoDroide}
-                  required
-                >
-                  <option value="" disabled>Selecciona una clase</option>
-                  {CLASES_DROIDTYCOON.map((clase) => (
-                    <option key={clase} value={clase}>{clase}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Rareza *
-                <select
-                  name="rareza"
-                  value={nuevoDroide.rareza}
-                  onChange={manejarCambioNuevoDroide}
-                  required
-                >
-                  <option value="" disabled>
-                    {rarezasOrdenadas.length ? 'Selecciona una rareza' : 'No hay rarezas registradas'}
-                  </option>
-                  {rarezasOrdenadas.map((registro) => (
-                    <option key={registro.id} value={registro.nombre}>
-                      {registro.nombre}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <ComboboxFiltrable
+                id="droidex-nombre"
+                label="Nombre *"
+                value={nuevoDroide.nombre}
+                options={nombreOpciones}
+                noOptionsText="No hay nombres que coincidan."
+                onChange={(option) => manejarCambioComboboxDroide('nombre', option)}
+              />
+              <ComboboxFiltrable
+                id="droidex-clase"
+                label="Clase *"
+                value={nuevoDroide.clase}
+                options={claseOpciones}
+                noOptionsText="No hay clases que coincidan."
+                onChange={(option) => manejarCambioComboboxDroide('clase', option)}
+              />
+              <ComboboxFiltrable
+                id="droidex-rareza"
+                label="Rareza *"
+                value={nuevoDroide.rareza}
+                options={rarezaOpciones}
+                noOptionsText="No hay rarezas que coincidan."
+                onChange={(option) => manejarCambioComboboxDroide('rareza', option)}
+              />
               <label>
                 Ruta de imagen
                 <input

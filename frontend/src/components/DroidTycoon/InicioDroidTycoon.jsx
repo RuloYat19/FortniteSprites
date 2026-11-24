@@ -13,11 +13,6 @@ const opciones = [
     descripcion: 'Revisa los ciclos y requisitos de renacimiento.',
     icono: '♻️',
   },
-  {
-    titulo: 'Fusiones',
-    descripcion: 'Explora las combinaciones y reglas de fusión.',
-    icono: '🔗',
-  },
 ];
 
 function InicioDroidTycoon() {
@@ -53,6 +48,16 @@ function InicioDroidTycoon() {
           <div className="inicio-card-content">
             <h3>Droidex y Scourgedex</h3>
             <p>Explora y completa tu colección de droides.</p>
+          </div>
+        </Link>
+
+        <Link to="/droid-tycoon/informacion" className="inicio-card">
+          <div className="inicio-card-image inicio-droid-tycoon-option-icon">
+            <span aria-hidden="true">🔗</span>
+          </div>
+          <div className="inicio-card-content">
+            <h3>Información de Droid Tycoon</h3>
+            <p>Consulta las recetas y reglas de fusión.</p>
           </div>
         </Link>
 

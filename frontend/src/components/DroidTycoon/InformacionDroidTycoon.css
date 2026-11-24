@@ -1,0 +1,313 @@
+.informacion-fusion-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.informacion-fusion-tabs {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(15, 52, 96, 0.3);
+}
+
+.informacion-fusion-tabs button {
+  flex: 1;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.informacion-fusion-add-button {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #35cf35;
+  color: #102015;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.informacion-fusion-add-button:hover:not(:disabled) {
+  background: #56e456;
+}
+
+.informacion-fusion-add-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) textarea {
+  min-height: 120px;
+  padding: 9px 12px;
+  border: 1px solid #315078;
+  border-radius: 7px;
+  outline: 0;
+  background: #1a1a2e;
+  color: #fff;
+  font: inherit;
+  resize: vertical;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) textarea:focus {
+  border-color: #35cf35;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) input[readonly] {
+  color: #9aa3b5;
+  cursor: default;
+}
+
+.informacion-mover-summary {
+  margin: 0;
+  color: #c3c9d4;
+  line-height: 1.5;
+}
+
+.informacion-mover-summary strong {
+  color: #35cf35;
+}
+
+.informacion-fusion-tabs button:hover,
+.informacion-fusion-tabs button.active {
+  background: #35cf35;
+  color: #1a1a2e;
+}
+
+.informacion-fusion-list {
+  display: grid;
+  gap: 10px;
+}
+
+.informacion-fusion-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 32px minmax(130px, 0.65fr);
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  background: rgba(15, 52, 96, 0.24);
+}
+
+.informacion-fusion-order {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  color: #ffca55;
+  font-weight: 700;
+}
+
+.informacion-fusion-order small {
+  color: #9aa3b5;
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.informacion-fusion-row-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 28px);
+  justify-content: center;
+  gap: 4px;
+}
+
+.informacion-fusion-row-actions button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #315078;
+  border-radius: 6px;
+  background: rgba(22, 33, 62, 0.8);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.informacion-fusion-row-actions button:hover:not(:disabled) {
+  border-color: #35cf35;
+  background: rgba(53, 207, 53, 0.1);
+}
+
+.informacion-fusion-row-actions button.delete:hover:not(:disabled) {
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.12);
+}
+
+.informacion-fusion-row-actions button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.informacion-fusion-components,
+.informacion-fusion-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.informacion-fusion-droid-image {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 5px;
+  color: #35cf35;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.informacion-fusion-droid-image img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.informacion-fusion-droid-image small {
+  max-width: 110px;
+  color: #c3c9d4;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.informacion-fusion-arrow {
+  color: #ffca55;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.informacion-fusion-result {
+  flex-wrap: wrap;
+}
+
+.informacion-fusion-rarity {
+  text-align: center;
+}
+
+.informacion-reglas-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.informacion-reglas-list li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid #0f3460;
+  border-radius: 10px;
+  background: rgba(15, 52, 96, 0.24);
+}
+
+.informacion-reglas-list p {
+  min-width: 0;
+  margin: 0;
+  color: #d3d8e2;
+  line-height: 1.55;
+}
+
+.informacion-regla-meta {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.informacion-regla-order {
+  color: #ffca55;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .informacion-fusion-row {
+    grid-template-columns: 60px minmax(0, 1fr) 24px minmax(92px, 0.55fr);
+    gap: 7px;
+    padding: 12px 8px;
+  }
+
+  .informacion-reglas-list li {
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .informacion-fusion-components,
+  .informacion-fusion-result {
+    gap: 4px;
+  }
+
+  .informacion-fusion-droid-image img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .informacion-fusion-droid-image small {
+    max-width: 76px;
+    font-size: 0.66rem;
+  }
+
+  .informacion-fusion-row-actions button {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .informacion-fusion-tabs button {
+    padding: 10px 6px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 580px) {
+  .informacion-fusion-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .informacion-fusion-add-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .informacion-fusion-row {
+    grid-template-columns: 50px minmax(0, 1fr) 18px minmax(74px, 0.5fr);
+    gap: 4px;
+  }
+
+  .informacion-fusion-row-actions {
+    grid-template-columns: repeat(2, 21px);
+    gap: 2px;
+  }
+
+  .informacion-fusion-row-actions button {
+    width: 21px;
+    height: 21px;
+    font-size: 0.58rem;
+  }
+
+  .informacion-reglas-list li {
+    grid-template-columns: 50px minmax(0, 1fr);
+  }
+
+  .informacion-fusion-droid-image img {
+    width: 34px;
+    height: 34px;
+  }
+}

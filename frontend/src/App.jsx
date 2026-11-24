@@ -7,6 +7,7 @@ import Dominados from './components/Sprites/Dominados';
 import Administrador from './components/Administrador/Administrador';
 import InicioDroidTycoon from './components/DroidTycoon/InicioDroidTycoon';
 import Droidex from './components/DroidTycoon/Droidex';
+import InformacionDroidTycoon from './components/DroidTycoon/InformacionDroidTycoon';
 import AdministradorDroidTycoon from './components/AdministradorDroidTycoon/AdministradorDroidTycoon';
 
 function InicioWrapper() {
@@ -71,6 +72,7 @@ function App() {
         <Route path="/sprites/administrador" element={<Administrador />} />
         <Route path="/droid-tycoon" element={<InicioDroidTycoon />} />
         <Route path="/droid-tycoon/droidex" element={<Droidex />} />
+        <Route path="/droid-tycoon/informacion" element={<InformacionDroidTycoon />} />
         <Route path="/droid-tycoon/administrador" element={<AdministradorDroidTycoon />} />
       </Routes>
     </div>
