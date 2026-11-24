@@ -8,4 +8,5 @@ router = create_crud_router(
     create_schema=schemas.MaterialDroideCreate,
     update_schema=schemas.MaterialDroideUpdate,
     response_schema=schemas.MaterialDroideResponse,
+    list_filter=("droide_id", models.MaterialDroide.droide_id),
 )

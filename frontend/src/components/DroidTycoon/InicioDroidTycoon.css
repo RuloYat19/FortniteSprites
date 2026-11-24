@@ -1,0 +1,48 @@
+.inicio-droid-tycoon {
+  position: relative;
+}
+
+.inicio-droid-tycoon .inicio-droid-tycoon-back {
+  margin-bottom: 18px;
+  padding: 9px 14px;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  background: #16213e;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.inicio-droid-tycoon .inicio-droid-tycoon-back:hover {
+  border-color: #35cf35;
+  color: #35cf35;
+}
+
+.inicio-droid-tycoon .inicio-card {
+  text-decoration: none;
+}
+
+.inicio-droid-tycoon .inicio-droid-tycoon-option-icon {
+  color: #35cf35;
+  font-size: 5rem;
+}
+
+.inicio-droid-tycoon .inicio-droid-tycoon-pending {
+  cursor: default;
+}
+
+.inicio-droid-tycoon .inicio-droid-tycoon-pending:hover {
+  transform: none;
+  border-color: #0f3460;
+  box-shadow: none;
+}
+
+.inicio-droid-tycoon-badge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 10px;
+  border: 1px solid #526079;
+  border-radius: 20px;
+  color: #9aa3b5;
+  font-size: 0.75rem;
+}

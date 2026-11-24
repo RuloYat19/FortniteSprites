@@ -21,6 +21,70 @@ export const spritsService = {
   actualizarPolvos: () => api.post('/sprits/actualizar-polvos'),
 };
 
+export const droidesService = {
+  getAll: (params = {}) => api.get('/droides/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/droides/', data),
+  update: (id, data) => api.put(`/droides/${id}`, data),
+};
+
+export const materialDroidTycoonService = {
+  getAll: (params = {}) => api.get('/materiales-droid-tycoon/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/materiales-droid-tycoon/', data),
+  update: (id, data) => api.put(`/materiales-droid-tycoon/${id}`, data),
+  delete: (id) => api.delete(`/materiales-droid-tycoon/${id}`),
+};
+
+export const materialesDroideService = {
+  getAll: (params = {}) => api.get('/materiales-droide/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/materiales-droide/', data),
+  update: (id, data) => api.put(`/materiales-droide/${id}`, data),
+};
+
+export const nombresDroidesService = {
+  getAll: (params = {}) => api.get('/nombres-droides/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/nombres-droides/', data),
+  update: (id, data) => api.put(`/nombres-droides/${id}`, data),
+  delete: (id) => api.delete(`/nombres-droides/${id}`),
+};
+
+export const rarezasDroidesService = {
+  getAll: (params = {}) => api.get('/rareza-droides/', {
+    params: { limit: 1000, ...params },
+  }),
+  create: (data) => api.post('/rareza-droides/', data),
+  update: (id, data) => api.put(`/rareza-droides/${id}`, data),
+  delete: (id) => api.delete(`/rareza-droides/${id}`),
+};
+
+export const creditosPorSegundoService = {
+  getAll: () => api.get('/creditos-por-segundo/', { params: { limit: 1000 } }),
+  create: (data) => api.post('/creditos-por-segundo/', data),
+  update: (id, data) => api.put(`/creditos-por-segundo/${id}`, data),
+  delete: (id) => api.delete(`/creditos-por-segundo/${id}`),
+};
+
+export const chipsVentaDroideService = {
+  getAll: () => api.get('/chips-venta-droide/', { params: { limit: 1000 } }),
+  create: (data) => api.post('/chips-venta-droide/', data),
+  update: (id, data) => api.put(`/chips-venta-droide/${id}`, data),
+  delete: (id) => api.delete(`/chips-venta-droide/${id}`),
+};
+
+export const kyberActivarDroideService = {
+  getAll: () => api.get('/kyber-activar-droide/', { params: { limit: 1000 } }),
+  create: (data) => api.post('/kyber-activar-droide/', data),
+  update: (id, data) => api.put(`/kyber-activar-droide/${id}`, data),
+  delete: (id) => api.delete(`/kyber-activar-droide/${id}`),
+};
+
 export const cantidadPolvoExtraerService = {
   getAll: () => axios.get(`${API_URL}/cantidad-polvo-extraer`),
   getById: (id) => axios.get(`${API_URL}/cantidad-polvo-extraer/${id}`),

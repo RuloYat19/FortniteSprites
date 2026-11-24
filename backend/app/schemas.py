@@ -265,6 +265,20 @@ class MaterialDroideUpdate(BaseModel):
 class MaterialDroideResponse(MaterialDroideBase, DroidTycoonResponse):
     pass
 
+class MaterialDroidTycoonBase(BaseModel):
+    numeroOrden: int
+    material: str
+
+class MaterialDroidTycoonCreate(MaterialDroidTycoonBase):
+    pass
+
+class MaterialDroidTycoonUpdate(BaseModel):
+    numeroOrden: Optional[int] = None
+    material: Optional[str] = None
+
+class MaterialDroidTycoonResponse(MaterialDroidTycoonBase, DroidTycoonResponse):
+    pass
+
 class NombreDroideBase(BaseModel):
     numeroOrden: int
     nombre: str

@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Any, Type
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
@@ -15,16 +15,32 @@ def create_crud_router(
     create_schema: Type[BaseModel],
     update_schema: Type[BaseModel],
     response_schema: Type[BaseModel],
+    list_filter: tuple[str, Any] | None = None,
 ) -> APIRouter:
     router = APIRouter(prefix=prefix, tags=[tag])
 
-    @router.get("/", response_model=list[response_schema])
-    def get_all(
-        db: Session = Depends(get_db),
-        skip: int = Query(0, ge=0),
-        limit: int = Query(100, ge=1, le=1000),
-    ):
-        return db.query(model).order_by(model.id).offset(skip).limit(limit).all()
+    if list_filter is None:
+        @router.get("/", response_model=list[response_schema])
+        def get_all(
+            db: Session = Depends(get_db),
+            skip: int = Query(0, ge=0),
+            limit: int = Query(100, ge=1, le=1000),
+        ):
+            return db.query(model).order_by(model.id).offset(skip).limit(limit).all()
+    else:
+        filter_name, filter_column = list_filter
+
+        @router.get("/", response_model=list[response_schema])
+        def get_all(
+            db: Session = Depends(get_db),
+            skip: int = Query(0, ge=0),
+            limit: int = Query(100, ge=1, le=1000),
+            filter_value: int | None = Query(None, alias=filter_name),
+        ):
+            query = db.query(model)
+            if filter_value is not None:
+                query = query.filter(filter_column == filter_value)
+            return query.order_by(model.id).offset(skip).limit(limit).all()
 
     @router.get("/{item_id}", response_model=response_schema)
     def get_by_id(item_id: int, db: Session = Depends(get_db)):

@@ -1,0 +1,699 @@
+.droidex-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.droidex-sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex: 0 0 260px;
+  flex-direction: column;
+  height: 100vh;
+  background: #16213e;
+  border-right: 2px solid #0f3460;
+}
+
+.droidex-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 18px;
+  border-bottom: 2px solid #0f3460;
+}
+
+.droidex-sidebar-header img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.droidex-sidebar-header h2 {
+  margin: 0;
+  color: #35cf35;
+  font-size: 1.15rem;
+}
+
+.droidex-sidebar-header span {
+  color: #8892a6;
+  font-size: 0.8rem;
+}
+
+.droidex-sidebar-nav {
+  flex: 1;
+  padding: 22px 0;
+}
+
+.droidex-nav-heading {
+  display: block;
+  padding: 0 20px 10px;
+  color: #78839a;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.droidex-sidebar-nav button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+
+.droidex-sidebar-nav button:hover,
+.droidex-sidebar-nav button.active {
+  background: rgba(53, 207, 53, 0.09);
+  color: #35cf35;
+}
+
+.droidex-sidebar-nav button.active {
+  border-left-color: #35cf35;
+}
+
+.droidex-nav-count {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 20px;
+  background: rgba(53, 207, 53, 0.15);
+  color: #35cf35;
+  font-size: 0.75rem;
+}
+
+.droidex-sidebar-footer {
+  padding: 16px;
+  border-top: 2px solid #0f3460;
+}
+
+.droidex-sidebar-footer button {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.droidex-sidebar-footer button:hover {
+  border-color: #35cf35;
+  color: #35cf35;
+}
+
+.droidex-main {
+  min-width: 0;
+  flex: 1;
+  padding: 32px clamp(18px, 4vw, 52px);
+}
+
+.droidex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.droidex-eyebrow {
+  margin: 0 0 5px;
+  color: #35cf35;
+  font-size: 0.78rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.droidex-header h1 {
+  margin: 0;
+  color: #35cf35;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  text-shadow: 0 0 10px rgba(38, 167, 21, 0.35);
+}
+
+.droidex-subtitle {
+  margin: 7px 0 0;
+  color: #9aa3b5;
+}
+
+.droidex-header-stat {
+  display: flex;
+  min-width: 120px;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 20px;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  background: rgba(15, 52, 96, 0.3);
+}
+
+.droidex-header-stat span {
+  color: #ffca55;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.droidex-header-stat small {
+  color: #9aa3b5;
+}
+
+.droidex-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 14px;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  background: rgba(15, 52, 96, 0.25);
+}
+
+.droidex-search {
+  display: flex;
+  min-width: 220px;
+  flex: 1;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #9aa3b5;
+}
+
+.droidex-search input,
+.droidex-filters select {
+  min-height: 42px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+}
+
+.droidex-search input {
+  width: 100%;
+  outline: 0;
+}
+
+.droidex-search input::placeholder {
+  color: #78839a;
+}
+
+.droidex-filters select {
+  min-width: 175px;
+  padding: 0 10px;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  background: #1a1a2e;
+  cursor: pointer;
+}
+
+.droidex-filters select option {
+  background: #1a1a2e;
+}
+
+.droidex-add-button {
+  min-height: 42px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 8px;
+  background: #35cf35;
+  color: #102015;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.droidex-add-button:hover {
+  background: #56e456;
+}
+
+.droidex-results-count {
+  min-width: 90px;
+  color: #9aa3b5;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.droidex-error,
+.droidex-message {
+  padding: 22px;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  background: rgba(15, 52, 96, 0.25);
+  color: #bbc3d2;
+  text-align: center;
+}
+
+.droidex-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  border-color: rgba(244, 67, 54, 0.5);
+  color: #ff9a91;
+}
+
+.droidex-error button {
+  padding: 7px 12px;
+  border: 1px solid rgba(244, 67, 54, 0.6);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.droidex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.droidex-card {
+  overflow: hidden;
+  border: 1px solid #0f3460;
+  border-radius: 14px;
+  background: rgba(15, 52, 96, 0.24);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.droidex-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(53, 207, 53, 0.55);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.droidex-card-visual {
+  position: relative;
+}
+
+.droidex-card-image {
+  display: grid;
+  height: 135px;
+  place-items: center;
+  background: radial-gradient(circle, rgba(53, 207, 53, 0.1), rgba(15, 52, 96, 0.2));
+  color: #35cf35;
+  font-size: 4.5rem;
+}
+
+.droidex-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 9px;
+}
+
+.droidex-class-icon {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 105px;
+  max-height: 45px;
+  object-fit: contain;
+}
+
+.droidex-card-content {
+  padding: 9px;
+}
+
+.droidex-card-title {
+  display: grid;
+  justify-items: start;
+  gap: 7px;
+}
+
+.droidex-perfect-toggle {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  background: rgba(22, 33, 62, 0.88);
+  color: #d7dce5;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.droidex-perfect-toggle:hover:not(:disabled),
+.droidex-perfect-toggle.selected.perfect {
+  border-color: #ffca55;
+  color: #ffca55;
+  background: rgba(255, 202, 85, 0.08);
+}
+
+.droidex-perfect-toggle:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.droidex-card-title h2 {
+  width: 100%;
+  margin: 0;
+  color: #fff;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.droidex-rarity {
+  padding: 4px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #c3c9d4;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+.droidex-rarity.raro {
+  border-color: #2196f3;
+  color: #64b5f6;
+}
+
+.droidex-rarity.épico {
+  border-color: #9c27b0;
+  color: #ce93d8;
+}
+
+.droidex-rarity.legendario {
+  border-color: #ff6f00;
+  color: #ffb74d;
+}
+
+.droidex-rarity.mítico {
+  border-color: #f44336;
+  color: #ffcdd2;
+}
+
+.droidex-card-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.droidex-card-actions button {
+  min-height: 36px;
+  border: 1px solid #315078;
+  border-radius: 7px;
+  background: rgba(22, 33, 62, 0.8);
+  color: #b7c0d0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.droidex-card-actions button:hover:not(:disabled),
+.droidex-card-actions button.selected {
+  border-color: #35cf35;
+  color: #35cf35;
+}
+
+.droidex-card-actions button.selected {
+  background: rgba(53, 207, 53, 0.08);
+}
+
+.droidex-card-actions button.selected.perfect {
+  border-color: #ffca55;
+  color: #ffca55;
+  background: rgba(255, 202, 85, 0.08);
+}
+
+.droidex-card-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.droidex-materials {
+  margin-top: 10px;
+}
+
+.droidex-materials p {
+  margin: 0 0 8px;
+  color: #9aa3b5;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.droidex-materials small {
+  display: block;
+  margin: -4px 0 9px;
+  color: #78839a;
+  font-size: 0.72rem;
+}
+
+.droidex-material-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.droidex-material-buttons button {
+  min-width: 46px;
+  padding: 7px 9px;
+  border: 1px solid #29394e;
+  border-radius: 6px;
+  background: rgba(11, 24, 35, 0.65);
+  color: #8490a0;
+  cursor: pointer;
+  font-size: 0.69rem;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.droidex-material-buttons button:hover:not(:disabled) {
+  border-color: #35cf35;
+  color: #fff;
+}
+
+.droidex-material-buttons button.selected {
+  border-color: #35cf35;
+  background: rgba(53, 207, 53, 0.16);
+  color: #35cf35;
+}
+
+.droidex-material-buttons button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.droidex-modal-overlay {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(5, 10, 20, 0.78);
+}
+
+.droidex-modal {
+  display: grid;
+  width: min(100%, 520px);
+  max-height: min(90vh, 760px);
+  gap: 15px;
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid #0f3460;
+  border-radius: 14px;
+  background: #16213e;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+.droidex-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.droidex-modal-header h2 {
+  margin: 0;
+  color: #fff;
+}
+
+.droidex-modal-close {
+  border: 0;
+  background: transparent;
+  color: #9aa3b5;
+  cursor: pointer;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) {
+  display: grid;
+  gap: 6px;
+  color: #bbc3d2;
+  font-size: 0.88rem;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) input,
+.droidex-modal > label:not(.droidex-checkbox) select {
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #315078;
+  border-radius: 7px;
+  outline: 0;
+  background: #1a1a2e;
+  color: #fff;
+  font: inherit;
+}
+
+.droidex-modal > label:not(.droidex-checkbox) input:focus,
+.droidex-modal > label:not(.droidex-checkbox) select:focus {
+  border-color: #35cf35;
+}
+
+.droidex-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #bbc3d2;
+  cursor: pointer;
+}
+
+.droidex-checkbox input {
+  accent-color: #35cf35;
+  width: 17px;
+  height: 17px;
+}
+
+.droidex-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.droidex-modal-actions button {
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 7px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.droidex-cancel-button {
+  border: 1px solid #315078;
+  background: transparent;
+  color: #bbc3d2;
+}
+
+.droidex-save-button {
+  border: 1px solid #35cf35;
+  background: #35cf35;
+  color: #102015;
+  font-weight: 700 !important;
+}
+
+.droidex-save-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+@media (max-width: 800px) {
+  .droidex-layout {
+    flex-direction: column;
+  }
+
+  .droidex-sidebar {
+    position: static;
+    height: auto;
+    flex-basis: auto;
+    border-right: 0;
+    border-bottom: 2px solid #0f3460;
+  }
+
+  .droidex-sidebar-header {
+    padding: 12px 16px;
+  }
+
+  .droidex-sidebar-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .droidex-nav-heading {
+    width: 100%;
+    padding: 4px 8px;
+  }
+
+  .droidex-sidebar-nav button {
+    width: auto;
+    flex: 1;
+    border-bottom: 3px solid transparent;
+    border-left: 0;
+  }
+
+  .droidex-sidebar-nav button.active {
+    border-bottom-color: #35cf35;
+  }
+
+  .droidex-sidebar-footer {
+    padding: 8px 12px 12px;
+    border-top: 0;
+  }
+}
+
+@media (max-width: 580px) {
+  .droidex-main {
+    padding: 22px 14px;
+  }
+
+  .droidex-header {
+    align-items: flex-start;
+  }
+
+  .droidex-header-stat {
+    min-width: 95px;
+    padding: 10px;
+  }
+
+  .droidex-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .droidex-search,
+  .droidex-filters select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .droidex-add-button {
+    width: 100%;
+  }
+
+  .droidex-results-count {
+    text-align: left;
+  }
+
+  .droidex-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}

@@ -4,9 +4,11 @@ from app.config import settings
 from app.database import engine, Base
 from app.routes.sprites import sprits, cantidad_polvo_extraer, cantidad_polvo_invocar, material, nombres_sprites, orden_default, orden_rareza, backup, metodo_subida_nivel
 from app.routes import droidTycoon
+from app.seed import seed_material_droid_tycoon
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)
+seed_material_droid_tycoon()
 
 app = FastAPI(
     title=settings.APP_NAME,

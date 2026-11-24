@@ -1,5 +1,45 @@
 from app.database import SessionLocal, engine, Base
-from app.models import Sprit, CantidadPolvoEspirituExtraer, Material, NombreSprit, OrdenDefault, OrdenRareza
+from app.models import (
+    CantidadPolvoEspirituExtraer,
+    Material,
+    MaterialDroidTycoon,
+    NombreSprit,
+    OrdenDefault,
+    OrdenRareza,
+    Sprit,
+)
+
+DROID_TYCOON_MATERIALES = [
+    (1, "BASE"),
+    (2, "GOLD"),
+    (3, "DIA"),
+    (4, "RBW"),
+    (5, "BSK"),
+    (6, "GLC"),
+    (7, "STL"),
+    (8, "KYB"),
+    (9, "SCR"),
+]
+
+
+def seed_material_droid_tycoon():
+    db = SessionLocal()
+    try:
+        for numero_orden, material in DROID_TYCOON_MATERIALES:
+            existe = db.query(MaterialDroidTycoon).filter(
+                MaterialDroidTycoon.material == material
+            ).first()
+            if existe is None:
+                db.add(MaterialDroidTycoon(
+                    numeroOrden=numero_orden,
+                    material=material,
+                ))
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 # Datos de Sprits
 sprits_data = [

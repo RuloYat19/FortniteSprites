@@ -1,11 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Inicio from './components/Inicio';
 import InicioSprites from './components/InicioSprites';
 import SpritsList from './components/Sprites/SpritsList';
 import CalculadoraPolvoEspiritu from './components/Sprites/CalculadoraPolvoEspiritu';
 import Dominados from './components/Sprites/Dominados';
 import Administrador from './components/Administrador/Administrador';
+import InicioDroidTycoon from './components/DroidTycoon/InicioDroidTycoon';
+import Droidex from './components/DroidTycoon/Droidex';
+import AdministradorDroidTycoon from './components/AdministradorDroidTycoon/AdministradorDroidTycoon';
 
 function InicioWrapper() {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ function InicioWrapper() {
         navigate('/');
         break;
       case 'droid_tycoon':
-        navigate('/');
+        navigate('/droid-tycoon');
         break;
       case 'sprites':
         navigate('/sprites');
@@ -59,18 +61,19 @@ function InicioSpritesWarapper() {
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<InicioWrapper />} />
-          <Route path="/sprites" element={<InicioSpritesWarapper />} />
-          <Route path="/sprites/sprits" element={<SpritsList />} />
-          <Route path="/sprites/calculadora" element={<CalculadoraPolvoEspiritu />} />
-          <Route path="/sprites/dominados" element={<Dominados />} />
-          <Route path="/sprites/administrador" element={<Administrador />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<InicioWrapper />} />
+        <Route path="/sprites" element={<InicioSpritesWarapper />} />
+        <Route path="/sprites/sprits" element={<SpritsList />} />
+        <Route path="/sprites/calculadora" element={<CalculadoraPolvoEspiritu />} />
+        <Route path="/sprites/dominados" element={<Dominados />} />
+        <Route path="/sprites/administrador" element={<Administrador />} />
+        <Route path="/droid-tycoon" element={<InicioDroidTycoon />} />
+        <Route path="/droid-tycoon/droidex" element={<Droidex />} />
+        <Route path="/droid-tycoon/administrador" element={<AdministradorDroidTycoon />} />
+      </Routes>
+    </div>
   );
 }
 

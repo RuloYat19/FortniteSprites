@@ -291,6 +291,49 @@ END
 GO
 
 -- ================================================
+-- TABLA: Materiales de los Droides
+-- ================================================
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'materialDroidTycoon')
+BEGIN
+    CREATE TABLE materialDroidTycoon (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        numeroOrden INT NOT NULL,
+        material VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME NULL
+    );
+
+    CREATE INDEX idx_materialDroidTycoon_material ON materialDroidTycoon(material);
+
+    PRINT '✅ Tabla materialDroidTycoon creada';
+END
+ELSE
+BEGIN
+    PRINT '⚠️ Tabla materialDroidTycoon ya existe';
+END
+GO
+
+INSERT INTO materialDroidTycoon (numeroOrden, material)
+SELECT materiales.numeroOrden, materiales.material
+FROM (VALUES
+    (1, 'BASE'),
+    (2, 'GOLD'),
+    (3, 'DIA'),
+    (4, 'RBW'),
+    (5, 'BSK'),
+    (6, 'GLC'),
+    (7, 'STL'),
+    (8, 'KYB'),
+    (9, 'SCR')
+) AS materiales(numeroOrden, material)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM materialDroidTycoon AS existente
+    WHERE existente.material = materiales.material
+);
+GO
+
+-- ================================================
 -- TABLA: Nombre de Droide
 -- ================================================
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nombreDroide')
