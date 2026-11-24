@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from '../ConfirmModal';
 import {
   droidesService,
   materialDroidTycoonService,
@@ -29,7 +30,25 @@ const NUEVO_DROIDE = {
   rareza: '',
   nombreArchivoImagen: '',
   estaImpecable: false,
+  esDroideFusion: false,
 };
+
+function normalizarNombreDroide(nombre) {
+  const palabras = nombre.trim().split(/\s+/).filter(Boolean);
+  if (palabras.length === 0) return '';
+
+  return palabras[0].toLowerCase() + palabras
+    .slice(1)
+    .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase())
+    .join('');
+}
+
+function normalizarTexto(texto) {
+  return texto
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('es');
+}
 
 async function cargarTodosLosRegistros(servicio) {
   const registros = [];
@@ -92,13 +111,18 @@ function Droidex() {
   const [seccionActiva, setSeccionActiva] = useState('droidex');
   const [busqueda, setBusqueda] = useState('');
   const [rarezaFiltro, setRarezaFiltro] = useState('');
+  const [materialesFiltro, setMaterialesFiltro] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [actualizandoId, setActualizandoId] = useState(null);
   const [materialActualizando, setMaterialActualizando] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [nuevoDroide, setNuevoDroide] = useState(NUEVO_DROIDE);
+  const [droideEditando, setDroideEditando] = useState(null);
+  const [droideAEliminar, setDroideAEliminar] = useState(null);
+  const [errorFormulario, setErrorFormulario] = useState('');
   const [creandoDroide, setCreandoDroide] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
 
   const cargarDatos = async () => {
     setCargando(true);
@@ -161,11 +185,15 @@ function Droidex() {
     [rarezasDisponibles],
   );
 
-  const rarezas = useMemo(
-    () => [...new Set(droides.map((droide) => droide.rareza).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b, 'es')),
-    [droides],
-  );
+  const obtenerMaterialesVisibles = (rareza) => materialesOrdenados.filter((material) => {
+      const esIconico = normalizarTexto(rareza) === 'iconico';
+      const esComun = normalizarTexto(material.material) === 'comun';
+      const coincideRareza = !esIconico || esComun;
+      const coincideFiltro = materialesFiltro.length === 0
+        || materialesFiltro.includes(material.material);
+
+      return coincideRareza && coincideFiltro;
+  });
 
   const droidesFiltrados = useMemo(() => {
     const texto = busqueda.trim().toLocaleLowerCase('es');
@@ -260,30 +288,113 @@ function Droidex() {
     setNuevoDroide((actual) => ({
       ...actual,
       [name]: type === 'checkbox' ? checked : value,
+      ...(name === 'nombre' && value
+        ? { nombreArchivoImagen: `./imagenesDroides/${normalizarNombreDroide(value)}.png` }
+        : {}),
     }));
+  };
+
+  const limpiarFiltros = () => {
+    setBusqueda('');
+    setRarezaFiltro('');
+    setMaterialesFiltro([]);
+  };
+
+  const abrirFormularioNuevo = () => {
+    setDroideEditando(null);
+    setNuevoDroide(NUEVO_DROIDE);
+    setErrorFormulario('');
+    setModalAbierto(true);
+  };
+
+  const abrirFormularioEdicion = (droide) => {
+    setDroideEditando(droide);
+    setErrorFormulario('');
+    setNuevoDroide({
+      nombre: droide.nombre,
+      clase: droide.clase,
+      rareza: droide.rareza,
+      nombreArchivoImagen: droide.nombreArchivoImagen || '',
+      estaImpecable: Boolean(droide.estaImpecable),
+      esDroideFusion: Boolean(droide.esDroideFusion),
+    });
+    setModalAbierto(true);
+  };
+
+  const cerrarFormulario = () => {
+    setModalAbierto(false);
+    setDroideEditando(null);
+    setNuevoDroide(NUEVO_DROIDE);
+    setErrorFormulario('');
   };
 
   const guardarNuevoDroide = async (event) => {
     event.preventDefault();
     setCreandoDroide(true);
+    setErrorFormulario('');
     setError('');
 
     try {
-      const response = await droidesService.create({
+      const datos = {
         ...nuevoDroide,
         nombre: nuevoDroide.nombre.trim(),
         clase: nuevoDroide.clase.trim(),
         rareza: nuevoDroide.rareza.trim(),
         nombreArchivoImagen: nuevoDroide.nombreArchivoImagen.trim() || null,
-      });
-      setDroides((actuales) => [...actuales, response.data]);
-      setNuevoDroide(NUEVO_DROIDE);
-      setModalAbierto(false);
+      };
+
+      if (droideEditando) {
+        const response = await droidesService.update(droideEditando.id, datos);
+        setDroides((actuales) => actuales.map((droide) => (
+          droide.id === droideEditando.id ? response.data : droide
+        )));
+      } else {
+        const response = await droidesService.create(datos);
+        setDroides((actuales) => [...actuales, response.data]);
+      }
+
+      cerrarFormulario();
     } catch (requestError) {
-      console.error('Error al crear el droide:', requestError);
-      setError('No se pudo guardar el droide. Revisa los datos e intenta de nuevo.');
+      console.error(
+        droideEditando ? 'Error al actualizar el droide:' : 'Error al crear el droide:',
+        requestError,
+      );
+      setError(
+        droideEditando
+          ? 'No se pudieron guardar los cambios del droide.'
+          : 'No se pudo guardar el droide. Revisa los datos e intenta de nuevo.',
+      );
+      setErrorFormulario(
+        droideEditando
+          ? 'No se pudieron guardar los cambios. Revisa los datos e intenta de nuevo.'
+          : 'No se pudo guardar el droide. Revisa los datos e intenta de nuevo.',
+      );
     } finally {
       setCreandoDroide(false);
+    }
+  };
+
+  const eliminarDroide = async () => {
+    if (!droideAEliminar) return;
+
+    setEliminandoId(droideAEliminar.id);
+    setError('');
+
+    try {
+      await droidesService.delete(droideAEliminar.id);
+      setDroides((actuales) => actuales.filter((droide) => (
+        droide.id !== droideAEliminar.id
+      )));
+      setMaterialesAsignados((actuales) => actuales.filter((material) => (
+        material.droide_id !== droideAEliminar.id
+      )));
+      setDroideAEliminar(null);
+    } catch (requestError) {
+      console.error('Error al eliminar el droide:', requestError);
+      setError(`No se pudo eliminar "${droideAEliminar.nombre}". Intenta de nuevo.`);
+      setDroideAEliminar(null);
+    } finally {
+      setEliminandoId(null);
     }
   };
 
@@ -361,14 +472,45 @@ function Droidex() {
             aria-label="Filtrar por rareza"
           >
             <option value="">Todas las rarezas</option>
-            {rarezas.map((rareza) => (
-              <option key={rareza} value={rareza}>{rareza}</option>
+            {rarezasOrdenadas.map((rareza) => (
+              <option key={rareza.id} value={rareza.nombre}>{rareza.nombre}</option>
             ))}
           </select>
+          <details className="droidex-material-filter">
+            <summary>
+              Materiales{materialesFiltro.length > 0 ? ` (${materialesFiltro.length})` : ''}
+            </summary>
+            <div className="droidex-material-filter-options" role="group" aria-label="Filtrar materiales">
+              {materialesOrdenados.length > 0 ? materialesOrdenados.map((material) => (
+                <label key={material.id}>
+                  <input
+                    type="checkbox"
+                    checked={materialesFiltro.includes(material.material)}
+                    onChange={() => setMaterialesFiltro((actuales) => (
+                      actuales.includes(material.material)
+                        ? actuales.filter((nombre) => nombre !== material.material)
+                        : [...actuales, material.material]
+                    ))}
+                  />
+                  {material.material}
+                </label>
+              )) : (
+                <span>No hay materiales registrados.</span>
+              )}
+            </div>
+          </details>
+          <button
+            type="button"
+            className="droidex-clear-filters-button"
+            onClick={limpiarFiltros}
+            disabled={!busqueda && !rarezaFiltro && materialesFiltro.length === 0}
+          >
+            Limpiar filtros
+          </button>
           <button
             type="button"
             className="droidex-add-button"
-            onClick={() => setModalAbierto(true)}
+            onClick={abrirFormularioNuevo}
           >
             + Agregar droide
           </button>
@@ -405,6 +547,11 @@ function Droidex() {
                       alt={`Clase ${droide.clase}`}
                     />
                   )}
+                  {droide.esDroideFusion && (
+                    <span className="droidex-fusion-badge" aria-label="Droide de fusión">
+                      F
+                    </span>
+                  )}
                   <button
                     type="button"
                     className={`droidex-perfect-toggle ${droide.estaImpecable ? 'selected perfect' : ''}`}
@@ -422,14 +569,38 @@ function Droidex() {
                 <div className="droidex-card-content">
                   <div className="droidex-card-title">
                     <h2>{droide.nombre}</h2>
-                    <span className={`droidex-rarity ${droide.rareza.toLowerCase()}`}>
-                      {droide.clase} - {droide.rareza}
-                    </span>
+                    <div className="droidex-card-meta">
+                      <span className={`droidex-rarity ${droide.rareza.toLowerCase()}`}>
+                        {droide.rareza}
+                      </span>
+                      <div className="droidex-card-management">
+                        <button
+                          type="button"
+                          className="droidex-card-management-button"
+                          aria-label={`Editar ${droide.nombre}`}
+                          title={`Editar ${droide.nombre}`}
+                          disabled={eliminandoId === droide.id}
+                          onClick={() => abrirFormularioEdicion(droide)}
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          type="button"
+                          className="droidex-card-management-button delete"
+                          aria-label={`Eliminar ${droide.nombre}`}
+                          title={`Eliminar ${droide.nombre}`}
+                          disabled={eliminandoId === droide.id}
+                          onClick={() => setDroideAEliminar(droide)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="droidex-materials">
                     <div className="droidex-material-buttons">
-                      {materialesOrdenados.map((material) => {
+                      {obtenerMaterialesVisibles(droide.rareza).map((material) => {
                         const asignacion = materialesAsignados.find((item) => (
                           item.droide_id === droide.id
                           && item.material === material.material
@@ -461,7 +632,7 @@ function Droidex() {
         {modalAbierto && (
           <div
             className="droidex-modal-overlay"
-            onClick={() => setModalAbierto(false)}
+            onClick={cerrarFormulario}
           >
             <form
               className="droidex-modal"
@@ -474,17 +645,23 @@ function Droidex() {
               <div className="droidex-modal-header">
                 <div>
                   <p className="droidex-eyebrow">Droid Tycoon</p>
-                  <h2 id="droidex-modal-title">Agregar droide</h2>
+                  <h2 id="droidex-modal-title">
+                    {droideEditando ? 'Editar droide' : 'Agregar droide'}
+                  </h2>
                 </div>
                 <button
                   type="button"
                   className="droidex-modal-close"
-                  onClick={() => setModalAbierto(false)}
+                  onClick={cerrarFormulario}
                   aria-label="Cerrar formulario"
                 >
                   ×
                 </button>
               </div>
+
+              {errorFormulario && (
+                <p className="droidex-form-error" role="alert">{errorFormulario}</p>
+              )}
 
               <label>
                 Nombre *
@@ -502,6 +679,11 @@ function Droidex() {
                       {registro.nombre}
                     </option>
                   ))}
+                  {droideEditando && !nombresOrdenados.some(
+                    (registro) => registro.nombre === droideEditando.nombre,
+                  ) && (
+                    <option value={droideEditando.nombre}>{droideEditando.nombre}</option>
+                  )}
                 </select>
               </label>
               <label>
@@ -556,11 +738,20 @@ function Droidex() {
                 />
                 Droide impecable
               </label>
+              <label className="droidex-checkbox">
+                <input
+                  type="checkbox"
+                  name="esDroideFusion"
+                  checked={nuevoDroide.esDroideFusion}
+                  onChange={manejarCambioNuevoDroide}
+                />
+                Droide de fusión
+              </label>
               <div className="droidex-modal-actions">
                 <button
                   type="button"
                   className="droidex-cancel-button"
-                  onClick={() => setModalAbierto(false)}
+                  onClick={cerrarFormulario}
                 >
                   Cancelar
                 </button>
@@ -569,12 +760,26 @@ function Droidex() {
                   className="droidex-save-button"
                   disabled={creandoDroide}
                 >
-                  {creandoDroide ? 'Guardando...' : 'Guardar droide'}
+                  {creandoDroide
+                    ? 'Guardando...'
+                    : droideEditando
+                      ? 'Guardar cambios'
+                      : 'Guardar droide'}
                 </button>
               </div>
             </form>
           </div>
         )}
+        <ConfirmModal
+          isOpen={Boolean(droideAEliminar)}
+          onClose={() => setDroideAEliminar(null)}
+          title="🗑️ Confirmar eliminación"
+          message={`¿Eliminar "${droideAEliminar?.nombre ?? ''}"? También se eliminarán sus materiales asociados. Esta acción no se puede deshacer.`}
+          type="warning"
+          confirmText="Eliminar"
+          onConfirm={eliminarDroide}
+          showCancelButton
+        />
       </main>
     </div>
   );

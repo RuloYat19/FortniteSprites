@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, text
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -106,6 +106,7 @@ class Droide(Base):
     rareza = Column(String(50), nullable=False, index=True)
     estaImpecable = Column(Boolean, default=False)
     estaEnScourgedex = Column(Boolean, default=False)
+    esDroideFusion = Column(Boolean, nullable=False, default=False, server_default=text("0"))
     nombreArchivoImagen = Column(String(255), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

@@ -229,6 +229,7 @@ class DroideBase(BaseModel):
     rareza: str
     estaImpecable: bool = False
     estaEnScourgedex: bool = False
+    esDroideFusion: bool = False
     nombreArchivoImagen: Optional[str] = None
 
 class DroideCreate(DroideBase):
@@ -240,6 +241,7 @@ class DroideUpdate(BaseModel):
     rareza: Optional[str] = None
     estaImpecable: Optional[bool] = None
     estaEnScourgedex: Optional[bool] = None
+    esDroideFusion: Optional[bool] = None
     nombreArchivoImagen: Optional[str] = None
 
 class DroideResponse(DroideBase, DroidTycoonResponse):

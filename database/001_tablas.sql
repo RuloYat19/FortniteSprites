@@ -245,6 +245,7 @@ BEGIN
         rareza VARCHAR(50) NOT NULL,
         estaImpecable BIT DEFAULT 0,
         estaEnScourgedex BIT DEFAULT 0,
+        esDroideFusion BIT NOT NULL CONSTRAINT DF_droide_esDroideFusion DEFAULT (0),
         nombreArchivoImagen VARCHAR(255) NULL,
         created_at DATETIME DEFAULT GETDATE(),
         updated_at DATETIME NULL
@@ -311,26 +312,6 @@ ELSE
 BEGIN
     PRINT '⚠️ Tabla materialDroidTycoon ya existe';
 END
-GO
-
-INSERT INTO materialDroidTycoon (numeroOrden, material)
-SELECT materiales.numeroOrden, materiales.material
-FROM (VALUES
-    (1, 'BASE'),
-    (2, 'GOLD'),
-    (3, 'DIA'),
-    (4, 'RBW'),
-    (5, 'BSK'),
-    (6, 'GLC'),
-    (7, 'STL'),
-    (8, 'KYB'),
-    (9, 'SCR')
-) AS materiales(numeroOrden, material)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM materialDroidTycoon AS existente
-    WHERE existente.material = materiales.material
-);
 GO
 
 -- ================================================

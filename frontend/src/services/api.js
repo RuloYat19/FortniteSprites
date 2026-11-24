@@ -27,6 +27,7 @@ export const droidesService = {
   }),
   create: (data) => api.post('/droides/', data),
   update: (id, data) => api.put(`/droides/${id}`, data),
+  delete: (id) => api.delete(`/droides/${id}`),
 };
 
 export const materialDroidTycoonService = {
