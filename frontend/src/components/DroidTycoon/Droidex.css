@@ -423,8 +423,8 @@
   position: absolute;
   top: 9px;
   left: 9px;
-  width: 105px;
-  max-height: 45px;
+  width: 35px;
+  max-height: 35px;
   object-fit: contain;
 }
 

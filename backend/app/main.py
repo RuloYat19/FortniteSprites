@@ -8,7 +8,7 @@ from app.seed import seed_material_droid_tycoon
 
 # Crear las tablas en la base de datos
 Base.metadata.create_all(bind=engine)
-seed_material_droid_tycoon()
+# seed_material_droid_tycoon()
 
 app = FastAPI(
     title=settings.APP_NAME,

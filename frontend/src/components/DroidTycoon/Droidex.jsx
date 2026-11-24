@@ -186,13 +186,14 @@ function Droidex() {
   );
 
   const obtenerMaterialesVisibles = (rareza) => materialesOrdenados.filter((material) => {
-      const esIconico = normalizarTexto(rareza) === 'iconico';
-      const esComun = normalizarTexto(material.material) === 'comun';
-      const coincideRareza = !esIconico || esComun;
-      const coincideFiltro = materialesFiltro.length === 0
-        || materialesFiltro.includes(material.material);
+    const esIconico = normalizarTexto(rareza) === 'iconico';
+    const materialNormalizado = normalizarTexto(material.material);
+    const esMaterialVisibleParaIconico = ['pred'].includes(materialNormalizado);
+    const coincideRareza = !esIconico || esMaterialVisibleParaIconico;
+    const coincideFiltro = materialesFiltro.length === 0
+      || materialesFiltro.includes(material.material);
 
-      return coincideRareza && coincideFiltro;
+    return coincideRareza && coincideFiltro;
   });
 
   const droidesFiltrados = useMemo(() => {

@@ -36,6 +36,16 @@ function InicioDroidTycoon() {
       <h1>Droid Tycoon</h1>
 
       <div className="inicio-cards">
+        <Link to="/droid-tycoon/administrador" className="inicio-card">
+          <div className="inicio-card-image inicio-droid-tycoon-option-icon">
+            <img src="/imagenesSprites/administradorSprites.png" alt="" />
+          </div>
+          <div className="inicio-card-content">
+            <h3>Administrar Droid Tycoon</h3>
+            <p>Gestiona nombres, materiales, rarezas y costos.</p>
+          </div>
+        </Link>
+
         <Link to="/droid-tycoon/droidex" className="inicio-card">
           <div className="inicio-card-image">
             <img src="/imagenesGeneral/LogoDroidTycoon.png" alt="" />
@@ -43,16 +53,6 @@ function InicioDroidTycoon() {
           <div className="inicio-card-content">
             <h3>Droidex y Scourgedex</h3>
             <p>Explora y completa tu colección de droides.</p>
-          </div>
-        </Link>
-
-        <Link to="/droid-tycoon/administrador" className="inicio-card">
-          <div className="inicio-card-image inicio-droid-tycoon-option-icon">
-            <span aria-hidden="true">⚙️</span>
-          </div>
-          <div className="inicio-card-content">
-            <h3>Administrar Droid Tycoon</h3>
-            <p>Gestiona nombres, materiales, rarezas y costos.</p>
           </div>
         </Link>
 
