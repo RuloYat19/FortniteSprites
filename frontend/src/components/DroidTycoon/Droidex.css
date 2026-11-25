@@ -335,6 +335,29 @@
   opacity: 0.5;
 }
 
+.droidex-scourgedex-clear-button {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(244, 67, 54, 0.55);
+  border-radius: 8px;
+  background: rgba(244, 67, 54, 0.1);
+  color: #ff9a91;
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.droidex-scourgedex-clear-button:hover:not(:disabled) {
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.2);
+  color: #ffc2bd;
+}
+
+.droidex-scourgedex-clear-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
 .droidex-results-count {
   min-width: 90px;
   color: #9aa3b5;
@@ -389,6 +412,27 @@
   transform: translateY(-4px);
   border-color: rgba(53, 207, 53, 0.55);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.droidex-scourgedex-card {
+  cursor: pointer;
+  outline: none;
+}
+
+.droidex-scourgedex-card.selected {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.12);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.droidex-scourgedex-card:focus-visible {
+  outline: 2px solid #35cf35;
+  outline-offset: 3px;
+}
+
+.droidex-scourgedex-card[aria-disabled="true"] {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .droidex-card-visual {
@@ -447,6 +491,13 @@
   line-height: 1;
   padding: 0;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.droidex-scourgedex-card .droidex-fusion-badge {
+  left: 9px;
+  right: auto;
+  cursor: default;
+  pointer-events: none;
 }
 
 .droidex-fusion-badge:hover {
@@ -548,6 +599,12 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
+}
+
+.droidex-scourgedex-meta {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
 }
 
 .droidex-card-management {
@@ -993,6 +1050,10 @@
   }
 
   .droidex-clear-filters-button {
+    width: 100%;
+  }
+
+  .droidex-scourgedex-clear-button {
     width: 100%;
   }
 

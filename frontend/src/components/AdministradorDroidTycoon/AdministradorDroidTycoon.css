@@ -95,6 +95,41 @@
   overflow-wrap: anywhere;
 }
 
+.droid-admin-main .btn-mover-orden {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.droid-admin-main .btn-mover-orden:hover:not(:disabled) {
+  background: rgba(53, 207, 53, 0.2);
+  transform: scale(1.12);
+}
+
+.droid-admin-main .btn-mover-orden:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.droid-admin-move-summary {
+  margin: 0 0 16px;
+  color: #c3c9d4;
+  line-height: 1.5;
+}
+
+.droid-admin-move-summary strong {
+  color: #35cf35;
+}
+
+.droid-admin-move-error {
+  margin: 12px 0 0;
+  color: #ff9a91;
+}
+
 @media (max-width: 768px) {
   .droid-admin-nav-button {
     min-height: 28px;
@@ -107,5 +142,10 @@
   .droid-admin-main .admin-filtros .filtros-group,
   .droid-admin-main .admin-filtros .filtro-select {
     width: 100%;
+  }
+
+  .droid-admin-main .btn-mover-orden {
+    padding: 2px 6px;
+    font-size: 0.85rem;
   }
 }

@@ -140,6 +140,7 @@ function Droidex() {
   const [seccionActiva, setSeccionActiva] = useState('droidex');
   const [busqueda, setBusqueda] = useState('');
   const [rarezaFiltro, setRarezaFiltro] = useState('');
+  const [ordenScourgedex, setOrdenScourgedex] = useState('vista-droidex');
   const [materialesFiltro, setMaterialesFiltro] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
@@ -152,6 +153,8 @@ function Droidex() {
   const [errorFormulario, setErrorFormulario] = useState('');
   const [creandoDroide, setCreandoDroide] = useState(false);
   const [eliminandoId, setEliminandoId] = useState(null);
+  const [confirmarLimpiarScourgedex, setConfirmarLimpiarScourgedex] = useState(false);
+  const [limpiandoScourgedex, setLimpiandoScourgedex] = useState(false);
 
   const cargarDatos = async () => {
     setCargando(true);
@@ -308,17 +311,31 @@ function Droidex() {
 
   const droidesFiltrados = useMemo(() => {
     const texto = busqueda.trim().toLocaleLowerCase('es');
+    const mostrarVistaDroidex = seccionActiva === 'scourgedex'
+      && ordenScourgedex === 'vista-droidex';
 
-    return droides.filter((droide) => {
+    const filtrados = droides.filter((droide) => {
       const coincideTexto = !texto
         || droide.nombre.toLocaleLowerCase('es').includes(texto)
         || droide.clase.toLocaleLowerCase('es').includes(texto);
       const coincideRareza = !rarezaFiltro || droide.rareza === rarezaFiltro;
-      const coincideSeccion = seccionActiva !== 'scourgedex' || droide.estaEnScourgedex;
+      const coincideSeccion = seccionActiva !== 'scourgedex'
+        || mostrarVistaDroidex
+        || normalizarTexto(droide.rareza) !== 'iconico';
 
       return coincideTexto && coincideRareza && coincideSeccion;
     });
-  }, [busqueda, droides, rarezaFiltro, seccionActiva]);
+
+    if (seccionActiva !== 'scourgedex' || mostrarVistaDroidex) return filtrados;
+
+    const marcadosPrimero = ordenScourgedex === 'marcados';
+    return filtrados.sort((droideA, droideB) => {
+      const droideAMarcado = Boolean(droideA.estaEnScourgedex);
+      const droideBMarcado = Boolean(droideB.estaEnScourgedex);
+      if (droideAMarcado === droideBMarcado) return 0;
+      return droideAMarcado === marcadosPrimero ? -1 : 1;
+    });
+  }, [busqueda, droides, ordenScourgedex, rarezaFiltro, seccionActiva]);
 
   const recetasPorDroideResultante = useMemo(() => {
     const recetasOrdenadas = [...recetasFusion].sort(
@@ -350,7 +367,9 @@ function Droidex() {
   const totales = useMemo(
     () => ({
       droidex: droides.length,
-      scourgedex: droides.filter((droide) => droide.estaEnScourgedex).length,
+      scourgedex: droides.filter((droide) => (
+        droide.estaEnScourgedex && normalizarTexto(droide.rareza) !== 'iconico'
+      )).length,
       impecables: droides.filter((droide) => droide.estaImpecable).length,
     }),
     [droides],
@@ -379,6 +398,52 @@ function Droidex() {
       setError(`No se pudo actualizar "${droide.nombre}". Intenta de nuevo.`);
     } finally {
       setActualizandoId(null);
+    }
+  };
+
+  const deseleccionarScourgedex = async () => {
+    const seleccionados = droides.filter((droide) => (
+      droide.estaEnScourgedex && normalizarTexto(droide.rareza) !== 'iconico'
+    ));
+    setConfirmarLimpiarScourgedex(false);
+
+    if (seleccionados.length === 0) return;
+
+    setLimpiandoScourgedex(true);
+    setError('');
+
+    try {
+      const resultados = await Promise.allSettled(
+        seleccionados.map((droide) => droidesService.update(droide.id, {
+          estaEnScourgedex: false,
+        })),
+      );
+      let totalFallidos = 0;
+      const resultadosPorId = new Map(
+        seleccionados.map((droide, indice) => [droide.id, resultados[indice]]),
+      );
+
+      resultados.forEach((resultado, indice) => {
+        if (resultado.status === 'rejected') {
+          totalFallidos += 1;
+          console.error(
+            `Error al deseleccionar "${seleccionados[indice].nombre}" del Scourgedex:`,
+            resultado.reason,
+          );
+        }
+      });
+
+      setDroides((actuales) => actuales.map((droide) => {
+        const resultado = resultadosPorId.get(droide.id);
+        if (!resultado) return droide;
+        return resultado.status === 'fulfilled' ? resultado.value.data : droide;
+      }));
+
+      if (totalFallidos > 0) {
+        setError(`No se pudieron deseleccionar ${totalFallidos} droides. Intenta de nuevo.`);
+      }
+    } finally {
+      setLimpiandoScourgedex(false);
     }
   };
 
@@ -605,7 +670,7 @@ function Droidex() {
             <p className="droidex-subtitle">
               {seccionActiva === 'droidex'
                 ? 'Explora y completa tu colección de droides.'
-                : 'Droides que ya forman parte de tu Scourgedex.'}
+                : 'Selecciona los droides que ya forman parte de tu Scourgedex.'}
             </p>
           </div>
           <div className="droidex-header-stat">
@@ -635,29 +700,40 @@ function Droidex() {
               <option key={rareza.id} value={rareza.nombre}>{rareza.nombre}</option>
             ))}
           </select>
-          <details className="droidex-material-filter">
-            <summary>
-              Materiales{materialesFiltro.length > 0 ? ` (${materialesFiltro.length})` : ''}
-            </summary>
-            <div className="droidex-material-filter-options" role="group" aria-label="Filtrar materiales">
-              {materialesOrdenados.length > 0 ? materialesOrdenados.map((material) => (
-                <label key={material.id}>
-                  <input
-                    type="checkbox"
-                    checked={materialesFiltro.includes(material.material)}
-                    onChange={() => setMaterialesFiltro((actuales) => (
-                      actuales.includes(material.material)
-                        ? actuales.filter((nombre) => nombre !== material.material)
-                        : [...actuales, material.material]
-                    ))}
-                  />
-                  {material.material}
-                </label>
-              )) : (
-                <span>No hay materiales registrados.</span>
-              )}
-            </div>
-          </details>
+          {seccionActiva === 'scourgedex' ? (
+            <button
+              type="button"
+              className="droidex-scourgedex-clear-button"
+              onClick={() => setConfirmarLimpiarScourgedex(true)}
+              disabled={limpiandoScourgedex || actualizandoId !== null || totales.scourgedex === 0}
+            >
+              {limpiandoScourgedex ? 'Deseleccionando...' : 'Deseleccionar todos'}
+            </button>
+          ) : (
+            <details className="droidex-material-filter">
+              <summary>
+                Materiales{materialesFiltro.length > 0 ? ` (${materialesFiltro.length})` : ''}
+              </summary>
+              <div className="droidex-material-filter-options" role="group" aria-label="Filtrar materiales">
+                {materialesOrdenados.length > 0 ? materialesOrdenados.map((material) => (
+                  <label key={material.id}>
+                    <input
+                      type="checkbox"
+                      checked={materialesFiltro.includes(material.material)}
+                      onChange={() => setMaterialesFiltro((actuales) => (
+                        actuales.includes(material.material)
+                          ? actuales.filter((nombre) => nombre !== material.material)
+                          : [...actuales, material.material]
+                      ))}
+                    />
+                    {material.material}
+                  </label>
+                )) : (
+                  <span>No hay materiales registrados.</span>
+                )}
+              </div>
+            </details>
+          )}
           <button
             type="button"
             className="droidex-clear-filters-button"
@@ -666,13 +742,26 @@ function Droidex() {
           >
             Limpiar filtros
           </button>
-          <button
-            type="button"
-            className="droidex-add-button"
-            onClick={abrirFormularioNuevo}
-          >
-            + Agregar droide
-          </button>
+          {seccionActiva === 'scourgedex' ? (
+            <select
+              className="droidex-scourgedex-sort"
+              value={ordenScourgedex}
+              onChange={(event) => setOrdenScourgedex(event.target.value)}
+              aria-label="Ordenar droides del Scourgedex"
+            >
+              <option value="vista-droidex">Vista Droidex</option>
+              <option value="marcados">Está en Scourgedex</option>
+              <option value="faltantes">Hacen falta en Scourgedex</option>
+            </select>
+          ) : (
+            <button
+              type="button"
+              className="droidex-add-button"
+              onClick={abrirFormularioNuevo}
+            >
+              + Agregar droide
+            </button>
+          )}
           <span className="droidex-results-count">
             {droidesFiltrados.length} {droidesFiltrados.length === 1 ? 'droide' : 'droides'}
           </span>
@@ -696,7 +785,63 @@ function Droidex() {
         ) : (
           <section className="droidex-grid" aria-label="Droides">
             {droidesFiltrados.map((droide) => {
+              const esScourgedex = seccionActiva === 'scourgedex';
               const recetaAbierta = droideRecetaAbierta?.id === droide.id;
+
+              if (esScourgedex) {
+                const seleccionado = Boolean(droide.estaEnScourgedex);
+                const actualizando = limpiandoScourgedex || actualizandoId !== null;
+
+                return (
+                  <article
+                    className={`droidex-card droidex-scourgedex-card${seleccionado ? ' selected' : ''}`}
+                    key={droide.id}
+                    role="button"
+                    tabIndex={actualizando ? -1 : 0}
+                    aria-label={`${droide.nombre}, clase ${droide.clase}, rareza ${droide.rareza}${droide.esDroideFusion ? ', droide de fusión' : ''}`}
+                    aria-pressed={seleccionado}
+                    aria-disabled={actualizando}
+                    onClick={() => {
+                      if (!actualizando) alternarEstado(droide, 'estaEnScourgedex');
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (!actualizando) alternarEstado(droide, 'estaEnScourgedex');
+                      }
+                    }}
+                  >
+                    <div className="droidex-card-visual">
+                      <ImagenDroide droide={droide} />
+                      {ICONOS_CLASE_DROIDTYCOON[droide.clase] && (
+                        <img
+                          className="droidex-class-icon"
+                          src={ICONOS_CLASE_DROIDTYCOON[droide.clase]}
+                          alt={`Clase ${droide.clase}`}
+                        />
+                      )}
+                      {droide.esDroideFusion && (
+                        <span
+                          className="droidex-fusion-badge droidex-fusion-indicator"
+                          aria-label="Droide de fusión"
+                        >
+                          F
+                        </span>
+                      )}
+                    </div>
+                    <div className="droidex-card-content">
+                      <div className="droidex-card-title">
+                        <h2>{droide.nombre}</h2>
+                        <div className="droidex-scourgedex-meta">
+                          <span className={`droidex-rarity ${droide.rareza.toLowerCase()}`}>
+                            {droide.rareza}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                );
+              }
 
               return (
                 <article className="droidex-card" key={droide.id}>
@@ -991,6 +1136,16 @@ function Droidex() {
             </form>
           </div>
         )}
+        <ConfirmModal
+          isOpen={confirmarLimpiarScourgedex}
+          onClose={() => setConfirmarLimpiarScourgedex(false)}
+          title="⚠️ Limpiar Scourgedex"
+          message={`¿Deseleccionar los ${totales.scourgedex} droides actualmente marcados en el Scourgedex? Esta acción no se puede deshacer automáticamente.`}
+          type="warning"
+          confirmText="Deseleccionar todos"
+          onConfirm={deseleccionarScourgedex}
+          showCancelButton
+        />
         <ConfirmModal
           isOpen={Boolean(droideAEliminar)}
           onClose={() => setDroideAEliminar(null)}
